@@ -17,11 +17,11 @@ export interface Flows {
   gridBattery: number;
 }
 
-/** Tải tính từ cân bằng công suất khi không có entity riêng. */
+/** Tải tính từ cân bằng công suất khi không có entity riêng; thiếu một nguồn thì không tính được. */
 export function resolveLoad(p: Power): number | undefined {
   if (p.load !== undefined) return p.load;
-  if (p.pv === undefined && p.battery === undefined && p.grid === undefined) return undefined;
-  return Math.max(0, (p.pv ?? 0) + (p.battery ?? 0) + (p.grid ?? 0));
+  if (p.pv === undefined || p.battery === undefined || p.grid === undefined) return undefined;
+  return Math.max(0, p.pv + p.battery + p.grid);
 }
 
 /** Solar cấp cho nhà trước, phần dư sạc pin, sau cùng mới phát lên lưới. */

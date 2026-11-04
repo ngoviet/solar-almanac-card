@@ -25,7 +25,7 @@ export type EntityRef = string | FlowEntityConfig;
  * - pv:      dương = đang phát
  * - battery: dương = đang xả, âm = đang sạc
  * - grid:    dương = mua điện, âm = bán điện
- * - load:    dương = đang tiêu thụ (bỏ trống thì tự tính pv + battery + grid)
+ * - load:    dương = đang tiêu thụ (bỏ trống thì tự tính khi đủ pv, battery, grid)
  */
 export interface SolarAlmanacCardConfig {
   type: string;

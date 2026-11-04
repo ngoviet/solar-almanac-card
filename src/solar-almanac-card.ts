@@ -146,9 +146,9 @@ export class SolarAlmanacCard extends LitElement {
     return this._entity('inverter_temperature')?.st.attributes.unit_of_measurement || '°C';
   }
 
-  /** Có nguồn đã khai mà không đọc được; lúc mất lưới thì lưới chắc chắn bằng 0. */
-  private _unread(power: Power, online?: boolean): boolean {
-    return SOURCES.some(({ key }) => this._config?.entities[key] && power[key] === undefined && !(key === 'grid' && online === false));
+  /** Có nguồn đã khai mà không đọc được. */
+  private _unread(power: Power): boolean {
+    return SOURCES.some(({ key }) => this._config?.entities[key] && power[key] === undefined);
   }
 
   private _moreInfo(key: EntityKey | undefined): void {
@@ -410,15 +410,16 @@ export class SolarAlmanacCard extends LitElement {
     if (!this._config) return nothing;
     const now = this.now ?? new Date();
     const threshold = this._config.threshold ?? 10;
+    const online = this._gridOnline();
     const power: Power = {
       pv: this._power('pv'),
       battery: this._power('battery'),
-      grid: this._power('grid'),
+      // Lúc mất lưới, sensor lưới có thể mất tín hiệu nhưng lưới chắc chắn bằng 0.
+      grid: this._power('grid') ?? (online === false && this._config.entities.grid ? 0 : undefined),
       load: this._power('load'),
     };
-    const online = this._gridOnline();
-    const unread = this._unread(power, online);
-    const load = unread ? power.load : resolveLoad(power);
+    const unread = this._unread(power);
+    const load = resolveLoad(power);
     const flows = computeFlows(power);
     const soc = this._value('battery_soc');
     const capacity = this._config.battery_capacity;
@@ -548,7 +549,7 @@ export class SolarAlmanacCard extends LitElement {
       }
       .live {
         display: grid;
-        grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 16), 1fr) calc(var(--u) * 158) calc(var(--u) * 84);
+        grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 16), 1fr) calc(var(--u) * 158) auto;
         align-items: stretch;
         padding: calc(var(--u) * 12) calc(var(--u) * 14) calc(var(--u) * 4);
       }
@@ -659,6 +660,8 @@ export class SolarAlmanacCard extends LitElement {
         display: grid;
         grid-auto-rows: 1fr;
         align-items: center;
+        box-sizing: border-box;
+        width: calc(var(--u) * 84);
         padding-left: calc(var(--u) * 4);
         min-width: 0;
       }
@@ -734,8 +737,11 @@ export class SolarAlmanacCard extends LitElement {
       }
       .window {
         grid-row: 1;
-        overflow: hidden;
-        padding: calc(var(--u) * 2) 0;
+        justify-self: center;
+        box-sizing: border-box;
+        width: max-content;
+        min-width: 100%;
+        padding: calc(var(--u) * 2) calc(var(--u) * 4);
         border-radius: calc(var(--u) * 3);
         background: var(--sac-fg);
         color: var(--sac-surface);
@@ -794,6 +800,7 @@ export class SolarAlmanacCard extends LitElement {
         }
         .reserve {
           grid-column: 1 / -1;
+          width: auto;
           grid-auto-flow: column;
           grid-auto-columns: minmax(0, 1fr);
           padding: calc(var(--u) * 8) 0 0;

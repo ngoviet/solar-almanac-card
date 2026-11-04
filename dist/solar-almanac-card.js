@@ -517,7 +517,7 @@ function we() {
 // src/flows.ts
 function G(e) {
 	if (e.load !== void 0) return e.load;
-	if (e.pv !== void 0 || e.battery !== void 0 || e.grid !== void 0) return Math.max(0, (e.pv ?? 0) + (e.battery ?? 0) + (e.grid ?? 0));
+	if (e.pv !== void 0 && e.battery !== void 0 && e.grid !== void 0) return Math.max(0, e.pv + e.battery + e.grid);
 }
 function Te(e) {
 	let t = Math.max(0, e.pv ?? 0), n = Math.max(0, G(e) ?? 0), r = Math.max(0, e.battery ?? 0), i = Math.max(0, -(e.battery ?? 0)), a = Math.max(0, e.grid ?? 0), o = Math.max(0, -(e.grid ?? 0)), s = Math.min(t, n), c = Math.min(r, n - s), l = Math.min(a, Math.max(0, n - s - c)), u = t - s, d = Math.min(u, i);
@@ -809,8 +809,8 @@ var $ = class extends W {
 	_temperatureUnit() {
 		return this._entity("inverter_temperature")?.st.attributes.unit_of_measurement || "°C";
 	}
-	_unread(e, t) {
-		return We.some(({ key: n }) => this._config?.entities[n] && e[n] === void 0 && (n !== "grid" || t !== !1));
+	_unread(e) {
+		return We.some(({ key: t }) => this._config?.entities[t] && e[t] === void 0);
 	}
 	_moreInfo(e) {
 		let t = e && Q(this._config?.entities[e])?.entity;
@@ -1018,26 +1018,26 @@ var $ = class extends W {
 	}
 	render() {
 		if (!this._config) return F;
-		let e = this.now ?? /* @__PURE__ */ new Date(), t = this._config.threshold ?? 10, n = {
+		let e = this.now ?? /* @__PURE__ */ new Date(), t = this._config.threshold ?? 10, n = this._gridOnline(), r = {
 			pv: this._power("pv"),
 			battery: this._power("battery"),
-			grid: this._power("grid"),
+			grid: this._power("grid") ?? (n === !1 && this._config.entities.grid ? 0 : void 0),
 			load: this._power("load")
-		}, r = this._gridOnline(), i = this._unread(n, r), a = i ? n.load : G(n), o = Te(n), s = this._value("battery_soc"), c = this._config.battery_capacity, l = s !== void 0 && c && a !== void 0 ? ke(s, c, this._config.battery_reserve ?? 0, a) : void 0, u = s !== void 0 && c ? Ae(s, c, Math.max(0, -(n.battery ?? 0))) : void 0, d = this._energy("grid_import_today"), f = this._energy("load_today"), ee = d !== void 0 && f ? Math.max(0, Math.round((1 - d / f) * 100)) : void 0, p = i ? void 0 : Me({
-			power: n,
+		}, i = this._unread(r), a = G(r), o = Te(r), s = this._value("battery_soc"), c = this._config.battery_capacity, l = s !== void 0 && c && a !== void 0 ? ke(s, c, this._config.battery_reserve ?? 0, a) : void 0, u = s !== void 0 && c ? Ae(s, c, Math.max(0, -(r.battery ?? 0))) : void 0, d = this._energy("grid_import_today"), f = this._energy("load_today"), ee = d !== void 0 && f ? Math.max(0, Math.round((1 - d / f) * 100)) : void 0, p = i ? void 0 : Me({
+			power: r,
 			flows: o,
 			threshold: t,
-			gridOnline: r,
+			gridOnline: n,
 			runtime: l,
 			fullIn: u
 		});
 		return N`
       <ha-card>
         <div class="page">
-          ${this._renderBand(e, r)}
+          ${this._renderBand(e, n)}
           ${this._alerts().map((e) => N`<p class="alert">${e}</p>`)}
           <section class="live">
-            ${this._renderSources(n)} ${this._renderHero(a, i ? void 0 : o)} ${this._renderReserve(l, r, ee)}
+            ${this._renderSources(r)} ${this._renderHero(a, i ? void 0 : o)} ${this._renderReserve(l, n, ee)}
           </section>
           ${p ? N`<p class="say"><b>${p.lead}</b> ${p.rest ?? ""}</p>` : F}
           ${this._config.compact ? F : N`${this._renderHours(e)} ${this._renderFine()}`}
@@ -1136,7 +1136,7 @@ X($, "properties", {
       }
       .live {
         display: grid;
-        grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 16), 1fr) calc(var(--u) * 158) calc(var(--u) * 84);
+        grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 16), 1fr) calc(var(--u) * 158) auto;
         align-items: stretch;
         padding: calc(var(--u) * 12) calc(var(--u) * 14) calc(var(--u) * 4);
       }
@@ -1247,6 +1247,8 @@ X($, "properties", {
         display: grid;
         grid-auto-rows: 1fr;
         align-items: center;
+        box-sizing: border-box;
+        width: calc(var(--u) * 84);
         padding-left: calc(var(--u) * 4);
         min-width: 0;
       }
@@ -1322,8 +1324,11 @@ X($, "properties", {
       }
       .window {
         grid-row: 1;
-        overflow: hidden;
-        padding: calc(var(--u) * 2) 0;
+        justify-self: center;
+        box-sizing: border-box;
+        width: max-content;
+        min-width: 100%;
+        padding: calc(var(--u) * 2) calc(var(--u) * 4);
         border-radius: calc(var(--u) * 3);
         background: var(--sac-fg);
         color: var(--sac-surface);
@@ -1382,6 +1387,7 @@ X($, "properties", {
         }
         .reserve {
           grid-column: 1 / -1;
+          width: auto;
           grid-auto-flow: column;
           grid-auto-columns: minmax(0, 1fr);
           padding: calc(var(--u) * 8) 0 0;

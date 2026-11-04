@@ -110,7 +110,7 @@ components:
     textColor: "{colors.sac-surface}"
     typography: "{typography.label}"
     rounded: "{rounded.tile}"
-    padding: "calc(var(--u) * 2) 0"
+    padding: "calc(var(--u) * 2) calc(var(--u) * 4)"
   fine-print:
     textColor: "{colors.sac-dim}"
     typography: "{typography.small}"
@@ -176,7 +176,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 - **body** (400, 14u, 1.4): cỡ gốc của tờ giấy.
 - **band** (500, 14u, 1.4): ngày trên băng; tiêu đề trên băng lùi về 400.
 - **small** (400, 12.5u, 1.4): tiêu đề dải giờ và chữ nhỏ cuối tờ; giá trị trong chữ nhỏ dùng 500.
-- **label** (400, sàn 11px, 12u, 1.4): nhãn nguồn và nhãn dự phòng; nhãn khung giờ tốt dùng cùng cỡ ở 600, line-height 1.25; số giờ dưới ô dùng 11u với cùng sàn.
+- **label** (400, sàn 11px, 12u, 1.4): nhãn nguồn và nhãn dự phòng; nhãn khung giờ tốt dùng cùng cỡ ở 600, line-height 1.25, rộng bằng khung và nhô đều hai bên khi khung ngắn hơn chữ, không cắt chữ; số giờ dưới ô dùng 11u với cùng sàn.
 
 ### Named Rules
 **Quy tắc Bộ Số.** `SAC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như "giờ", "kWh" quay về font thân bài (`small`, 12u, 500).
@@ -187,7 +187,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 
 Mọi kích thước tính theo `--u` (`spacing.unit`), đặt trên `.page` để `cqi` đo theo bề rộng `ha-card` (`container-type: inline-size`). Mốc tham chiếu: card 412px thì 1u bằng 1px. `--u` kẹp từ 0.92px (card khoảng 380px) đến 1.7px (card khoảng 700px). Co giãn chỉ theo chiều ngang; chiều cao do nội dung quyết định.
 
-Từ trên xuống: băng đỏ, các dòng cảnh báo nếu có, vùng sống, câu trạng thái, dải giờ, chữ nhỏ. Lề hai bên luôn là 14u (`gutter`). Vùng sống là lưới bốn cột: nguồn 112u, đường nối co giãn (tối thiểu 16u), số lớn 158u, dự phòng 84u. Khi card rộng hơn mốc kẹp của `--u`, phần dư đổ hết vào cột đường nối.
+Từ trên xuống: băng đỏ, các dòng cảnh báo nếu có, vùng sống, câu trạng thái, dải giờ, chữ nhỏ. Lề hai bên luôn là 14u (`gutter`). Vùng sống là lưới bốn cột: nguồn 112u, đường nối co giãn (tối thiểu 16u), số lớn 158u, dự phòng 84u (không có mục dự phòng thì cột này bằng 0). Khi card rộng hơn mốc kẹp của `--u`, phần dư đổ hết vào cột đường nối.
 
 Từ 367px trở xuống, khi lưới bốn cột không còn đủ 398u kể cả lề: cột dự phòng xuống thành hàng ngang dưới vùng sống, ẩn tiêu đề trên băng, ẩn nhãn giờ chẵn theo vị trí, chữ nhỏ về một cột. Chế độ `compact` bỏ dải giờ và chữ nhỏ. Thiếu dữ liệu thì khối đó biến mất; bố cục khép lại, không để ô rỗng.
 
