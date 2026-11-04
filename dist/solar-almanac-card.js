@@ -29,7 +29,7 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 	let t = "";
 	for (let n of e.cssRules) t += n.cssText;
 	return a(t);
-})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: p, getPrototypeOf: ee } = Object, m = globalThis, h = m.trustedTypes, te = h ? h.emptyScript : "", ne = m.reactiveElementPolyfillSupport, g = (e, t) => e, _ = {
+})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: ee, getPrototypeOf: p } = Object, m = globalThis, h = m.trustedTypes, te = h ? h.emptyScript : "", ne = m.reactiveElementPolyfillSupport, g = (e, t) => e, _ = {
 	toAttribute(e, t) {
 		switch (t) {
 			case Boolean:
@@ -104,13 +104,13 @@ var y = class extends HTMLElement {
 	}
 	static _$Ei() {
 		if (this.hasOwnProperty(g("elementProperties"))) return;
-		let e = ee(this);
+		let e = p(this);
 		e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
 	}
 	static finalize() {
 		if (this.hasOwnProperty(g("finalized"))) return;
 		if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(g("properties"))) {
-			let e = this.properties, t = [...f(e), ...p(e)];
+			let e = this.properties, t = [...f(e), ...ee(e)];
 			for (let n of t) this.createProperty(n, e[n]);
 		}
 		let e = this[Symbol.metadata];
@@ -253,14 +253,14 @@ var y = class extends HTMLElement {
 };
 y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[g("elementProperties")] = /* @__PURE__ */ new Map(), y[g("finalized")] = /* @__PURE__ */ new Map(), ne?.({ ReactiveElement: y }), (m.reactiveElementVersions ??= []).push("2.1.2");
 // node_modules/lit-html/lit-html.js
-var b = globalThis, x = (e) => e, S = b.trustedTypes, C = S ? S.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, ie = "$lit$", w = `lit$${Math.random().toFixed(9).slice(2)}$`, T = "?" + w, ae = `<${T}>`, E = document, D = () => E.createComment(""), O = (e) => e === null || typeof e != "object" && typeof e != "function", k = Array.isArray, oe = (e) => k(e) || typeof e?.[Symbol.iterator] == "function", A = "[ 	\n\f\r]", j = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, se = /-->/g, ce = />/g, M = RegExp(`>|${A}(?:([^\\s"'>=/]+)(${A}*=${A}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), le = /'/g, ue = /"/g, de = /^(?:script|style|textarea|title)$/i, fe = (e) => (t, ...n) => ({
+var b = globalThis, x = (e) => e, S = b.trustedTypes, ie = S ? S.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, C = "$lit$", w = `lit$${Math.random().toFixed(9).slice(2)}$`, T = "?" + w, ae = `<${T}>`, E = document, D = () => E.createComment(""), O = (e) => e === null || typeof e != "object" && typeof e != "function", k = Array.isArray, oe = (e) => k(e) || typeof e?.[Symbol.iterator] == "function", A = "[ 	\n\f\r]", j = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, se = /-->/g, ce = />/g, M = RegExp(`>|${A}(?:([^\\s"'>=/]+)(${A}*=${A}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), le = /'/g, ue = /"/g, de = /^(?:script|style|textarea|title)$/i, fe = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
 }), N = fe(1), pe = fe(2), P = Symbol.for("lit-noChange"), F = Symbol.for("lit-nothing"), I = /* @__PURE__ */ new WeakMap(), L = E.createTreeWalker(E, 129);
 function R(e, t) {
 	if (!k(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-	return C === void 0 ? t : C.createHTML(t);
+	return ie === void 0 ? t : ie.createHTML(t);
 }
 var me = (e, t) => {
 	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = j;
@@ -268,7 +268,7 @@ var me = (e, t) => {
 		let n = e[t], s, c, l = -1, u = 0;
 		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === j ? c[1] === "!--" ? o = se : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = M) : (de.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = M) : o = ce : o === M ? c[0] === ">" ? (o = i ?? j, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? M : c[3] === "\"" ? ue : le) : o === ue || o === le ? o = M : o === se || o === ce ? o = j : (o = M, i = void 0);
 		let d = o === M && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === j ? n + ae : l >= 0 ? (r.push(s), n.slice(0, l) + ie + n.slice(l) + w + d) : n + w + (l === -2 ? t : d);
+		a += o === j ? n + ae : l >= 0 ? (r.push(s), n.slice(0, l) + C + n.slice(l) + w + d) : n + w + (l === -2 ? t : d);
 	}
 	return [R(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
 }, z = class e {
@@ -282,7 +282,7 @@ var me = (e, t) => {
 		}
 		for (; (i = L.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
-				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(ie)) {
+				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(C)) {
 					let t = u[o++], n = i.getAttribute(e).split(w), r = /([.?@])?(.*)/.exec(t);
 					c.push({
 						type: 1,
@@ -592,16 +592,22 @@ function Me({ power: e, flows: t, threshold: n, gridOnline: r, runtime: i, fullI
 			rest: `đang sạc pin ${q(e.battery ?? 0)}.${t}`
 		};
 	}
-	return t.gridBattery > n ? {
+	if (t.gridBattery > n) return {
 		lead: "Lưới đang sạc pin",
 		rest: `${q(t.gridBattery)}.`
-	} : t.batteryHome > n && t.gridHome > n ? {
+	};
+	let c = t.solarHome > n, l = t.batteryHome > n, u = t.gridHome > n;
+	if (c && (l || u)) {
+		let e = [l && `pin bù ${q(t.batteryHome)}`, u && `lưới bù ${q(t.gridHome)}`].filter(Boolean);
+		return {
+			lead: `Solar cấp ${s(t.solarHome)}% tải,`,
+			rest: `${e.join(", ")}.`
+		};
+	}
+	return l && u ? {
 		lead: `Pin đang gánh ${s(t.batteryHome)}% tải,`,
 		rest: `lưới bù ${q(t.gridHome)}.`
-	} : t.batteryHome > n ? { lead: "Pin đang gánh cả nhà." } : t.gridHome > n && t.solarHome > n ? {
-		lead: `Solar cấp ${s(t.solarHome)}% tải,`,
-		rest: `lưới bù ${q(t.gridHome)}.`
-	} : t.gridHome > n ? { lead: "Nhà đang dùng điện lưới." } : t.solarHome > n ? { lead: "Solar đủ cho cả nhà." } : { lead: "Không có dòng công suất đáng kể." };
+	} : l ? { lead: "Pin đang gánh cả nhà." } : u ? { lead: "Nhà đang dùng điện lưới." } : c ? { lead: "Solar đủ cho cả nhà." } : { lead: "Không có dòng công suất đáng kể." };
 }
 // src/history.ts
 function J(e) {
@@ -623,8 +629,10 @@ function Pe(e, t, n) {
 	for (let t of e) {
 		let e = typeof t.s == "string" ? parseFloat(t.s) : NaN;
 		if (Number.isNaN(e) || typeof t.lu != "number") continue;
-		let o = Math.floor((t.lu * 1e3 - r) / 36e5);
-		o < 0 || o > 23 || (i[o] += e * n, a[o] += 1);
+		let o = /* @__PURE__ */ new Date(t.lu * 1e3);
+		if (J(o) !== r) continue;
+		let s = o.getHours();
+		i[s] += e * n, a[s] += 1;
 	}
 	let o = /* @__PURE__ */ new Map(), s = 0;
 	for (let e = 0; e <= t.getHours(); e++) a[e] && (s = i[e] / a[e]), o.set(e, s);
@@ -710,7 +718,10 @@ function X(e, t, n) {
 	}) : e[t] = n, e;
 }
 // src/solar-almanac-card.ts
-var Z = "solar-almanac-card", Ve = 3e5, He = [6, 17], Ue = [
+var Z = "solar-almanac-card", Ve = 3e5, He = [6, 17], Ue = {
+	wh: .001,
+	mwh: 1e3
+}, We = [
 	{
 		key: "pv",
 		label: "Solar",
@@ -774,14 +785,30 @@ var $ = class extends W {
 		let t = parseFloat(this._entity(e)?.st.state ?? "");
 		return Number.isNaN(t) ? void 0 : t;
 	}
+	_unit(e) {
+		return String(this._entity(e)?.st.attributes.unit_of_measurement ?? "").toLowerCase();
+	}
 	_scale(e) {
-		return String(this._entity(e)?.st.attributes.unit_of_measurement ?? "").toLowerCase() === "kw" ? 1e3 : 1;
+		let t = this._unit(e) === "kw" ? 1e3 : 1;
+		return this._entity(e)?.cfg.invert ? -t : t;
 	}
 	_power(e) {
 		let t = this._value(e);
-		if (t === void 0) return;
-		let n = t * this._scale(e);
-		return this._entity(e).cfg.invert ? -n : n;
+		return t === void 0 ? void 0 : t * this._scale(e);
+	}
+	_energy(e) {
+		let t = this._value(e);
+		return t === void 0 ? void 0 : t * (Ue[this._unit(e)] ?? 1);
+	}
+	_cellDelta() {
+		let e = this._value("cell_delta");
+		return e !== void 0 && this._unit("cell_delta") === "v" ? e * 1e3 : e;
+	}
+	_temperatureUnit() {
+		return this._entity("inverter_temperature")?.st.attributes.unit_of_measurement || "°C";
+	}
+	_unread(e, t) {
+		return We.some(({ key: n }) => this._config?.entities[n] && e[n] === void 0 && (n !== "grid" || t !== !1));
 	}
 	_moreInfo(e) {
 		let t = e && Q(this._config?.entities[e])?.entity;
@@ -802,21 +829,16 @@ var $ = class extends W {
 	}
 	_alerts() {
 		return [[
-			"cell_delta",
 			"Lệch cell",
+			this._cellDelta(),
 			this._config?.cell_delta_warn,
 			"mV"
 		], [
-			"inverter_temperature",
 			"Nhiệt biến tần",
+			this._value("inverter_temperature"),
 			this._config?.inverter_temperature_warn,
-			"°C"
-		]].flatMap(([e, t, n, r]) => {
-			let i = this._value(e);
-			if (i === void 0 || n === void 0 || i <= n) return [];
-			let a = this._entity(e)?.st.attributes.unit_of_measurement || r;
-			return [`${t} ${K(i, 0)} ${a}, vượt ngưỡng ${K(n, 0)} ${a}`];
-		});
+			this._temperatureUnit()
+		]].flatMap(([e, t, n, r]) => t === void 0 || n === void 0 || t <= n ? [] : [`${e} ${K(t, 0)} ${r}, vượt ngưỡng ${K(n, 0)} ${r}`]);
 	}
 	_hourCells(e) {
 		let t = this._forecast("forecast_today", e), n = this._forecast("forecast_tomorrow", new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1)), r = je(t), i = n.size > 0 && (!r || e.getHours() >= r.end), a = i ? n : t, o = i ? je(n) : r, s = i ? void 0 : this._hourly, c = Math.max(0, ...a.values()), l = [...a].filter(([, e]) => e >= c * .02 && e > 0).map(([e]) => e);
@@ -846,7 +868,7 @@ var $ = class extends W {
     `;
 	}
 	_renderSources(e) {
-		let t = Ue.filter(({ key: e }) => this._config?.entities[e]), n = this._value("battery_soc"), r = this._config?.threshold ?? 10;
+		let t = We.filter(({ key: e }) => this._config?.entities[e]), n = this._value("battery_soc"), r = this._config?.threshold ?? 10;
 		return N`
       <div class="sources">
         ${t.map(({ key: t, label: i, color: a }) => {
@@ -883,7 +905,7 @@ var $ = class extends W {
     `;
 	}
 	_renderHero(e, t) {
-		let n = e === void 0 ? void 0 : De(e), r = t.solarHome + t.batteryHome + t.gridHome, i = [
+		let n = e === void 0 ? void 0 : De(e), r = t ? [
 			{
 				w: t.solarHome,
 				color: "var(--sac-solar)"
@@ -896,15 +918,15 @@ var $ = class extends W {
 				w: t.gridHome,
 				color: "var(--sac-grid)"
 			}
-		].filter((e) => e.w > 0), a = N`
+		].filter((e) => e.w > 0) : [], i = N`
       <b class="num">${n?.value ?? "—"}</b>
       <span>${n?.unit ?? "W"} nhà đang dùng</span>
-      ${r > 0 ? N`<span class="mix">${i.map((e) => N`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : F}
+      ${r.length ? N`<span class="mix">${r.map((e) => N`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : F}
     `;
-		return this._config?.entities.load ? N`<button class="hero" @click=${() => this._moreInfo("load")}>${a}</button>` : N`<div class="hero">${a}</div>`;
+		return this._config?.entities.load ? N`<button class="hero" @click=${() => this._moreInfo("load")}>${i}</button>` : N`<div class="hero">${i}</div>`;
 	}
 	_renderReserve(e, t, n) {
-		let r = this._value("forecast_tomorrow"), i = [
+		let r = this._energy("forecast_tomorrow"), i = [
 			e === void 0 ? void 0 : {
 				label: t === !1 ? "Pin còn" : "Nếu mất điện",
 				value: `~${K(e)}`,
@@ -966,13 +988,13 @@ var $ = class extends W {
     `;
 	}
 	_renderFine() {
-		let e = (e) => e === void 0 ? void 0 : `${K(e)} kWh`, t = this._value("pv_today"), n = this._value("forecast_today"), r = this._value("grid_import_today"), i = this._value("grid_export_today"), a = this._value("savings_month"), o = this._value("cell_delta"), s = this._value("inverter_temperature"), c = this._value("grid_frequency"), l = (e) => this._entity(e)?.st.attributes.unit_of_measurement ?? "", u = [
+		let e = (e) => e === void 0 ? void 0 : `${K(e)} kWh`, t = this._energy("pv_today"), n = this._energy("forecast_today"), r = this._energy("grid_import_today"), i = this._energy("grid_export_today"), a = this._value("savings_month"), o = this._cellDelta(), s = this._value("inverter_temperature"), c = this._value("grid_frequency"), l = (e) => e === void 0 ? "—" : K(e), u = [
 			["Solar hôm nay", t === void 0 ? void 0 : n === void 0 ? e(t) : `${K(t)} / ${K(n)} kWh`],
 			["Tiết kiệm tháng", a === void 0 ? void 0 : `${K(a, 0)} đ`],
-			["Tải hôm nay", e(this._value("load_today"))],
-			["Mua / phát", r === void 0 && i === void 0 ? void 0 : `${K(r ?? 0)} / ${K(i ?? 0)} kWh`],
-			["Lệch cell", o === void 0 ? void 0 : `${K(o, 0)} ${l("cell_delta")}`],
-			["Nhiệt biến tần", s === void 0 ? void 0 : `${K(s, 0)} ${l("inverter_temperature") || "°C"}`],
+			["Tải hôm nay", e(this._energy("load_today"))],
+			["Mua / phát", r === void 0 && i === void 0 ? void 0 : `${l(r)} / ${l(i)} kWh`],
+			["Lệch cell", o === void 0 ? void 0 : `${K(o, 0)} mV`],
+			["Nhiệt biến tần", s === void 0 ? void 0 : `${K(s, 0)} ${this._temperatureUnit()}`],
 			["Tần số lưới", c === void 0 ? void 0 : `${K(c)} Hz`]
 		].filter((e) => e[1] !== void 0);
 		return u.length ? N`<dl class="fine">${u.map(([e, t]) => N`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : F;
@@ -995,21 +1017,21 @@ var $ = class extends W {
 			battery: this._power("battery"),
 			grid: this._power("grid"),
 			load: this._power("load")
-		}, r = G(n), i = Te(n), a = this._gridOnline(), o = this._value("battery_soc"), s = this._config.battery_capacity, c = o !== void 0 && s && r !== void 0 ? ke(o, s, this._config.battery_reserve ?? 0, r) : void 0, l = o !== void 0 && s ? Ae(o, s, Math.max(0, -(n.battery ?? 0))) : void 0, u = this._value("grid_import_today"), d = this._value("load_today"), f = u !== void 0 && d ? Math.max(0, Math.round((1 - u / d) * 100)) : void 0, p = Me({
+		}, r = this._gridOnline(), i = this._unread(n, r), a = i ? n.load : G(n), o = Te(n), s = this._value("battery_soc"), c = this._config.battery_capacity, l = s !== void 0 && c && a !== void 0 ? ke(s, c, this._config.battery_reserve ?? 0, a) : void 0, u = s !== void 0 && c ? Ae(s, c, Math.max(0, -(n.battery ?? 0))) : void 0, d = this._energy("grid_import_today"), f = this._energy("load_today"), ee = d !== void 0 && f ? Math.max(0, Math.round((1 - d / f) * 100)) : void 0, p = i ? void 0 : Me({
 			power: n,
-			flows: i,
+			flows: o,
 			threshold: t,
-			gridOnline: a,
-			runtime: c,
-			fullIn: l
+			gridOnline: r,
+			runtime: l,
+			fullIn: u
 		});
 		return N`
       <ha-card>
         <div class="page">
-          ${this._renderBand(e, a)}
+          ${this._renderBand(e, r)}
           ${this._alerts().map((e) => N`<p class="alert">${e}</p>`)}
           <section class="live">
-            ${this._renderSources(n)} ${this._renderHero(r, i)} ${this._renderReserve(c, a, f)}
+            ${this._renderSources(n)} ${this._renderHero(a, i ? void 0 : o)} ${this._renderReserve(l, r, ee)}
           </section>
           ${p ? N`<p class="say"><b>${p.lead}</b> ${p.rest ?? ""}</p>` : F}
           ${this._config.compact ? F : N`${this._renderHours(e)} ${this._renderFine()}`}

@@ -8,9 +8,12 @@ Lấy cảm hứng từ [sunsynk-power-flow-card](https://github.com/slipx06/sun
 
 ## Cài đặt
 
-1. `npm run build` → tạo `dist/solar-almanac-card.js`
-2. Chép file vào `config/www/solar-almanac-card.js` của HA
-3. Thêm resource: **Settings → Dashboards → Resources** → `/local/solar-almanac-card.js` (JavaScript module)
+Qua HACS: **HACS → Custom repositories**, thêm `ngoviet/solar-almanac-card` với loại **Dashboard**, rồi cài **Solar Almanac**. Bản build `dist/solar-almanac-card.js` có sẵn trong repo nên không cần tự build.
+
+Cài tay:
+
+1. Chép `dist/solar-almanac-card.js` vào `config/www/solar-almanac-card.js` của HA
+2. Thêm resource: **Settings → Dashboards → Resources** → `/local/solar-almanac-card.js` (JavaScript module)
 
 ## Cấu hình
 
@@ -56,10 +59,10 @@ entities:
 | `theme`            | `auto`   | `auto` theo chế độ sáng/tối của HA, hoặc `light`, `dark`       |
 | `compact`          | `false`  | Ẩn dải giờ và dòng chữ nhỏ                                     |
 | `threshold`        | `10`     | W, dưới mức này coi như không có dòng chảy                     |
-| `battery_capacity` | —        | kWh, cần để hiện "Mất điện ~h" và "Đầy sau"                    |
+| `battery_capacity` | —        | kWh, cần để hiện "Nếu mất điện" và "Đầy sau"                   |
 | `battery_reserve`  | `0`      | %, phần pin không dùng khi tính thời gian còn chạy             |
 | `forecast_attribute` | tự dò  | Tên thuộc tính dự báo; tự dò `detailedHourly`, `detailedForecast`, `watts` |
-| `cell_delta_warn`  | —        | Vượt ngưỡng này hiện cảnh báo bằng chữ dưới băng đỏ            |
+| `cell_delta_warn`  | —        | mV, vượt ngưỡng này hiện cảnh báo bằng chữ dưới băng đỏ        |
 | `inverter_temperature_warn` | — | Như trên, cho nhiệt độ biến tần                               |
 
 ### Entity
@@ -91,7 +94,9 @@ Quy ước dấu (sau `invert`):
 | grid    | mua điện     | bán điện  |
 | load    | tiêu thụ     | —         |
 
-Công suất nhận cả `W` lẫn `kW` (tự quy đổi theo `unit_of_measurement`).
+Card tự quy đổi theo `unit_of_measurement`: công suất nhận `W`, `kW`; năng lượng nhận `Wh`, `kWh`, `MWh`; `cell_delta` nhận `mV`, `V`.
+
+Nguồn đã khai mà không đọc được thì dòng của nó hiện `—`, thanh tỉ lệ và câu trạng thái ẩn. Khi không có `load`, số to giữa card cũng hiện `—`, trừ lúc `grid_connected` báo mất lưới thì lưới được tính bằng 0.
 
 ### Dải giờ
 

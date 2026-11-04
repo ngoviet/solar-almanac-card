@@ -37,8 +37,9 @@ export function toHourly(points: HistoryPoint[], now: Date, scale: number): Map<
   for (const p of points) {
     const value = typeof p.s === 'string' ? parseFloat(p.s) : NaN;
     if (Number.isNaN(value) || typeof p.lu !== 'number') continue;
-    const hour = Math.floor((p.lu * 1000 - dayStart) / 3_600_000);
-    if (hour < 0 || hour > 23) continue;
+    const at = new Date(p.lu * 1000);
+    if (startOfDay(at) !== dayStart) continue;
+    const hour = at.getHours();
     sum[hour] += value * scale;
     count[hour] += 1;
   }

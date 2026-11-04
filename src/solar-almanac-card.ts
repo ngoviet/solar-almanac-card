@@ -22,6 +22,7 @@ const CARD_TAG = 'solar-almanac-card';
 const HISTORY_REFRESH_MS = 5 * 60_000;
 const DASH_PERIOD = 15;
 const DEFAULT_HOURS: [number, number] = [6, 17];
+const ENERGY_TO_KWH: Record<string, number> = { wh: 0.001, mwh: 1000 };
 
 type EntityKey = keyof SolarAlmanacCardConfig['entities'];
 
@@ -113,18 +114,41 @@ export class SolarAlmanacCard extends LitElement {
     return Number.isNaN(v) ? undefined : v;
   }
 
-  /** Hệ số đổi về W theo `unit_of_measurement`. */
-  private _scale(key: EntityKey): number {
-    const unit = String(this._entity(key)?.st.attributes.unit_of_measurement ?? '').toLowerCase();
-    return unit === 'kw' ? 1000 : 1;
+  private _unit(key: EntityKey): string {
+    return String(this._entity(key)?.st.attributes.unit_of_measurement ?? '').toLowerCase();
   }
 
-  /** Đọc công suất (W) của một nút, đã quy đổi kW và áp dụng invert. */
+  /** Hệ số đổi về W theo `unit_of_measurement`, đã áp dụng invert. */
+  private _scale(key: EntityKey): number {
+    const scale = this._unit(key) === 'kw' ? 1000 : 1;
+    return this._entity(key)?.cfg.invert ? -scale : scale;
+  }
+
+  /** Đọc công suất (W) của một nút. */
   private _power(key: FlowKey | 'load'): number | undefined {
     const v = this._value(key);
-    if (v === undefined) return undefined;
-    const w = v * this._scale(key);
-    return this._entity(key)!.cfg.invert ? -w : w;
+    return v === undefined ? undefined : v * this._scale(key);
+  }
+
+  /** Đọc năng lượng (kWh); đơn vị khác Wh, MWh thì coi là kWh. */
+  private _energy(key: EntityKey): number | undefined {
+    const v = this._value(key);
+    return v === undefined ? undefined : v * (ENERGY_TO_KWH[this._unit(key)] ?? 1);
+  }
+
+  /** Độ lệch cell (mV); BMS báo V hay mV tuỳ hãng. */
+  private _cellDelta(): number | undefined {
+    const v = this._value('cell_delta');
+    return v !== undefined && this._unit('cell_delta') === 'v' ? v * 1000 : v;
+  }
+
+  private _temperatureUnit(): string {
+    return this._entity('inverter_temperature')?.st.attributes.unit_of_measurement || '°C';
+  }
+
+  /** Có nguồn đã khai mà không đọc được; lúc mất lưới thì lưới chắc chắn bằng 0. */
+  private _unread(power: Power, online?: boolean): boolean {
+    return SOURCES.some(({ key }) => this._config?.entities[key] && power[key] === undefined && !(key === 'grid' && online === false));
   }
 
   private _moreInfo(key: EntityKey | undefined): void {
@@ -149,14 +173,12 @@ export class SolarAlmanacCard extends LitElement {
 
   /** Câu cảnh báo khi một chỉ số tình trạng vượt ngưỡng người dùng đặt. */
   private _alerts(): string[] {
-    const checks: Array<[EntityKey, string, number | undefined, string]> = [
-      ['cell_delta', 'Lệch cell', this._config?.cell_delta_warn, 'mV'],
-      ['inverter_temperature', 'Nhiệt biến tần', this._config?.inverter_temperature_warn, '°C'],
+    const checks: Array<[string, number | undefined, number | undefined, string]> = [
+      ['Lệch cell', this._cellDelta(), this._config?.cell_delta_warn, 'mV'],
+      ['Nhiệt biến tần', this._value('inverter_temperature'), this._config?.inverter_temperature_warn, this._temperatureUnit()],
     ];
-    return checks.flatMap(([key, name, limit, fallback]) => {
-      const value = this._value(key);
+    return checks.flatMap(([name, value, limit, unit]) => {
       if (value === undefined || limit === undefined || value <= limit) return [];
-      const unit = this._entity(key)?.st.attributes.unit_of_measurement || fallback;
       return [`${name} ${formatNumber(value, 0)} ${unit}, vượt ngưỡng ${formatNumber(limit, 0)} ${unit}`];
     });
   }
@@ -253,18 +275,19 @@ export class SolarAlmanacCard extends LitElement {
     `;
   }
 
-  private _renderHero(load: number | undefined, flows: ReturnType<typeof computeFlows>) {
+  private _renderHero(load: number | undefined, flows?: ReturnType<typeof computeFlows>) {
     const hero = load === undefined ? undefined : heroPower(load);
-    const total = flows.solarHome + flows.batteryHome + flows.gridHome;
-    const parts = [
-      { w: flows.solarHome, color: 'var(--sac-solar)' },
-      { w: flows.batteryHome, color: 'var(--sac-battery)' },
-      { w: flows.gridHome, color: 'var(--sac-grid)' },
-    ].filter((p) => p.w > 0);
+    const parts = flows
+      ? [
+          { w: flows.solarHome, color: 'var(--sac-solar)' },
+          { w: flows.batteryHome, color: 'var(--sac-battery)' },
+          { w: flows.gridHome, color: 'var(--sac-grid)' },
+        ].filter((p) => p.w > 0)
+      : [];
     const body = html`
       <b class="num">${hero?.value ?? '—'}</b>
       <span>${hero?.unit ?? 'W'} nhà đang dùng</span>
-      ${total > 0 ? html`<span class="mix">${parts.map((p) => html`<i style="flex:${p.w} 1 0;background:${p.color}"></i>`)}</span>` : nothing}
+      ${parts.length ? html`<span class="mix">${parts.map((p) => html`<i style="flex:${p.w} 1 0;background:${p.color}"></i>`)}</span>` : nothing}
     `;
     return this._config?.entities.load
       ? html`<button class="hero" @click=${() => this._moreInfo('load')}>${body}</button>`
@@ -272,7 +295,7 @@ export class SolarAlmanacCard extends LitElement {
   }
 
   private _renderReserve(runtime: number | undefined, online: boolean | undefined, selfUse: number | undefined) {
-    const tomorrow = this._value('forecast_tomorrow');
+    const tomorrow = this._energy('forecast_tomorrow');
     const items = [
       runtime !== undefined ? { label: online === false ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ' } : undefined,
       selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%` } : undefined,
@@ -341,22 +364,22 @@ export class SolarAlmanacCard extends LitElement {
 
   private _renderFine() {
     const kwh = (v: number | undefined) => (v === undefined ? undefined : `${formatNumber(v)} kWh`);
-    const pvToday = this._value('pv_today');
-    const forecast = this._value('forecast_today');
-    const bought = this._value('grid_import_today');
-    const sold = this._value('grid_export_today');
+    const pvToday = this._energy('pv_today');
+    const forecast = this._energy('forecast_today');
+    const bought = this._energy('grid_import_today');
+    const sold = this._energy('grid_export_today');
     const savings = this._value('savings_month');
-    const delta = this._value('cell_delta');
+    const delta = this._cellDelta();
     const temp = this._value('inverter_temperature');
     const freq = this._value('grid_frequency');
-    const unit = (key: EntityKey) => this._entity(key)?.st.attributes.unit_of_measurement ?? '';
+    const part = (v: number | undefined) => (v === undefined ? '—' : formatNumber(v));
     const rows: Array<[string, string | undefined]> = [
       ['Solar hôm nay', pvToday === undefined ? undefined : forecast === undefined ? kwh(pvToday) : `${formatNumber(pvToday)} / ${formatNumber(forecast)} kWh`],
       ['Tiết kiệm tháng', savings === undefined ? undefined : `${formatNumber(savings, 0)} đ`],
-      ['Tải hôm nay', kwh(this._value('load_today'))],
-      ['Mua / phát', bought === undefined && sold === undefined ? undefined : `${formatNumber(bought ?? 0)} / ${formatNumber(sold ?? 0)} kWh`],
-      ['Lệch cell', delta === undefined ? undefined : `${formatNumber(delta, 0)} ${unit('cell_delta')}`],
-      ['Nhiệt biến tần', temp === undefined ? undefined : `${formatNumber(temp, 0)} ${unit('inverter_temperature') || '°C'}`],
+      ['Tải hôm nay', kwh(this._energy('load_today'))],
+      ['Mua / phát', bought === undefined && sold === undefined ? undefined : `${part(bought)} / ${part(sold)} kWh`],
+      ['Lệch cell', delta === undefined ? undefined : `${formatNumber(delta, 0)} mV`],
+      ['Nhiệt biến tần', temp === undefined ? undefined : `${formatNumber(temp, 0)} ${this._temperatureUnit()}`],
       ['Tần số lưới', freq === undefined ? undefined : `${formatNumber(freq)} Hz`],
     ];
     const shown = rows.filter((r) => r[1] !== undefined);
@@ -391,17 +414,18 @@ export class SolarAlmanacCard extends LitElement {
       grid: this._power('grid'),
       load: this._power('load'),
     };
-    const load = resolveLoad(power);
-    const flows = computeFlows(power);
     const online = this._gridOnline();
+    const unread = this._unread(power, online);
+    const load = unread ? power.load : resolveLoad(power);
+    const flows = computeFlows(power);
     const soc = this._value('battery_soc');
     const capacity = this._config.battery_capacity;
     const runtime = soc !== undefined && capacity && load !== undefined ? hoursLeft(soc, capacity, this._config.battery_reserve ?? 0, load) : undefined;
     const fullIn = soc !== undefined && capacity ? hoursToFull(soc, capacity, Math.max(0, -(power.battery ?? 0))) : undefined;
-    const bought = this._value('grid_import_today');
-    const consumed = this._value('load_today');
+    const bought = this._energy('grid_import_today');
+    const consumed = this._energy('load_today');
     const selfUse = bought !== undefined && consumed ? Math.max(0, Math.round((1 - bought / consumed) * 100)) : undefined;
-    const status = statusLine({ power, flows, threshold, gridOnline: online, runtime, fullIn });
+    const status = unread ? undefined : statusLine({ power, flows, threshold, gridOnline: online, runtime, fullIn });
 
     return html`
       <ha-card>
@@ -409,7 +433,7 @@ export class SolarAlmanacCard extends LitElement {
           ${this._renderBand(now, online)}
           ${this._alerts().map((text) => html`<p class="alert">${text}</p>`)}
           <section class="live">
-            ${this._renderSources(power)} ${this._renderHero(load, flows)} ${this._renderReserve(runtime, online, selfUse)}
+            ${this._renderSources(power)} ${this._renderHero(load, unread ? undefined : flows)} ${this._renderReserve(runtime, online, selfUse)}
           </section>
           ${status ? html`<p class="say"><b>${status.lead}</b> ${status.rest ?? ''}</p>` : nothing}
           ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`}

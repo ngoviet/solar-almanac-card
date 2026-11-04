@@ -185,7 +185,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 
 ## Layout
 
-Mọi kích thước tính theo `--u` (`spacing.unit`), đặt trên `.page` để `cqi` đo theo bề rộng `ha-card` (`container-type: inline-size`). Mốc tham chiếu: card 412px thì 1u bằng 1px. `--u` kẹp từ 0.8px (card khoảng 330px) đến 1.7px (card khoảng 700px). Co giãn chỉ theo chiều ngang; chiều cao do nội dung quyết định.
+Mọi kích thước tính theo `--u` (`spacing.unit`), đặt trên `.page` để `cqi` đo theo bề rộng `ha-card` (`container-type: inline-size`). Mốc tham chiếu: card 412px thì 1u bằng 1px. `--u` kẹp từ 0.92px (card khoảng 380px) đến 1.7px (card khoảng 700px). Co giãn chỉ theo chiều ngang; chiều cao do nội dung quyết định.
 
 Từ trên xuống: băng đỏ, các dòng cảnh báo nếu có, vùng sống, câu trạng thái, dải giờ, chữ nhỏ. Lề hai bên luôn là 14u (`gutter`). Vùng sống là lưới bốn cột: nguồn 112u, đường nối co giãn (tối thiểu 16u), số lớn 158u, dự phòng 84u. Khi card rộng hơn mốc kẹp của `--u`, phần dư đổ hết vào cột đường nối.
 

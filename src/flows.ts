@@ -132,14 +132,18 @@ export function statusLine({ power, flows, threshold, gridOnline, runtime, fullI
   if (flows.gridBattery > threshold) {
     return { lead: 'Lưới đang sạc pin', rest: `${formatPower(flows.gridBattery)}.` };
   }
-  if (flows.batteryHome > threshold && flows.gridHome > threshold) {
+  const solar = flows.solarHome > threshold;
+  const battery = flows.batteryHome > threshold;
+  const grid = flows.gridHome > threshold;
+  if (solar && (battery || grid)) {
+    const backup = [battery && `pin bù ${formatPower(flows.batteryHome)}`, grid && `lưới bù ${formatPower(flows.gridHome)}`].filter(Boolean);
+    return { lead: `Solar cấp ${share(flows.solarHome)}% tải,`, rest: `${backup.join(', ')}.` };
+  }
+  if (battery && grid) {
     return { lead: `Pin đang gánh ${share(flows.batteryHome)}% tải,`, rest: `lưới bù ${formatPower(flows.gridHome)}.` };
   }
-  if (flows.batteryHome > threshold) return { lead: 'Pin đang gánh cả nhà.' };
-  if (flows.gridHome > threshold && flows.solarHome > threshold) {
-    return { lead: `Solar cấp ${share(flows.solarHome)}% tải,`, rest: `lưới bù ${formatPower(flows.gridHome)}.` };
-  }
-  if (flows.gridHome > threshold) return { lead: 'Nhà đang dùng điện lưới.' };
-  if (flows.solarHome > threshold) return { lead: 'Solar đủ cho cả nhà.' };
+  if (battery) return { lead: 'Pin đang gánh cả nhà.' };
+  if (grid) return { lead: 'Nhà đang dùng điện lưới.' };
+  if (solar) return { lead: 'Solar đủ cho cả nhà.' };
   return { lead: 'Không có dòng công suất đáng kể.' };
 }

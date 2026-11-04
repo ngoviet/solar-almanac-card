@@ -16,7 +16,6 @@ export interface FlowEntityConfig {
   entity: string;
   /** Đảo dấu giá trị (khi biến tần dùng quy ước dấu ngược). */
   invert?: boolean;
-  name?: string;
 }
 
 export type EntityRef = string | FlowEntityConfig;
@@ -43,7 +42,7 @@ export interface SolarAlmanacCardConfig {
   battery_reserve?: number;
   /** Thuộc tính chứa dự báo theo giờ; bỏ trống thì dò các tên phổ biến. */
   forecast_attribute?: string;
-  /** Vượt các ngưỡng này thì hiện cảnh báo bằng chữ dưới băng đỏ. */
+  /** Vượt các ngưỡng này thì hiện cảnh báo bằng chữ dưới băng đỏ; `cell_delta_warn` tính bằng mV. */
   cell_delta_warn?: number;
   inverter_temperature_warn?: number;
   entities: {
@@ -52,7 +51,7 @@ export interface SolarAlmanacCardConfig {
     battery_soc?: EntityRef;
     grid?: EntityRef;
     load?: EntityRef;
-    /** Năng lượng trong ngày (kWh). */
+    /** Năng lượng trong ngày (Wh, kWh hoặc MWh). */
     pv_today?: EntityRef;
     load_today?: EntityRef;
     grid_import_today?: EntityRef;
