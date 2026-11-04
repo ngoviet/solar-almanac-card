@@ -1474,9 +1474,10 @@ X($, "properties", {
       }
       .control {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: calc(var(--u) * 8);
+        gap: calc(var(--u) * 4) calc(var(--u) * 8);
       }
       .about {
         display: flex;
@@ -1490,6 +1491,7 @@ X($, "properties", {
       }
       .opts {
         display: flex;
+        margin-left: auto;
         gap: calc(var(--u) * 4);
       }
       .opt {
