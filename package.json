@@ -1,0 +1,24 @@
+{
+  "name": "solar-almanac-card",
+  "version": "0.2.0",
+  "description": "Home Assistant Lovelace card: live solar / battery / grid / load power flow",
+  "type": "module",
+  "main": "dist/solar-almanac-card.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "watch": "vite build --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "author": "ngoviet",
+  "repository": "github:ngoviet/solar-almanac-card",
+  "private": true,
+  "dependencies": {
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>solar-almanac-card · dev</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #fbf5f5;
+        font-family: Roboto, sans-serif;
+      }
+      body[data-dark='true'] {
+        background: #1f0b0a;
+      }
+      #bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      #wrap {
+        max-width: 460px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="bar"></div>
+    <div id="wrap"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
