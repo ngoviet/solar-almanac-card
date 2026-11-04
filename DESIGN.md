@@ -251,7 +251,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Style:** lưới hai cột phía dưới đường kẻ 1px, dòng đầu trải hết chiều rộng; nhãn Mực Nhạt bên trái, giá trị Mực Nâu 500 bên phải.
 
 ### Khu điều khiển
-- **Cấu trúc:** nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ `small`. Mỗi dòng một việc: nhãn Mực Nhạt kèm giá trị Mực Nâu 500 bên trái (bấm mở chi tiết), nút bên phải. Dòng quạt: số vòng/phút cao nhất trong các sensor, `Tắt` khi quạt tắt, nút `Tự động`. Dòng EOD lưới: một nút cho mỗi mức trong `eod_levels`; giá trị hiện tại không trùng mức nào thì hiện số cạnh nhãn.
+- **Cấu trúc:** nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ `small`. Mỗi dòng một việc: nhãn Mực Nhạt kèm giá trị Mực Nâu 500 bên trái (bấm mở chi tiết), nút bên phải. Hàng hẹp không đủ chỗ thì nút xuống dòng riêng bên dưới, căn phải, và các nút tự xuống dòng trong hàng của nó; ba mức EOD mặc định vẫn vừa một dòng ở card 280px. Dòng quạt: số vòng/phút cao nhất trong các sensor, `Tắt` khi quạt tắt, nút `Tự động`. Dòng EOD lưới: một nút cho mỗi mức trong `eod_levels`; giá trị hiện tại không trùng mức nào thì hiện số cạnh nhãn.
 - **Nút:** viền 1px Viền Giấy, bo `tile`, chữ Mực Nâu 500, cao tối thiểu 36px để bấm bằng ngón tay. Đang bật hoặc đang chọn thì đảo mực như nhãn khung giờ tốt: nền Mực Nâu, chữ giấy, 600. Không glow, không màu nguồn. Chưa đọc được trạng thái thì nút khoá, chữ Mực Nhạt.
 - **Ghi:** nút phát `hass-action`; mức EOD kèm `confirmation` để HA hỏi lại trước khi ghi vào biến tần. Bấm mức đang chọn thì không làm gì.
 - **Tự bỏ qua:** không khai entity, hoặc entity không có trong HA, thì dòng đó không vẽ; không còn dòng nào thì cả khu biến mất. Không lặp nhiệt độ biến tần vì chữ nhỏ đã có; quạt kẹt lên dòng cảnh báo.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-04T18:58:09Z",
+  "generatedAt": "2026-11-04T19:23:40Z",
   "title": "Design System: Solar Almanac",
   "extensions": {
     "colorMeta": {
@@ -386,9 +386,9 @@
       "name": "Khu điều khiển",
       "kind": "card",
       "refersTo": "control-option",
-      "description": "Nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ small; mỗi dòng một việc với nhãn bấm mở chi tiết bên trái và nút bên phải. Không khai entity thì dòng đó không vẽ, không còn dòng nào thì cả khu biến mất.",
+      "description": "Nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ small; mỗi dòng một việc với nhãn bấm mở chi tiết bên trái và nút bên phải; hàng hẹp không đủ chỗ thì nút xuống dòng riêng bên dưới, căn phải, và các nút tự xuống dòng trong hàng của nó. Không khai entity thì dòng đó không vẽ, không còn dòng nào thì cả khu biến mất.",
       "html": "<div class=\"ds-controls\"><div class=\"ds-control\"><button class=\"ds-about\"><span>Quạt tản nhiệt</span><b>1.240 vòng/phút</b></button><button class=\"ds-opt ds-opt-on\" aria-pressed=\"true\">Tự động</button></div><div class=\"ds-control\"><button class=\"ds-about\"><span>EOD lưới</span></button><div class=\"ds-opts\"><button class=\"ds-opt\">10%</button><button class=\"ds-opt ds-opt-on\" aria-pressed=\"true\">20%</button><button class=\"ds-opt\">30%</button></div></div></div>",
-      "css": ".ds-controls { display: grid; gap: 4px; margin: 10px 14px 12px; padding-top: 9px; border-top: 1px solid #e5d3d1; font-size: 12.5px; color: #7d5a56; } .ds-control { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .ds-about { all: unset; display: flex; gap: 8px; min-width: 0; white-space: nowrap; cursor: pointer; } .ds-about:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-about b { color: #443331; font-weight: 500; } .ds-opts { display: flex; gap: 4px; }"
+      "css": ".ds-controls { display: grid; gap: 4px; margin: 10px 14px 12px; padding-top: 9px; border-top: 1px solid #e5d3d1; font-size: 12.5px; color: #7d5a56; } .ds-control { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; } .ds-about { all: unset; display: flex; gap: 8px; min-width: 0; white-space: nowrap; cursor: pointer; } .ds-about:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-about b { color: #443331; font-weight: 500; } .ds-opts { display: flex; flex-wrap: wrap; justify-content: flex-end; margin-left: auto; gap: 4px; }"
     },
     {
       "name": "Nút điều khiển",
