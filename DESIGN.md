@@ -114,6 +114,14 @@ components:
   fine-print:
     textColor: "{colors.sac-dim}"
     typography: "{typography.small}"
+  control-option:
+    textColor: "{colors.sac-fg}"
+    rounded: "{rounded.tile}"
+    height: "max(36px, calc(var(--u) * 32))"
+    padding: "0 calc(var(--u) * 9)"
+  control-option-on:
+    backgroundColor: "{colors.sac-fg}"
+    textColor: "{colors.sac-surface}"
 ---
 
 # Design System: Solar Almanac
@@ -187,9 +195,9 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 
 Mọi kích thước tính theo `--u` (`spacing.unit`), đặt trên `.page` để `cqi` đo theo bề rộng `ha-card` (`container-type: inline-size`). Mốc tham chiếu: card 412px thì 1u bằng 1px. `--u` kẹp từ 0.92px (card khoảng 380px) đến 1.7px (card khoảng 700px). Co giãn chỉ theo chiều ngang; chiều cao do nội dung quyết định.
 
-Từ trên xuống: băng đỏ, các dòng cảnh báo nếu có, vùng sống, câu trạng thái, dải giờ, chữ nhỏ. Lề hai bên luôn là 14u (`gutter`). Vùng sống là lưới bốn cột: nguồn 112u, đường nối co giãn (tối thiểu 16u), số lớn 158u, dự phòng 84u (không có mục dự phòng thì cột này bằng 0). Khi card rộng hơn mốc kẹp của `--u`, phần dư đổ hết vào cột đường nối.
+Từ trên xuống: băng đỏ, các dòng cảnh báo nếu có, vùng sống, câu trạng thái, dải giờ, chữ nhỏ, khu điều khiển. Lề hai bên luôn là 14u (`gutter`). Vùng sống là lưới bốn cột: nguồn 112u, đường nối co giãn (tối thiểu 16u), số lớn 158u, dự phòng 84u (không có mục dự phòng thì cột này bằng 0). Khi card rộng hơn mốc kẹp của `--u`, phần dư đổ hết vào cột đường nối.
 
-Từ 367px trở xuống, khi lưới bốn cột không còn đủ 398u kể cả lề: cột dự phòng xuống thành hàng ngang dưới vùng sống, ẩn tiêu đề trên băng, ẩn nhãn giờ chẵn theo vị trí, chữ nhỏ về một cột. Chế độ `compact` bỏ dải giờ và chữ nhỏ. Thiếu dữ liệu thì khối đó biến mất; bố cục khép lại, không để ô rỗng.
+Từ 367px trở xuống, khi lưới bốn cột không còn đủ 398u kể cả lề: cột dự phòng xuống thành hàng ngang dưới vùng sống, ẩn tiêu đề trên băng, ẩn nhãn giờ chẵn theo vị trí, chữ nhỏ về một cột. Chế độ `compact` bỏ dải giờ và chữ nhỏ, giữ khu điều khiển. Thiếu dữ liệu thì khối đó biến mất; bố cục khép lại, không để ô rỗng.
 
 ## Elevation & Depth
 
@@ -204,7 +212,7 @@ Góc gần như vuông, như mép giấy bị cắt. Ba bậc bo theo `--u`: `ma
 
 ## Components
 
-Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ giấy, bấm được thì mở chi tiết của entity qua `hass-more-info`.
+Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ giấy, bấm được thì mở chi tiết của entity qua `hass-more-info`. Ngoại lệ duy nhất là các nút trong khu điều khiển: chúng ghi giá trị, giao cho HA qua sự kiện `hass-action`.
 
 ### Băng đầu tờ
 - **Cấu trúc:** ngày bên trái, tiêu đề tuỳ chọn bị cắt bằng dấu ba chấm, trạng thái lưới đẩy sát phải, căn theo đường chân chữ.
@@ -212,7 +220,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 
 ### Dòng cảnh báo
 - **Style:** dải trắng chữ đỏ đậm 600 cỡ 13.5u nằm ngay dưới băng, kẻ đỏ 1px phía dưới. Giữ nền trắng ở cả hai chế độ để nổi lên khỏi giấy.
-- **Nội dung:** luôn là một câu có giá trị và ngưỡng, ví dụ "Nhiệt biến tần 62 °C, vượt ngưỡng 60 °C".
+- **Nội dung:** luôn là một câu có giá trị và ngưỡng, ví dụ "Nhiệt biến tần 62 °C, vượt ngưỡng 60 °C". Báo động dạng bật/tắt không có số thì câu nói rõ việc cần làm: "Quạt tản nhiệt bị kẹt, cần kiểm tra".
 
 ### Dòng nguồn
 - **Cấu trúc:** nhãn `label` có ô vuông màu 9u phía trước, kèm chiều và SOC bằng chữ ("xả", "sạc", "mua", "phát"), bên dưới là số `metric`.
@@ -241,13 +249,19 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 ### Chữ nhỏ cuối tờ
 - **Style:** lưới hai cột phía dưới đường kẻ 1px, dòng đầu trải hết chiều rộng; nhãn Mực Nhạt bên trái, giá trị Mực Nâu 500 bên phải.
 
+### Khu điều khiển
+- **Cấu trúc:** nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ `small`. Mỗi dòng một việc: nhãn Mực Nhạt kèm giá trị Mực Nâu 500 bên trái (bấm mở chi tiết), nút bên phải. Dòng quạt: số vòng/phút cao nhất trong các sensor, `Tắt` khi quạt tắt, nút `Tự động`. Dòng EOD lưới: một nút cho mỗi mức trong `eod_levels`; giá trị hiện tại không trùng mức nào thì hiện số cạnh nhãn.
+- **Nút:** viền 1px Viền Giấy, bo `tile`, chữ Mực Nâu 500, cao tối thiểu 36px để bấm bằng ngón tay. Đang bật hoặc đang chọn thì đảo mực như nhãn khung giờ tốt: nền Mực Nâu, chữ giấy, 600. Không glow, không màu nguồn. Chưa đọc được trạng thái thì nút khoá, chữ Mực Nhạt.
+- **Ghi:** nút phát `hass-action`; mức EOD kèm `confirmation` để HA hỏi lại trước khi ghi vào biến tần. Bấm mức đang chọn thì không làm gì.
+- **Tự bỏ qua:** không khai entity, hoặc entity không có trong HA, thì dòng đó không vẽ; không còn dòng nào thì cả khu biến mất. Không lặp nhiệt độ biến tần vì chữ nhỏ đã có; quạt kẹt lên dòng cảnh báo.
+
 ### Focus
 - **Style:** mọi nút dùng viền mực 2u, cách 1u, chỉ khi `:focus-visible`.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px và sàn 11px.
+- **Do** tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px, sàn chữ 11px và sàn bấm 36px.
 - **Do** đặt `--u` bên trong container (`.page`), không đặt trên `:host` hay `ha-card`, vì `cqi` phải đo được `ha-card`.
 - **Do** cài `@font-face` vào `document`, vì khai báo trong shadow DOM không có tác dụng.
 - **Do** để cảnh báo là chữ có giá trị và ngưỡng: "Mất lưới" trên băng, câu đầy đủ ở dòng cảnh báo.

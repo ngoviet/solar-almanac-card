@@ -724,6 +724,10 @@ var Z = "solar-almanac-card", Ve = 3e5, He = [6, 17], Ue = {
 	wh: .001,
 	mwh: 1e3
 }, We = [
+	10,
+	20,
+	30
+], Ge = [
 	{
 		key: "pv",
 		label: "Solar",
@@ -760,7 +764,8 @@ var $ = class extends W {
 		this._config = e, this._lastFetch = 0;
 	}
 	getCardSize() {
-		return this._config?.compact ? 5 : 11;
+		let e = this._config?.entities;
+		return (this._config?.compact ? 5 : 11) + (e?.fan || e?.fan_rpm ? 1 : 0) + +!!e?.eod;
 	}
 	getGridOptions() {
 		return {
@@ -810,15 +815,37 @@ var $ = class extends W {
 		return this._entity("inverter_temperature")?.st.attributes.unit_of_measurement || "°C";
 	}
 	_unread(e) {
-		return We.some(({ key: t }) => this._config?.entities[t] && e[t] === void 0);
+		return Ge.some(({ key: t }) => this._config?.entities[t] && e[t] === void 0);
 	}
-	_moreInfo(e) {
-		let t = e && Q(this._config?.entities[e])?.entity;
-		t && this.dispatchEvent(new CustomEvent("hass-more-info", {
+	_openEntity(e) {
+		e && this.dispatchEvent(new CustomEvent("hass-more-info", {
 			bubbles: !0,
 			composed: !0,
-			detail: { entityId: t }
+			detail: { entityId: e }
 		}));
+	}
+	_moreInfo(e) {
+		this._openEntity(e && Q(this._config?.entities[e])?.entity);
+	}
+	_perform(e, t) {
+		this.dispatchEvent(new CustomEvent("hass-action", {
+			bubbles: !0,
+			composed: !0,
+			detail: {
+				config: {
+					entity: e,
+					tap_action: t
+				},
+				action: "tap"
+			}
+		}));
+	}
+	_fanRpm() {
+		let e = [this._config?.entities.fan_rpm ?? []].flat().flatMap((e) => Q(e)?.entity ?? []).filter((e) => this.hass?.states[e]), t = e.map((e) => parseFloat(this.hass?.states[e].state ?? "")).filter((e) => !Number.isNaN(e));
+		return {
+			ids: e,
+			rpm: t.length ? Math.max(...t) : void 0
+		};
 	}
 	_gridOnline() {
 		let e = this._entity("grid_connected")?.st.state;
@@ -830,7 +857,7 @@ var $ = class extends W {
 		return Le(r ? n?.[r] : void 0, t);
 	}
 	_alerts() {
-		return [[
+		let e = [[
 			"Lệch cell",
 			this._cellDelta(),
 			this._config?.cell_delta_warn,
@@ -841,6 +868,7 @@ var $ = class extends W {
 			this._config?.inverter_temperature_warn,
 			this._temperatureUnit()
 		]].flatMap(([e, t, n, r]) => t === void 0 || n === void 0 || t <= n ? [] : [`${e} ${K(t, 0)} ${r}, vượt ngưỡng ${K(n, 0)} ${r}`]);
+		return this._entity("fan_stall")?.st.state === "on" && e.push("Quạt tản nhiệt bị kẹt, cần kiểm tra"), e;
 	}
 	_hourCells(e) {
 		let t = this._forecast("forecast_today", e), n = this._forecast("forecast_tomorrow", new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1)), r = je(t), i = n.size > 0 && (!r || e.getHours() >= r.end), a = i ? n : t, o = i ? je(n) : r, s = i ? void 0 : this._hourly, c = Math.max(0, ...a.values()), l = [...a].filter(([, e]) => e >= c * .02 && e > 0).map(([e]) => e);
@@ -870,7 +898,7 @@ var $ = class extends W {
     `;
 	}
 	_renderSources(e) {
-		let t = We.filter(({ key: e }) => this._config?.entities[e]), n = this._value("battery_soc"), r = this._config?.threshold ?? 10;
+		let t = Ge.filter(({ key: e }) => this._config?.entities[e]), n = this._value("battery_soc"), r = this._config?.threshold ?? 10;
 		return N`
       <div class="sources">
         ${t.map(({ key: t, label: i, color: a }) => {
@@ -932,9 +960,9 @@ var $ = class extends W {
 		return this._config?.entities.load ? N`<button class="hero" @click=${() => this._moreInfo("load")}>${a}</button>` : N`<div class="hero">${a}</div>`;
 	}
 	_renderReserve(e, t, n) {
-		let r = this._energy("forecast_tomorrow"), i = [
+		let r = this._energy("forecast_tomorrow"), i = t === !1 || !this._config?.entities.grid, a = [
 			e === void 0 ? void 0 : {
-				label: t === !1 ? "Pin còn" : "Nếu mất điện",
+				label: i ? "Pin còn" : "Nếu mất điện",
 				value: `~${K(e)}`,
 				unit: "giờ"
 			},
@@ -948,9 +976,9 @@ var $ = class extends W {
 				unit: "kWh"
 			}
 		].filter((e) => e !== void 0);
-		return i.length ? N`
+		return a.length ? N`
       <dl class="reserve">
-        ${i.map((e) => N`<div><dt>${e.label}</dt><dd class="num">${e.value}${e.unit ? N` <small>${e.unit}</small>` : F}</dd></div>`)}
+        ${a.map((e) => N`<div><dt>${e.label}</dt><dd class="num">${e.value}${e.unit ? N` <small>${e.unit}</small>` : F}</dd></div>`)}
       </dl>
     ` : F;
 	}
@@ -1005,9 +1033,61 @@ var $ = class extends W {
 		].filter((e) => e[1] !== void 0);
 		return u.length ? N`<dl class="fine">${u.map(([e, t]) => N`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : F;
 	}
+	_renderFan() {
+		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();
+		if (!e && !n.length) return F;
+		let i = e?.st.state === "on" ? "Đang chạy" : "—";
+		return N`
+      <div class="control">
+        <button class="about" @click=${() => this._openEntity(e?.cfg.entity ?? n[0])}>
+          <span>Quạt tản nhiệt</span><b>${e?.st.state === "off" ? "Tắt" : r === void 0 ? i : `${K(r, 0)} vòng/phút`}</b>
+        </button>
+        ${t ? N`<button
+              class="opt"
+              aria-pressed=${t.st.state === "on" ? "true" : "false"}
+              ?disabled=${t.st.state !== "on" && t.st.state !== "off"}
+              @click=${() => this._perform(t.cfg.entity, { action: "toggle" })}
+            >
+              Tự động
+            </button>` : F}
+      </div>
+    `;
+	}
+	_renderEod() {
+		let e = this._entity("eod");
+		if (!e) return F;
+		let t = e.cfg.entity, n = this._config?.eod_levels ?? We, r = this._value("eod"), i = (e) => this._perform(t, {
+			action: "perform-action",
+			perform_action: `${t.split(".")[0]}.set_value`,
+			target: { entity_id: t },
+			data: { value: e },
+			confirmation: { text: `Đặt EOD lưới = ${e}%? Pin sẽ xả tới ${e}% mới lấy lưới.` }
+		});
+		return N`
+      <div class="control">
+        <button class="about" @click=${() => this._moreInfo("eod")}>
+          <span>EOD lưới</span>${r === void 0 ? N`<b>—</b>` : n.includes(r) ? F : N`<b>${K(r, 0)}%</b>`}
+        </button>
+        <div class="opts" role="group" aria-label="Đặt EOD lưới">
+          ${n.map((e) => N`<button
+              class="opt"
+              aria-pressed=${e === r ? "true" : "false"}
+              ?disabled=${r === void 0}
+              @click=${() => e !== r && i(e)}
+            >
+              ${e}%
+            </button>`)}
+        </div>
+      </div>
+    `;
+	}
+	_renderControls() {
+		let e = this._renderFan(), t = this._renderEod();
+		return e === F && t === F ? F : N`<div class="controls">${e} ${t}</div>`;
+	}
 	shouldUpdate(e) {
 		let t = e.get("hass");
-		return e.size !== 1 || !t || !this._config || t.themes?.darkMode !== this.hass?.themes?.darkMode || Object.values(this._config.entities).some((e) => {
+		return e.size !== 1 || !t || !this._config || t.themes?.darkMode !== this.hass?.themes?.darkMode || Object.values(this._config.entities).flat().some((e) => {
 			let n = Q(e)?.entity;
 			return n !== void 0 && t.states[n] !== this.hass?.states[n];
 		});
@@ -1040,7 +1120,7 @@ var $ = class extends W {
             ${this._renderSources(r)} ${this._renderHero(a, i ? void 0 : o)} ${this._renderReserve(l, n, ee)}
           </section>
           ${p ? N`<p class="say"><b>${p.lead}</b> ${p.rest ?? ""}</p>` : F}
-          ${this._config.compact ? F : N`${this._renderHours(e)} ${this._renderFine()}`}
+          ${this._config.compact ? F : N`${this._renderHours(e)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
       </ha-card>
     `;
@@ -1374,11 +1454,70 @@ X($, "properties", {
         font-weight: 500;
         white-space: nowrap;
       }
+      .controls {
+        display: grid;
+        gap: calc(var(--u) * 4);
+        margin: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 12);
+        padding-top: calc(var(--u) * 9);
+        border-top: 1px solid var(--sac-border);
+        font-size: calc(var(--u) * 12.5);
+        color: var(--sac-dim);
+      }
+      .fine + .controls {
+        margin-top: 0;
+      }
+      .control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: calc(var(--u) * 8);
+      }
+      .about {
+        display: flex;
+        gap: calc(var(--u) * 8);
+        min-width: 0;
+        white-space: nowrap;
+      }
+      .about b {
+        color: var(--sac-fg);
+        font-weight: 500;
+      }
+      .opts {
+        display: flex;
+        gap: calc(var(--u) * 4);
+      }
+      .opt {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: calc(var(--u) * 46);
+        /* Không thấp hơn 36px để bấm bằng ngón tay trên điện thoại. */
+        height: max(36px, calc(var(--u) * 32));
+        padding: 0 calc(var(--u) * 9);
+        border: 1px solid var(--sac-border);
+        border-radius: calc(var(--u) * 3);
+        color: var(--sac-fg);
+        font-weight: 500;
+      }
+      .opt[aria-pressed='true'] {
+        background: var(--sac-fg);
+        border-color: var(--sac-fg);
+        color: var(--sac-surface);
+        font-weight: 600;
+      }
+      .opt:disabled {
+        cursor: default;
+        color: var(--sac-dim);
+      }
       @media (hover: hover) {
         .row:hover .label,
         button.hero:hover span:not(.mix),
+        .about:hover span,
         .cell:hover .hour {
           color: var(--sac-fg);
+        }
+        .opt:not(:disabled):hover {
+          border-color: var(--sac-fg);
         }
       }
       @container (max-width: 367px) {

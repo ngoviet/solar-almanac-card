@@ -23,8 +23,9 @@ const HISTORY_REFRESH_MS = 5 * 60_000;
 const DASH_PERIOD = 15;
 const DEFAULT_HOURS: [number, number] = [6, 17];
 const ENERGY_TO_KWH: Record<string, number> = { wh: 0.001, mwh: 1000 };
+const DEFAULT_EOD_LEVELS = [10, 20, 30];
 
-type EntityKey = keyof SolarAlmanacCardConfig['entities'];
+type EntityKey = Exclude<keyof SolarAlmanacCardConfig['entities'], 'fan_rpm'>;
 
 const SOURCES: Array<{ key: FlowKey; label: string; color: string }> = [
   { key: 'pv', label: 'Solar', color: 'var(--sac-solar)' },
@@ -84,7 +85,8 @@ export class SolarAlmanacCard extends LitElement {
   }
 
   getCardSize(): number {
-    return this._config?.compact ? 5 : 11;
+    const entities = this._config?.entities;
+    return (this._config?.compact ? 5 : 11) + (entities?.fan || entities?.fan_rpm ? 1 : 0) + (entities?.eod ? 1 : 0);
   }
 
   getGridOptions() {
@@ -151,10 +153,28 @@ export class SolarAlmanacCard extends LitElement {
     return SOURCES.some(({ key }) => this._config?.entities[key] && power[key] === undefined);
   }
 
-  private _moreInfo(key: EntityKey | undefined): void {
-    const entityId = key && toEntityConfig(this._config?.entities[key])?.entity;
+  private _openEntity(entityId: string | undefined): void {
     if (!entityId) return;
     this.dispatchEvent(new CustomEvent('hass-more-info', { bubbles: true, composed: true, detail: { entityId } }));
+  }
+
+  private _moreInfo(key: EntityKey | undefined): void {
+    this._openEntity(key && toEntityConfig(this._config?.entities[key])?.entity);
+  }
+
+  /** Giao hành động cho Home Assistant, hộp xác nhận cũng do HA hiện. */
+  private _perform(entity: string, tap_action: Record<string, unknown>): void {
+    this.dispatchEvent(
+      new CustomEvent('hass-action', { bubbles: true, composed: true, detail: { config: { entity, tap_action }, action: 'tap' } }),
+    );
+  }
+
+  /** Các sensor vòng quay có trong HA, kèm số cao nhất đọc được. */
+  private _fanRpm(): { ids: string[]; rpm?: number } {
+    const refs = [this._config?.entities.fan_rpm ?? []].flat();
+    const ids = refs.flatMap((ref) => toEntityConfig(ref)?.entity ?? []).filter((id) => this.hass?.states[id]);
+    const values = ids.map((id) => parseFloat(this.hass?.states[id].state ?? '')).filter((v) => !Number.isNaN(v));
+    return { ids, rpm: values.length ? Math.max(...values) : undefined };
   }
 
   private _gridOnline(): boolean | undefined {
@@ -177,10 +197,12 @@ export class SolarAlmanacCard extends LitElement {
       ['Lệch cell', this._cellDelta(), this._config?.cell_delta_warn, 'mV'],
       ['Nhiệt biến tần', this._value('inverter_temperature'), this._config?.inverter_temperature_warn, this._temperatureUnit()],
     ];
-    return checks.flatMap(([name, value, limit, unit]) => {
+    const alerts = checks.flatMap(([name, value, limit, unit]) => {
       if (value === undefined || limit === undefined || value <= limit) return [];
       return [`${name} ${formatNumber(value, 0)} ${unit}, vượt ngưỡng ${formatNumber(limit, 0)} ${unit}`];
     });
+    if (this._entity('fan_stall')?.st.state === 'on') alerts.push('Quạt tản nhiệt bị kẹt, cần kiểm tra');
+    return alerts;
   }
 
   private _hourCells(now: Date): { cells: HourCell[]; tomorrow: boolean; window?: { start: number; end: number } } {
@@ -298,8 +320,10 @@ export class SolarAlmanacCard extends LitElement {
 
   private _renderReserve(runtime: number | undefined, online: boolean | undefined, selfUse: number | undefined) {
     const tomorrow = this._energy('forecast_tomorrow');
+    // Hệ không nối lưới thì pin luôn là nguồn dự phòng, không có chuyện "mất điện".
+    const offGrid = online === false || !this._config?.entities.grid;
     const items = [
-      runtime !== undefined ? { label: online === false ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ' } : undefined,
+      runtime !== undefined ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ' } : undefined,
       selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%` } : undefined,
       tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh' } : undefined,
     ].filter((item) => item !== undefined);
@@ -389,12 +413,85 @@ export class SolarAlmanacCard extends LitElement {
     return html`<dl class="fine">${shown.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>`;
   }
 
+  private _renderFan() {
+    const fan = this._entity('fan');
+    const auto = this._entity('fan_auto');
+    const { ids, rpm } = this._fanRpm();
+    if (!fan && !ids.length) return nothing;
+    const running = fan?.st.state === 'on' ? 'Đang chạy' : '—';
+    const speed = fan?.st.state === 'off' ? 'Tắt' : rpm !== undefined ? `${formatNumber(rpm, 0)} vòng/phút` : running;
+    return html`
+      <div class="control">
+        <button class="about" @click=${() => this._openEntity(fan?.cfg.entity ?? ids[0])}>
+          <span>Quạt tản nhiệt</span><b>${speed}</b>
+        </button>
+        ${auto
+          ? html`<button
+              class="opt"
+              aria-pressed=${auto.st.state === 'on' ? 'true' : 'false'}
+              ?disabled=${auto.st.state !== 'on' && auto.st.state !== 'off'}
+              @click=${() => this._perform(auto.cfg.entity, { action: 'toggle' })}
+            >
+              Tự động
+            </button>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  private _renderEod() {
+    const eod = this._entity('eod');
+    if (!eod) return nothing;
+    const id = eod.cfg.entity;
+    const levels = this._config?.eod_levels ?? DEFAULT_EOD_LEVELS;
+    const current = this._value('eod');
+    const setLevel = (level: number) =>
+      this._perform(id, {
+        action: 'perform-action',
+        perform_action: `${id.split('.')[0]}.set_value`,
+        target: { entity_id: id },
+        data: { value: level },
+        confirmation: { text: `Đặt EOD lưới = ${level}%? Pin sẽ xả tới ${level}% mới lấy lưới.` },
+      });
+    return html`
+      <div class="control">
+        <button class="about" @click=${() => this._moreInfo('eod')}>
+          <span>EOD lưới</span>${current === undefined
+            ? html`<b>—</b>`
+            : levels.includes(current)
+              ? nothing
+              : html`<b>${formatNumber(current, 0)}%</b>`}
+        </button>
+        <div class="opts" role="group" aria-label="Đặt EOD lưới">
+          ${levels.map(
+            (level) => html`<button
+              class="opt"
+              aria-pressed=${level === current ? 'true' : 'false'}
+              ?disabled=${current === undefined}
+              @click=${() => level !== current && setLevel(level)}
+            >
+              ${level}%
+            </button>`,
+          )}
+        </div>
+      </div>
+    `;
+  }
+
+  /** Khu điều khiển: chỉ có khi đã khai quạt hoặc EOD, nên hệ không có quạt tự bỏ qua. */
+  private _renderControls() {
+    const fan = this._renderFan();
+    const eod = this._renderEod();
+    if (fan === nothing && eod === nothing) return nothing;
+    return html`<div class="controls">${fan} ${eod}</div>`;
+  }
+
   /** `hass` đổi theo mọi entity trong nhà; chỉ vẽ lại khi entity của card đổi. */
   protected shouldUpdate(changed: PropertyValues): boolean {
     const old = changed.get('hass') as HomeAssistant | undefined;
     if (changed.size !== 1 || !old || !this._config) return true;
     if (old.themes?.darkMode !== this.hass?.themes?.darkMode) return true;
-    return Object.values(this._config.entities).some((ref) => {
+    return Object.values(this._config.entities).flat().some((ref) => {
       const id = toEntityConfig(ref)?.entity;
       return id !== undefined && old.states[id] !== this.hass?.states[id];
     });
@@ -439,7 +536,7 @@ export class SolarAlmanacCard extends LitElement {
             ${this._renderSources(power)} ${this._renderHero(load, unread ? undefined : flows)} ${this._renderReserve(runtime, online, selfUse)}
           </section>
           ${status ? html`<p class="say"><b>${status.lead}</b> ${status.rest ?? ''}</p>` : nothing}
-          ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`}
+          ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
       </ha-card>
     `;
@@ -787,11 +884,70 @@ export class SolarAlmanacCard extends LitElement {
         font-weight: 500;
         white-space: nowrap;
       }
+      .controls {
+        display: grid;
+        gap: calc(var(--u) * 4);
+        margin: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 12);
+        padding-top: calc(var(--u) * 9);
+        border-top: 1px solid var(--sac-border);
+        font-size: calc(var(--u) * 12.5);
+        color: var(--sac-dim);
+      }
+      .fine + .controls {
+        margin-top: 0;
+      }
+      .control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: calc(var(--u) * 8);
+      }
+      .about {
+        display: flex;
+        gap: calc(var(--u) * 8);
+        min-width: 0;
+        white-space: nowrap;
+      }
+      .about b {
+        color: var(--sac-fg);
+        font-weight: 500;
+      }
+      .opts {
+        display: flex;
+        gap: calc(var(--u) * 4);
+      }
+      .opt {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: calc(var(--u) * 46);
+        /* Không thấp hơn 36px để bấm bằng ngón tay trên điện thoại. */
+        height: max(36px, calc(var(--u) * 32));
+        padding: 0 calc(var(--u) * 9);
+        border: 1px solid var(--sac-border);
+        border-radius: calc(var(--u) * 3);
+        color: var(--sac-fg);
+        font-weight: 500;
+      }
+      .opt[aria-pressed='true'] {
+        background: var(--sac-fg);
+        border-color: var(--sac-fg);
+        color: var(--sac-surface);
+        font-weight: 600;
+      }
+      .opt:disabled {
+        cursor: default;
+        color: var(--sac-dim);
+      }
       @media (hover: hover) {
         .row:hover .label,
         button.hero:hover span:not(.mix),
+        .about:hover span,
         .cell:hover .hour {
           color: var(--sac-fg);
+        }
+        .opt:not(:disabled):hover {
+          border-color: var(--sac-fg);
         }
       }
       @container (max-width: 367px) {

@@ -45,6 +45,8 @@ export interface SolarAlmanacCardConfig {
   /** Vượt các ngưỡng này thì hiện cảnh báo bằng chữ dưới băng đỏ; `cell_delta_warn` tính bằng mV. */
   cell_delta_warn?: number;
   inverter_temperature_warn?: number;
+  /** Các mức SOC (%) bấm nhanh cho `entities.eod`. */
+  eod_levels?: number[];
   entities: {
     pv?: EntityRef;
     battery?: EntityRef;
@@ -67,6 +69,16 @@ export interface SolarAlmanacCardConfig {
     grid_connected?: EntityRef;
     cell_delta?: EntityRef;
     inverter_temperature?: EntityRef;
+    /** Quạt tản nhiệt (light, fan hoặc switch). */
+    fan?: EntityRef;
+    /** Một hoặc nhiều sensor vòng quay; hiện số lớn nhất. */
+    fan_rpm?: EntityRef | EntityRef[];
+    /** input_boolean hoặc switch bật chế độ quạt tự động. */
+    fan_auto?: EntityRef;
+    /** binary_sensor: `on` là quạt kẹt. */
+    fan_stall?: EntityRef;
+    /** number: SOC (%) pin ngừng xả khi còn lưới. */
+    eod?: EntityRef;
   };
 }
 

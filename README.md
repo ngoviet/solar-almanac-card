@@ -51,6 +51,14 @@ entities:
   grid_voltage: sensor.luxpower_inverter_grid_grid_voltage
   grid_frequency: sensor.luxpower_inverter_grid_grid_frequency
   grid_connected: binary_sensor.luxpower_inverter_grid_grid_connected
+  # Khu điều khiển, bỏ trống thì không hiện
+  fan: light.luxpower_fan_controller_luxpower_fan_both_speed
+  fan_rpm:
+    - sensor.luxpower_fan_controller_fan_1_rpm
+    - sensor.luxpower_fan_controller_fan_2_rpm
+  fan_auto: input_boolean.luxpower_dual_fan_auto_speed
+  fan_stall: binary_sensor.luxpower_fan_controller_luxpower_fan_controller_fan_stall_alarm
+  eod: number.luxpower_inverter_battery_on_grid_cut_off_soc
 ```
 
 ### Tuỳ chọn
@@ -59,13 +67,14 @@ entities:
 |--------------------|----------|----------------------------------------------------------------|
 | `title`            | —        | Tên hiện trên băng đỏ, ẩn khi card quá hẹp                     |
 | `theme`            | `auto`   | `auto` theo chế độ sáng/tối của HA, hoặc `light`, `dark`       |
-| `compact`          | `false`  | Ẩn dải giờ và dòng chữ nhỏ                                     |
+| `compact`          | `false`  | Ẩn dải giờ và dòng chữ nhỏ; khu điều khiển vẫn hiện            |
 | `threshold`        | `10`     | W, dưới mức này coi như không có dòng chảy                     |
 | `battery_capacity` | —        | kWh, cần để hiện "Nếu mất điện" và "Đầy sau"                   |
 | `battery_reserve`  | `0`      | %, phần pin không dùng khi tính thời gian còn chạy             |
 | `forecast_attribute` | tự dò  | Tên thuộc tính dự báo; tự dò `detailedHourly`, `detailedForecast`, `watts` |
 | `cell_delta_warn`  | —        | mV, vượt ngưỡng này hiện cảnh báo bằng chữ dưới băng đỏ        |
 | `inverter_temperature_warn` | — | Như trên, cho nhiệt độ biến tần                               |
+| `eod_levels`       | `[10, 20, 30]` | %, các mức bấm nhanh cho `eod`                           |
 
 ### Entity
 
@@ -78,6 +87,13 @@ entities:
 | `forecast_today`, `forecast_tomorrow`                     | Giá trị kWh, cộng thuộc tính dự báo theo giờ để dựng dải giờ |
 | `grid_connected`, `grid_voltage`                          | Trạng thái lưới trên băng đỏ, báo mất lưới     |
 | `savings_month`, `cell_delta`, `inverter_temperature`, `grid_frequency` | Dòng chữ nhỏ cuối tờ             |
+| `fan`, `fan_rpm`, `fan_auto`                              | Dòng quạt tản nhiệt: `fan` (light, fan hoặc switch) cho biết bật/tắt, `fan_rpm` một hoặc danh sách sensor vòng quay, hiện số lớn nhất; `fan_auto` (input_boolean hoặc switch) thành nút Tự động |
+| `fan_stall`                                               | binary_sensor, `on` thì hiện cảnh báo quạt kẹt dưới băng đỏ |
+| `eod`                                                     | Dòng EOD lưới: entity `number` (hoặc `input_number`) là SOC pin ngừng xả khi còn lưới, mỗi mức trong `eod_levels` là một nút |
+
+### Khu điều khiển
+
+Khai `fan`, `fan_rpm` hoặc `eod` thì cuối card có thêm khu điều khiển; không khai, hoặc entity không có trong HA, thì khu đó tự bỏ qua. Nút Tự động bật/tắt `fan_auto`. Nút mức EOD gọi `<domain>.set_value` và HA hỏi xác nhận trước khi ghi, vì giá trị này ghi thẳng vào biến tần; bấm mức đang chọn thì không làm gì. Bấm nhãn bên trái mở chi tiết entity.
 
 Mỗi entity viết dạng chuỗi, hoặc dạng object khi cần đảo dấu:
 
@@ -121,7 +137,7 @@ npm run watch      # build lại mỗi khi sửa
 - `src/theme.ts` — màu sáng/tối sinh bằng palette-axi
 - `src/font.ts` — font số nhúng base64
 - `src/types.ts` — kiểu config và `hass`
-- `dev/` — trang thử với `hass` giả, có các tình huống sạc, xả, phát lưới, mất lưới, thiếu dữ liệu
+- `dev/` — trang thử với `hass` giả, có các tình huống sạc, xả, phát lưới, mất lưới, cảnh báo, quạt tắt, thiếu dữ liệu
 - `PRODUCT.md`, `DESIGN.md` — định hướng sản phẩm và hệ thiết kế
 
 ## Giấy phép

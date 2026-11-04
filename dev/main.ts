@@ -29,6 +29,8 @@ interface Scenario {
   gridOnline?: boolean;
   sparse?: boolean;
   temp?: number;
+  stall?: boolean;
+  fanOff?: boolean;
   pvToday: number;
   loadToday: number;
 }
@@ -38,7 +40,8 @@ const SCENARIOS: Scenario[] = [
   { label: '10:00 sạc', hour: 10, pv: 6139, battery: -4590, grid: 6, soc: 62, pvToday: 11.6, loadToday: 12.2 },
   { label: 'Phát lưới', hour: 12.5, pv: 6400, battery: 0, grid: -3200, soc: 100, pvToday: 20.1, loadToday: 14 },
   { label: 'Mất lưới', hour: 21, pv: 0, battery: 2400, grid: 0, soc: 42, gridOnline: false, pvToday: 29.4, loadToday: 24 },
-  { label: 'Cảnh báo', hour: 14, pv: 3100, battery: -800, grid: 0, soc: 96, temp: 78, pvToday: 24.5, loadToday: 16 },
+  { label: 'Cảnh báo', hour: 14, pv: 3100, battery: -800, grid: 0, soc: 96, temp: 78, stall: true, pvToday: 24.5, loadToday: 16 },
+  { label: 'Quạt tắt', hour: 6, pv: 120, battery: 300, grid: 0, soc: 48, fanOff: true, pvToday: 0.1, loadToday: 8 },
   { label: 'Thiếu dữ liệu', hour: 15, pv: 1500, battery: 0, grid: 300, soc: 55, sparse: true, pvToday: 0, loadToday: 0 },
 ];
 
@@ -66,9 +69,25 @@ card.setConfig({
     grid_connected: 'binary_sensor.grid_connected',
     cell_delta: 'sensor.cell_delta',
     inverter_temperature: 'sensor.inverter_temperature',
+    fan: 'light.fan',
+    fan_rpm: ['sensor.fan_1_rpm', 'sensor.fan_2_rpm', 'sensor.fan_3_rpm'],
+    fan_auto: 'input_boolean.fan_auto',
+    fan_stall: 'binary_sensor.fan_stall',
+    eod: 'number.eod',
   },
 });
 document.getElementById('wrap')!.appendChild(card);
+
+// Thay HA xử lý nút: trên dev bấm là đổi ngay, không có hộp xác nhận.
+let eod = 30;
+let fanAuto = true;
+card.addEventListener('hass-action', (e) => {
+  const action = (e as CustomEvent).detail.config.tap_action;
+  console.info('hass-action', action);
+  if (action.perform_action) eod = action.data.value;
+  else fanAuto = !fanAuto;
+  apply(scenario, dark);
+});
 
 function dateAt(hour: number): Date {
   const d = new Date(2026, 10, 4);
@@ -109,6 +128,13 @@ function apply(s: Scenario, dark: boolean) {
       'binary_sensor.grid_connected': entity(s.gridOnline === false ? 'off' : 'on'),
       'sensor.cell_delta': entity(4, 'mV'),
       'sensor.inverter_temperature': entity(s.temp ?? 47, '°C'),
+      'light.fan': entity(s.fanOff ? 'off' : 'on'),
+      'sensor.fan_1_rpm': entity(s.fanOff ? 0 : 2628, 'rpm'),
+      'sensor.fan_2_rpm': entity(s.fanOff ? 0 : 2670, 'rpm'),
+      'sensor.fan_3_rpm': entity(0, 'rpm'),
+      'input_boolean.fan_auto': entity(fanAuto ? 'on' : 'off'),
+      'binary_sensor.fan_stall': entity(s.stall ? 'on' : 'off'),
+      'number.eod': entity(eod, '%'),
     });
   }
   const hass: HomeAssistant = {
