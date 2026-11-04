@@ -60,7 +60,7 @@ type ForecastRow = Record<string, unknown>;
 /** Mỗi dòng là `[thời điểm, W]`; Solcast báo kW trong `pv_estimate`, các nguồn khác báo W. */
 function forecastRows(raw: unknown): Array<[unknown, number]> {
   if (Array.isArray(raw)) {
-    return (raw as ForecastRow[]).map((row) => {
+    return (raw as ForecastRow[]).filter((row) => row && typeof row === 'object').map((row) => {
       const at = row.period_start ?? row.datetime ?? row.time;
       return [at, row.pv_estimate !== undefined ? Number(row.pv_estimate) * 1000 : Number(row.watts ?? row.power)];
     });

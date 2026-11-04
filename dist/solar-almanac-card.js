@@ -646,7 +646,7 @@ var Fe = [
 	"watts"
 ];
 function Ie(e) {
-	return Array.isArray(e) ? e.map((e) => [e.period_start ?? e.datetime ?? e.time, e.pv_estimate === void 0 ? Number(e.watts ?? e.power) : Number(e.pv_estimate) * 1e3]) : e && typeof e == "object" ? Object.entries(e).map(([e, t]) => [e, Number(t)]) : [];
+	return Array.isArray(e) ? e.filter((e) => e && typeof e == "object").map((e) => [e.period_start ?? e.datetime ?? e.time, e.pv_estimate === void 0 ? Number(e.watts ?? e.power) : Number(e.pv_estimate) * 1e3]) : e && typeof e == "object" ? Object.entries(e).map(([e, t]) => [e, Number(t)]) : [];
 }
 function Le(e, t) {
 	let n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
