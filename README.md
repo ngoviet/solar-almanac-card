@@ -1,4 +1,4 @@
-# Solar Flow Card
+# Solar Almanac
 
 Card Lovelace cho Home Assistant, trình bày hệ điện mặt trời như **tờ lịch của hôm nay**: nhìn một lần biết nhà đang dùng bao nhiêu, điện từ đâu tới, mất điện thì pin chạy được bao lâu và giờ nào nên bật tải lớn.
 
@@ -8,16 +8,16 @@ Lấy cảm hứng từ [sunsynk-power-flow-card](https://github.com/slipx06/sun
 
 ## Cài đặt
 
-1. `npm run build` → tạo `dist/solar-flow-card.js`
-2. Chép file vào `config/www/solar-flow-card.js` của HA
-3. Thêm resource: **Settings → Dashboards → Resources** → `/local/solar-flow-card.js` (JavaScript module)
+1. `npm run build` → tạo `dist/solar-almanac-card.js`
+2. Chép file vào `config/www/solar-almanac-card.js` của HA
+3. Thêm resource: **Settings → Dashboards → Resources** → `/local/solar-almanac-card.js` (JavaScript module)
 
 ## Cấu hình
 
 Tối thiểu:
 
 ```yaml
-type: custom:solar-flow-card
+type: custom:solar-almanac-card
 entities:
   pv: sensor.pv_power
   battery: sensor.battery_power
@@ -28,7 +28,7 @@ entities:
 Đầy đủ, ví dụ với LuxPower và Solcast:
 
 ```yaml
-type: custom:solar-flow-card
+type: custom:solar-almanac-card
 title: Luxpower 6.5kW
 battery_capacity: 17.15   # kWh, để tính giờ còn chạy và giờ đầy
 battery_reserve: 2        # %, mức biến tần ngừng xả khi mất lưới
@@ -108,7 +108,7 @@ npm run build      # typecheck + build ra dist/
 npm run watch      # build lại mỗi khi sửa
 ```
 
-- `src/solar-flow-card.ts` — card chính (Lit)
+- `src/solar-almanac-card.ts` — card chính (Lit)
 - `src/flows.ts` — phân bổ công suất, định dạng số, câu trạng thái, khung giờ tốt
 - `src/history.ts` — lịch sử trong ngày và dự báo theo giờ
 - `src/theme.ts` — màu sáng/tối sinh bằng palette-axi

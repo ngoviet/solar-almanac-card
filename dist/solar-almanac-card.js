@@ -510,9 +510,9 @@ Se?.({ LitElement: W }), (U.litElementVersions ??= []).push("4.2.2");
 // src/font.ts
 var Ce = "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";
 function we() {
-	if (document.getElementById("sfc-font")) return;
+	if (document.getElementById("sac-font")) return;
 	let e = document.createElement("style");
-	e.id = "sfc-font", e.textContent = `@font-face{font-family:'SFC Numerals';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,${Ce}) format('woff2')}`, document.head.appendChild(e);
+	e.id = "sac-font", e.textContent = `@font-face{font-family:'SAC Numerals';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,${Ce}) format('woff2')}`, document.head.appendChild(e);
 }
 // src/flows.ts
 function G(e) {
@@ -651,27 +651,27 @@ function Le(e, t) {
 // src/theme.ts
 var Re = o`
   :host {
-    --sfc-surface: #fffaf9;
-    --sfc-border: #e5d3d1;
-    --sfc-dim: #7d5a56;
-    --sfc-fg: #443331;
-    --sfc-solar: #ac7a00;
-    --sfc-battery: #009655;
-    --sfc-grid: #0085e3;
-    --sfc-band: #c4302b;
-    --sfc-on-band: #ffffff;
+    --sac-surface: #fffaf9;
+    --sac-border: #e5d3d1;
+    --sac-dim: #7d5a56;
+    --sac-fg: #443331;
+    --sac-solar: #ac7a00;
+    --sac-battery: #009655;
+    --sac-grid: #0085e3;
+    --sac-band: #c4302b;
+    --sac-on-band: #ffffff;
     color-scheme: light;
   }
   :host([data-mode='dark']) {
-    --sfc-surface: #2c1412;
-    --sfc-border: #4f2d2b;
-    --sfc-dim: #d6aca7;
-    --sfc-fg: #f2e5e3;
-    --sfc-solar: #e7a500;
-    --sfc-battery: #00ca75;
-    --sfc-grid: #6fb7ff;
-    --sfc-band: #8f1f1b;
-    --sfc-on-band: #ffffff;
+    --sac-surface: #2c1412;
+    --sac-border: #4f2d2b;
+    --sac-dim: #d6aca7;
+    --sac-fg: #f2e5e3;
+    --sac-solar: #e7a500;
+    --sac-battery: #00ca75;
+    --sac-grid: #6fb7ff;
+    --sac-band: #8f1f1b;
+    --sac-on-band: #ffffff;
     color-scheme: dark;
   }
 `;
@@ -709,22 +709,22 @@ function X(e, t, n) {
 		writable: !0
 	}) : e[t] = n, e;
 }
-// src/solar-flow-card.ts
-var Z = "solar-flow-card", Ve = 3e5, He = [6, 17], Ue = [
+// src/solar-almanac-card.ts
+var Z = "solar-almanac-card", Ve = 3e5, He = [6, 17], Ue = [
 	{
 		key: "pv",
 		label: "Solar",
-		color: "var(--sfc-solar)"
+		color: "var(--sac-solar)"
 	},
 	{
 		key: "battery",
 		label: "Pin",
-		color: "var(--sfc-battery)"
+		color: "var(--sac-battery)"
 	},
 	{
 		key: "grid",
 		label: "Lưới",
-		color: "var(--sfc-grid)"
+		color: "var(--sac-grid)"
 	}
 ];
 function Q(e) {
@@ -743,7 +743,7 @@ var $ = class extends W {
 		} };
 	}
 	setConfig(e) {
-		if (!e || !e.entities) throw Error("solar-flow-card: cần khai báo \"entities\"");
+		if (!e || !e.entities) throw Error("solar-almanac-card: cần khai báo \"entities\"");
 		this._config = e, this._lastFetch = 0;
 	}
 	getCardSize() {
@@ -886,15 +886,15 @@ var $ = class extends W {
 		let n = e === void 0 ? void 0 : De(e), r = t.solarHome + t.batteryHome + t.gridHome, i = [
 			{
 				w: t.solarHome,
-				color: "var(--sfc-solar)"
+				color: "var(--sac-solar)"
 			},
 			{
 				w: t.batteryHome,
-				color: "var(--sfc-battery)"
+				color: "var(--sac-battery)"
 			},
 			{
 				w: t.gridHome,
-				color: "var(--sfc-grid)"
+				color: "var(--sac-grid)"
 			}
 		].filter((e) => e.w > 0), a = N`
       <b class="num">${n?.value ?? "—"}</b>
@@ -1038,7 +1038,7 @@ var $ = class extends W {
 		try {
 			this._hourly = Pe(await Ne(this.hass, e, t), t, this._scale("pv"));
 		} catch (e) {
-			console.warn("solar-flow-card: không đọc được lịch sử", e);
+			console.warn("solar-almanac-card: không đọc được lịch sử", e);
 		}
 	}
 };
@@ -1055,8 +1055,8 @@ X($, "properties", {
       ha-card {
         display: block;
         overflow: hidden;
-        background: var(--sfc-surface);
-        color: var(--sfc-fg);
+        background: var(--sac-surface);
+        color: var(--sac-fg);
         container-type: inline-size;
         font-family: var(--ha-font-family-body, Roboto, sans-serif);
         font-variant-numeric: tabular-nums;
@@ -1073,11 +1073,11 @@ X($, "properties", {
         cursor: pointer;
       }
       button:focus-visible {
-        outline: calc(var(--u) * 2) solid var(--sfc-fg);
+        outline: calc(var(--u) * 2) solid var(--sac-fg);
         outline-offset: calc(var(--u) * 1);
       }
       .num {
-        font-family: 'SFC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif);
+        font-family: 'SAC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif);
         font-weight: 700;
       }
       .band {
@@ -1085,8 +1085,8 @@ X($, "properties", {
         align-items: baseline;
         gap: calc(var(--u) * 10);
         padding: calc(var(--u) * 9) calc(var(--u) * 14);
-        background: var(--sfc-band);
-        color: var(--sfc-on-band);
+        background: var(--sac-band);
+        color: var(--sac-on-band);
         font-weight: 500;
       }
       .title {
@@ -1100,8 +1100,8 @@ X($, "properties", {
         white-space: nowrap;
       }
       .state.down {
-        background: var(--sfc-on-band);
-        color: var(--sfc-band);
+        background: var(--sac-on-band);
+        color: var(--sac-band);
         font-weight: 700;
         border-radius: calc(var(--u) * 4);
         padding: 0 calc(var(--u) * 7);
@@ -1127,7 +1127,7 @@ X($, "properties", {
       .label,
       .reserve dt {
         font-size: max(11px, calc(var(--u) * 12));
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
         white-space: nowrap;
       }
       .label i {
@@ -1148,14 +1148,14 @@ X($, "properties", {
         height: calc(var(--u) * 3);
         margin-top: calc(var(--u) * 3);
         width: 76%;
-        background: var(--sfc-border);
+        background: var(--sac-border);
         border-radius: calc(var(--u) * 2);
         overflow: hidden;
       }
       .soc span {
         display: block;
         height: 100%;
-        background: var(--sfc-battery);
+        background: var(--sac-battery);
       }
       .links {
         position: relative;
@@ -1173,7 +1173,7 @@ X($, "properties", {
         vector-effect: non-scaling-stroke;
       }
       .track {
-        stroke: var(--sfc-border);
+        stroke: var(--sac-border);
         stroke-width: 1px;
       }
       .flow {
@@ -1192,13 +1192,13 @@ X($, "properties", {
         min-width: 0;
         text-align: center;
         font-size: calc(var(--u) * 13);
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .hero .num {
         font-size: calc(var(--u) * 92);
         line-height: 1.08;
         letter-spacing: -0.02em;
-        color: var(--sfc-fg);
+        color: var(--sac-fg);
       }
       .mix {
         display: flex;
@@ -1230,9 +1230,9 @@ X($, "properties", {
       .alert {
         margin: 0;
         padding: calc(var(--u) * 5) calc(var(--u) * 14);
-        background: var(--sfc-on-band);
-        color: var(--sfc-band);
-        border-bottom: 1px solid var(--sfc-band);
+        background: var(--sac-on-band);
+        color: var(--sac-band);
+        border-bottom: 1px solid var(--sac-band);
         font-size: calc(var(--u) * 13.5);
         font-weight: 600;
       }
@@ -1257,15 +1257,15 @@ X($, "properties", {
         gap: calc(var(--u) * 10);
         margin-bottom: calc(var(--u) * 5);
         font-size: calc(var(--u) * 12.5);
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .hours-head b {
-        color: var(--sfc-fg);
+        color: var(--sac-fg);
         font-weight: 600;
         white-space: nowrap;
       }
       .hours-head b.legend {
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
         font-weight: 400;
       }
       .cells {
@@ -1285,20 +1285,20 @@ X($, "properties", {
         height: calc(var(--u) * 40);
         border-radius: calc(var(--u) * 3);
         overflow: hidden;
-        background: color-mix(in oklch, var(--sfc-solar) var(--level), var(--sfc-surface));
+        background: color-mix(in oklch, var(--sac-solar) var(--level), var(--sac-surface));
       }
       .tile i {
         position: absolute;
         inset: auto 0 0;
-        background: var(--sfc-solar);
+        background: var(--sac-solar);
       }
       .window {
         grid-row: 1;
         overflow: hidden;
         padding: calc(var(--u) * 2) 0;
         border-radius: calc(var(--u) * 3);
-        background: var(--sfc-fg);
-        color: var(--sfc-surface);
+        background: var(--sac-fg);
+        color: var(--sac-surface);
         font-size: max(11px, calc(var(--u) * 12));
         font-weight: 600;
         line-height: 1.25;
@@ -1306,14 +1306,14 @@ X($, "properties", {
         white-space: nowrap;
       }
       .cell.now .tile {
-        outline: calc(var(--u) * 2) solid var(--sfc-fg);
+        outline: calc(var(--u) * 2) solid var(--sac-fg);
         outline-offset: calc(var(--u) * 1);
       }
       .hour {
         display: block;
         margin-top: calc(var(--u) * 3);
         font-size: max(11px, calc(var(--u) * 11));
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .fine {
         display: grid;
@@ -1321,9 +1321,9 @@ X($, "properties", {
         gap: calc(var(--u) * 3) calc(var(--u) * 16);
         margin: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 12);
         padding-top: calc(var(--u) * 9);
-        border-top: 1px solid var(--sfc-border);
+        border-top: 1px solid var(--sac-border);
         font-size: calc(var(--u) * 12.5);
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .fine div:first-child {
         grid-column: 1 / -1;
@@ -1337,7 +1337,7 @@ X($, "properties", {
         white-space: nowrap;
       }
       .fine dd {
-        color: var(--sfc-fg);
+        color: var(--sac-fg);
         font-weight: 500;
         white-space: nowrap;
       }
@@ -1345,7 +1345,7 @@ X($, "properties", {
         .row:hover .label,
         button.hero:hover span:not(.mix),
         .cell:hover .hour {
-          color: var(--sfc-fg);
+          color: var(--sac-fg);
         }
       }
       @container (max-width: 340px) {
@@ -1372,8 +1372,8 @@ X($, "properties", {
       }
     `]), customElements.get(Z) || (customElements.define(Z, $), window.customCards = window.customCards || [], window.customCards.push({
 	type: Z,
-	name: "Solar Flow Card",
+	name: "Solar Almanac",
 	description: "Luồng năng lượng và giờ tốt dùng tải lớn, trình bày như một tờ lịch",
 	preview: !0
-}), console.info("%c SOLAR-FLOW-CARD %c v0.2.0 ", "background:#c4302b;color:#fff", "background:#333;color:#fff"));
-export { $ as SolarFlowCard };
+}), console.info("%c SOLAR-ALMANAC-CARD %c v0.2.0 ", "background:#c4302b;color:#fff", "background:#333;color:#fff"));
+export { $ as SolarAlmanacCard };

@@ -1,5 +1,5 @@
 // Trang dev: dựng card với `hass` giả, dùng số thật của một hệ Luxpower ngày 04/11/2026.
-import '../src/solar-flow-card';
+import '../src/solar-almanac-card';
 import type { HassEntity, HomeAssistant } from '../src/types';
 
 // Thay cho ha-card của Home Assistant: khối có bo góc, nền do card tự đặt.
@@ -42,9 +42,9 @@ const SCENARIOS: Scenario[] = [
   { label: 'Thiếu dữ liệu', hour: 15, pv: 1500, battery: 0, grid: 300, soc: 55, sparse: true, pvToday: 0, loadToday: 0 },
 ];
 
-const card = document.createElement('solar-flow-card');
+const card = document.createElement('solar-almanac-card');
 card.setConfig({
-  type: 'custom:solar-flow-card',
+  type: 'custom:solar-almanac-card',
   title: 'Luxpower 6.5kW',
   battery_capacity: 17.15,
   battery_reserve: 2,

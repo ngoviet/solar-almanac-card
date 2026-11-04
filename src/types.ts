@@ -28,7 +28,7 @@ export type EntityRef = string | FlowEntityConfig;
  * - grid:    dương = mua điện, âm = bán điện
  * - load:    dương = đang tiêu thụ (bỏ trống thì tự tính pv + battery + grid)
  */
-export interface SolarFlowCardConfig {
+export interface SolarAlmanacCardConfig {
   type: string;
   title?: string;
   /** Công suất (W) dưới ngưỡng này coi như không có dòng chảy. */

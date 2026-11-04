@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-11-04T13:26:16Z",
-  "title": "Design System: Solar Flow Card",
+  "title": "Design System: Solar Almanac",
   "extensions": {
     "colorMeta": {
-      "sfc-band": {
+      "sac-band": {
         "role": "primary",
         "displayName": "Đỏ Băng Lịch",
         "canonical": "#c4302b",
@@ -19,7 +19,7 @@
           "#fee9e6"
         ]
       },
-      "sfc-band-dark": {
+      "sac-band-dark": {
         "role": "primary",
         "displayName": "Đỏ Băng Lịch (tối)",
         "canonical": "#8f1f1b",
@@ -34,7 +34,7 @@
           "#ffe9e6"
         ]
       },
-      "sfc-on-band": {
+      "sac-on-band": {
         "role": "primary",
         "displayName": "Trắng Trên Băng",
         "canonical": "#ffffff",
@@ -49,7 +49,7 @@
           "#eeeeee"
         ]
       },
-      "sfc-solar": {
+      "sac-solar": {
         "role": "secondary",
         "displayName": "Vàng Nắng",
         "canonical": "#ac7a00",
@@ -64,7 +64,7 @@
           "#ffeccd"
         ]
       },
-      "sfc-solar-dark": {
+      "sac-solar-dark": {
         "role": "secondary",
         "displayName": "Vàng Nắng (tối)",
         "canonical": "#e7a500",
@@ -79,7 +79,7 @@
           "#ffecce"
         ]
       },
-      "sfc-battery": {
+      "sac-battery": {
         "role": "secondary",
         "displayName": "Xanh Lá Pin",
         "canonical": "#009655",
@@ -94,7 +94,7 @@
           "#c5ffd8"
         ]
       },
-      "sfc-battery-dark": {
+      "sac-battery-dark": {
         "role": "secondary",
         "displayName": "Xanh Lá Pin (tối)",
         "canonical": "#00ca75",
@@ -109,7 +109,7 @@
           "#c6ffd8"
         ]
       },
-      "sfc-grid": {
+      "sac-grid": {
         "role": "secondary",
         "displayName": "Xanh Trời Lưới",
         "canonical": "#0085e3",
@@ -124,7 +124,7 @@
           "#e3f0fe"
         ]
       },
-      "sfc-grid-dark": {
+      "sac-grid-dark": {
         "role": "secondary",
         "displayName": "Xanh Trời Lưới (tối)",
         "canonical": "#6fb7ff",
@@ -139,7 +139,7 @@
           "#e3f0fe"
         ]
       },
-      "sfc-surface": {
+      "sac-surface": {
         "role": "neutral",
         "displayName": "Giấy Hồng",
         "canonical": "#fffaf9",
@@ -154,7 +154,7 @@
           "#f2edec"
         ]
       },
-      "sfc-surface-dark": {
+      "sac-surface-dark": {
         "role": "neutral",
         "displayName": "Giấy Hồng (tối)",
         "canonical": "#2c1412",
@@ -169,7 +169,7 @@
           "#fee9e6"
         ]
       },
-      "sfc-fg": {
+      "sac-fg": {
         "role": "neutral",
         "displayName": "Mực Nâu",
         "canonical": "#443331",
@@ -184,7 +184,7 @@
           "#fee9e6"
         ]
       },
-      "sfc-fg-dark": {
+      "sac-fg-dark": {
         "role": "neutral",
         "displayName": "Mực Nâu (tối)",
         "canonical": "#f2e5e3",
@@ -199,7 +199,7 @@
           "#f8ebe9"
         ]
       },
-      "sfc-dim": {
+      "sac-dim": {
         "role": "neutral",
         "displayName": "Mực Nhạt",
         "canonical": "#7d5a56",
@@ -214,7 +214,7 @@
           "#fee9e6"
         ]
       },
-      "sfc-dim-dark": {
+      "sac-dim-dark": {
         "role": "neutral",
         "displayName": "Mực Nhạt (tối)",
         "canonical": "#d6aca7",
@@ -229,7 +229,7 @@
           "#fee9e6"
         ]
       },
-      "sfc-border": {
+      "sac-border": {
         "role": "neutral",
         "displayName": "Viền Giấy",
         "canonical": "#e5d3d1",
@@ -244,7 +244,7 @@
           "#fceae8"
         ]
       },
-      "sfc-border-dark": {
+      "sac-border-dark": {
         "role": "neutral",
         "displayName": "Viền Giấy (tối)",
         "canonical": "#4f2d2b",
@@ -415,7 +415,7 @@
       },
       {
         "name": "Quy tắc Bộ Số",
-        "body": "`SFC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như \"giờ\", \"kWh\" quay về font thân bài (`small`, 12u, 500).",
+        "body": "`SAC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như \"giờ\", \"kWh\" quay về font thân bài (`small`, 12u, 500).",
         "section": "typography"
       },
       {
@@ -434,7 +434,7 @@
       "Do đặt `--u` bên trong container (`.page`), không đặt trên `:host` hay `ha-card`, vì `cqi` phải đo được `ha-card`.",
       "Do cài `@font-face` vào `document`, vì khai báo trong shadow DOM không có tác dụng.",
       "Do để cảnh báo là chữ có giá trị và ngưỡng: \"Mất lưới\" trên băng, câu đầy đủ ở dòng cảnh báo.",
-      "Do chọn màu qua các biến `--sfc-*` để hai chế độ sáng tối đổi cùng lúc.",
+      "Do chọn màu qua các biến `--sac-*` để hai chế độ sáng tối đổi cùng lúc.",
       "Do để mỗi dấu trên dải giờ phản ánh số liệu thật.",
       "Do bọc mọi hiệu ứng hover trong `@media (hover: hover)`."
     ],

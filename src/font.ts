@@ -3,9 +3,9 @@ const BARLOW = 'd09GMgABAAAAABa0ABEAAAAAMdwAABZUAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 /** @font-face trong shadow DOM không có tác dụng nên phải gắn vào document. */
 export function installFont(): void {
-  if (document.getElementById('sfc-font')) return;
+  if (document.getElementById('sac-font')) return;
   const style = document.createElement('style');
-  style.id = 'sfc-font';
-  style.textContent = `@font-face{font-family:'SFC Numerals';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,${BARLOW}) format('woff2')}`;
+  style.id = 'sac-font';
+  style.textContent = `@font-face{font-family:'SAC Numerals';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,${BARLOW}) format('woff2')}`;
   document.head.appendChild(style);
 }

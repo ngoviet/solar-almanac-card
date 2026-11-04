@@ -16,19 +16,19 @@ import {
 import type { Power } from './flows';
 import { FORECAST_ATTRIBUTES, fetchToday, parseForecast, toHourly } from './history';
 import { themeStyles } from './theme';
-import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, SolarFlowCardConfig } from './types';
+import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, SolarAlmanacCardConfig } from './types';
 
-const CARD_TAG = 'solar-flow-card';
+const CARD_TAG = 'solar-almanac-card';
 const HISTORY_REFRESH_MS = 5 * 60_000;
 const DASH_PERIOD = 15;
 const DEFAULT_HOURS: [number, number] = [6, 17];
 
-type EntityKey = keyof SolarFlowCardConfig['entities'];
+type EntityKey = keyof SolarAlmanacCardConfig['entities'];
 
 const SOURCES: Array<{ key: FlowKey; label: string; color: string }> = [
-  { key: 'pv', label: 'Solar', color: 'var(--sfc-solar)' },
-  { key: 'battery', label: 'Pin', color: 'var(--sfc-battery)' },
-  { key: 'grid', label: 'Lưới', color: 'var(--sfc-grid)' },
+  { key: 'pv', label: 'Solar', color: 'var(--sac-solar)' },
+  { key: 'battery', label: 'Pin', color: 'var(--sac-battery)' },
+  { key: 'grid', label: 'Lưới', color: 'var(--sac-grid)' },
 ];
 
 interface HourCell {
@@ -44,7 +44,7 @@ function toEntityConfig(ref?: EntityRef): FlowEntityConfig | undefined {
   return typeof ref === 'string' ? { entity: ref } : ref;
 }
 
-export class SolarFlowCard extends LitElement {
+export class SolarAlmanacCard extends LitElement {
   static properties = {
     hass: { attribute: false },
     now: { attribute: false },
@@ -56,14 +56,14 @@ export class SolarFlowCard extends LitElement {
   declare hass?: HomeAssistant;
   /** Thời điểm hiển thị; để trống là giờ máy. Trang dev dùng để thử các tình huống. */
   declare now?: Date;
-  declare _config?: SolarFlowCardConfig;
+  declare _config?: SolarAlmanacCardConfig;
   declare _hourly?: Map<number, number>;
   declare _focusHour?: number;
 
   private _animations = new Map<string, Animation>();
   private _lastFetch = 0;
 
-  static getStubConfig(): Partial<SolarFlowCardConfig> {
+  static getStubConfig(): Partial<SolarAlmanacCardConfig> {
     return {
       entities: {
         pv: 'sensor.pv_power',
@@ -74,9 +74,9 @@ export class SolarFlowCard extends LitElement {
     };
   }
 
-  setConfig(config: SolarFlowCardConfig): void {
+  setConfig(config: SolarAlmanacCardConfig): void {
     if (!config || !config.entities) {
-      throw new Error('solar-flow-card: cần khai báo "entities"');
+      throw new Error('solar-almanac-card: cần khai báo "entities"');
     }
     this._config = config;
     this._lastFetch = 0;
@@ -257,9 +257,9 @@ export class SolarFlowCard extends LitElement {
     const hero = load === undefined ? undefined : heroPower(load);
     const total = flows.solarHome + flows.batteryHome + flows.gridHome;
     const parts = [
-      { w: flows.solarHome, color: 'var(--sfc-solar)' },
-      { w: flows.batteryHome, color: 'var(--sfc-battery)' },
-      { w: flows.gridHome, color: 'var(--sfc-grid)' },
+      { w: flows.solarHome, color: 'var(--sac-solar)' },
+      { w: flows.batteryHome, color: 'var(--sac-battery)' },
+      { w: flows.gridHome, color: 'var(--sac-grid)' },
     ].filter((p) => p.w > 0);
     const body = html`
       <b class="num">${hero?.value ?? '—'}</b>
@@ -456,7 +456,7 @@ export class SolarFlowCard extends LitElement {
       this._hourly = toHourly(await fetchToday(this.hass, entity, now), now, this._scale('pv'));
     } catch (err) {
       // Mất lịch sử chỉ làm dải giờ thiếu cột thực tế, phần còn lại của card vẫn chạy.
-      console.warn('solar-flow-card: không đọc được lịch sử', err);
+      console.warn('solar-almanac-card: không đọc được lịch sử', err);
     }
   }
 
@@ -469,8 +469,8 @@ export class SolarFlowCard extends LitElement {
       ha-card {
         display: block;
         overflow: hidden;
-        background: var(--sfc-surface);
-        color: var(--sfc-fg);
+        background: var(--sac-surface);
+        color: var(--sac-fg);
         container-type: inline-size;
         font-family: var(--ha-font-family-body, Roboto, sans-serif);
         font-variant-numeric: tabular-nums;
@@ -487,11 +487,11 @@ export class SolarFlowCard extends LitElement {
         cursor: pointer;
       }
       button:focus-visible {
-        outline: calc(var(--u) * 2) solid var(--sfc-fg);
+        outline: calc(var(--u) * 2) solid var(--sac-fg);
         outline-offset: calc(var(--u) * 1);
       }
       .num {
-        font-family: 'SFC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif);
+        font-family: 'SAC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif);
         font-weight: 700;
       }
       .band {
@@ -499,8 +499,8 @@ export class SolarFlowCard extends LitElement {
         align-items: baseline;
         gap: calc(var(--u) * 10);
         padding: calc(var(--u) * 9) calc(var(--u) * 14);
-        background: var(--sfc-band);
-        color: var(--sfc-on-band);
+        background: var(--sac-band);
+        color: var(--sac-on-band);
         font-weight: 500;
       }
       .title {
@@ -514,8 +514,8 @@ export class SolarFlowCard extends LitElement {
         white-space: nowrap;
       }
       .state.down {
-        background: var(--sfc-on-band);
-        color: var(--sfc-band);
+        background: var(--sac-on-band);
+        color: var(--sac-band);
         font-weight: 700;
         border-radius: calc(var(--u) * 4);
         padding: 0 calc(var(--u) * 7);
@@ -541,7 +541,7 @@ export class SolarFlowCard extends LitElement {
       .label,
       .reserve dt {
         font-size: max(11px, calc(var(--u) * 12));
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
         white-space: nowrap;
       }
       .label i {
@@ -562,14 +562,14 @@ export class SolarFlowCard extends LitElement {
         height: calc(var(--u) * 3);
         margin-top: calc(var(--u) * 3);
         width: 76%;
-        background: var(--sfc-border);
+        background: var(--sac-border);
         border-radius: calc(var(--u) * 2);
         overflow: hidden;
       }
       .soc span {
         display: block;
         height: 100%;
-        background: var(--sfc-battery);
+        background: var(--sac-battery);
       }
       .links {
         position: relative;
@@ -587,7 +587,7 @@ export class SolarFlowCard extends LitElement {
         vector-effect: non-scaling-stroke;
       }
       .track {
-        stroke: var(--sfc-border);
+        stroke: var(--sac-border);
         stroke-width: 1px;
       }
       .flow {
@@ -606,13 +606,13 @@ export class SolarFlowCard extends LitElement {
         min-width: 0;
         text-align: center;
         font-size: calc(var(--u) * 13);
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .hero .num {
         font-size: calc(var(--u) * 92);
         line-height: 1.08;
         letter-spacing: -0.02em;
-        color: var(--sfc-fg);
+        color: var(--sac-fg);
       }
       .mix {
         display: flex;
@@ -644,9 +644,9 @@ export class SolarFlowCard extends LitElement {
       .alert {
         margin: 0;
         padding: calc(var(--u) * 5) calc(var(--u) * 14);
-        background: var(--sfc-on-band);
-        color: var(--sfc-band);
-        border-bottom: 1px solid var(--sfc-band);
+        background: var(--sac-on-band);
+        color: var(--sac-band);
+        border-bottom: 1px solid var(--sac-band);
         font-size: calc(var(--u) * 13.5);
         font-weight: 600;
       }
@@ -671,15 +671,15 @@ export class SolarFlowCard extends LitElement {
         gap: calc(var(--u) * 10);
         margin-bottom: calc(var(--u) * 5);
         font-size: calc(var(--u) * 12.5);
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .hours-head b {
-        color: var(--sfc-fg);
+        color: var(--sac-fg);
         font-weight: 600;
         white-space: nowrap;
       }
       .hours-head b.legend {
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
         font-weight: 400;
       }
       .cells {
@@ -699,20 +699,20 @@ export class SolarFlowCard extends LitElement {
         height: calc(var(--u) * 40);
         border-radius: calc(var(--u) * 3);
         overflow: hidden;
-        background: color-mix(in oklch, var(--sfc-solar) var(--level), var(--sfc-surface));
+        background: color-mix(in oklch, var(--sac-solar) var(--level), var(--sac-surface));
       }
       .tile i {
         position: absolute;
         inset: auto 0 0;
-        background: var(--sfc-solar);
+        background: var(--sac-solar);
       }
       .window {
         grid-row: 1;
         overflow: hidden;
         padding: calc(var(--u) * 2) 0;
         border-radius: calc(var(--u) * 3);
-        background: var(--sfc-fg);
-        color: var(--sfc-surface);
+        background: var(--sac-fg);
+        color: var(--sac-surface);
         font-size: max(11px, calc(var(--u) * 12));
         font-weight: 600;
         line-height: 1.25;
@@ -720,14 +720,14 @@ export class SolarFlowCard extends LitElement {
         white-space: nowrap;
       }
       .cell.now .tile {
-        outline: calc(var(--u) * 2) solid var(--sfc-fg);
+        outline: calc(var(--u) * 2) solid var(--sac-fg);
         outline-offset: calc(var(--u) * 1);
       }
       .hour {
         display: block;
         margin-top: calc(var(--u) * 3);
         font-size: max(11px, calc(var(--u) * 11));
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .fine {
         display: grid;
@@ -735,9 +735,9 @@ export class SolarFlowCard extends LitElement {
         gap: calc(var(--u) * 3) calc(var(--u) * 16);
         margin: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 12);
         padding-top: calc(var(--u) * 9);
-        border-top: 1px solid var(--sfc-border);
+        border-top: 1px solid var(--sac-border);
         font-size: calc(var(--u) * 12.5);
-        color: var(--sfc-dim);
+        color: var(--sac-dim);
       }
       .fine div:first-child {
         grid-column: 1 / -1;
@@ -751,7 +751,7 @@ export class SolarFlowCard extends LitElement {
         white-space: nowrap;
       }
       .fine dd {
-        color: var(--sfc-fg);
+        color: var(--sac-fg);
         font-weight: 500;
         white-space: nowrap;
       }
@@ -759,7 +759,7 @@ export class SolarFlowCard extends LitElement {
         .row:hover .label,
         button.hero:hover span:not(.mix),
         .cell:hover .hour {
-          color: var(--sfc-fg);
+          color: var(--sac-fg);
         }
       }
       @container (max-width: 340px) {
@@ -789,19 +789,19 @@ export class SolarFlowCard extends LitElement {
 }
 
 if (!customElements.get(CARD_TAG)) {
-  customElements.define(CARD_TAG, SolarFlowCard);
+  customElements.define(CARD_TAG, SolarAlmanacCard);
   window.customCards = window.customCards || [];
   window.customCards.push({
     type: CARD_TAG,
-    name: 'Solar Flow Card',
+    name: 'Solar Almanac',
     description: 'Luồng năng lượng và giờ tốt dùng tải lớn, trình bày như một tờ lịch',
     preview: true,
   });
-  console.info(`%c SOLAR-FLOW-CARD %c v${__VERSION__} `, 'background:#c4302b;color:#fff', 'background:#333;color:#fff');
+  console.info(`%c SOLAR-ALMANAC-CARD %c v${__VERSION__} `, 'background:#c4302b;color:#fff', 'background:#333;color:#fff');
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'solar-flow-card': SolarFlowCard;
+    'solar-almanac-card': SolarAlmanacCard;
   }
 }

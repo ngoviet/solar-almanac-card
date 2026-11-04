@@ -1,33 +1,33 @@
 ---
-name: Solar Flow Card
+name: Solar Almanac
 description: Card Lovelace trình bày năng lượng trong nhà như một tờ lịch bloc treo tường
 colors:
-  sfc-band: "#c4302b"
-  sfc-band-dark: "#8f1f1b"
-  sfc-on-band: "#ffffff"
-  sfc-solar: "#ac7a00"
-  sfc-solar-dark: "#e7a500"
-  sfc-battery: "#009655"
-  sfc-battery-dark: "#00ca75"
-  sfc-grid: "#0085e3"
-  sfc-grid-dark: "#6fb7ff"
-  sfc-surface: "#fffaf9"
-  sfc-surface-dark: "#2c1412"
-  sfc-fg: "#443331"
-  sfc-fg-dark: "#f2e5e3"
-  sfc-dim: "#7d5a56"
-  sfc-dim-dark: "#d6aca7"
-  sfc-border: "#e5d3d1"
-  sfc-border-dark: "#4f2d2b"
+  sac-band: "#c4302b"
+  sac-band-dark: "#8f1f1b"
+  sac-on-band: "#ffffff"
+  sac-solar: "#ac7a00"
+  sac-solar-dark: "#e7a500"
+  sac-battery: "#009655"
+  sac-battery-dark: "#00ca75"
+  sac-grid: "#0085e3"
+  sac-grid-dark: "#6fb7ff"
+  sac-surface: "#fffaf9"
+  sac-surface-dark: "#2c1412"
+  sac-fg: "#443331"
+  sac-fg-dark: "#f2e5e3"
+  sac-dim: "#7d5a56"
+  sac-dim-dark: "#d6aca7"
+  sac-border: "#e5d3d1"
+  sac-border-dark: "#4f2d2b"
 typography:
   metric-hero:
-    fontFamily: "'SFC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif)"
+    fontFamily: "'SAC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif)"
     fontSize: "calc(var(--u) * 92)"
     fontWeight: 700
     lineHeight: 1.08
     letterSpacing: "-0.02em"
   metric:
-    fontFamily: "'SFC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif)"
+    fontFamily: "'SAC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif)"
     fontSize: "calc(var(--u) * 23)"
     fontWeight: 700
     lineHeight: 1.05
@@ -70,28 +70,28 @@ spacing:
   gutter: "calc(var(--u) * 14)"
 components:
   band:
-    backgroundColor: "{colors.sfc-band}"
-    textColor: "{colors.sfc-on-band}"
+    backgroundColor: "{colors.sac-band}"
+    textColor: "{colors.sac-on-band}"
     typography: "{typography.band}"
     padding: "calc(var(--u) * 9) calc(var(--u) * 14)"
   band-state-down:
-    backgroundColor: "{colors.sfc-on-band}"
-    textColor: "{colors.sfc-band}"
+    backgroundColor: "{colors.sac-on-band}"
+    textColor: "{colors.sac-band}"
     rounded: "{rounded.state}"
     padding: "0 calc(var(--u) * 7)"
   alert:
-    backgroundColor: "{colors.sfc-on-band}"
-    textColor: "{colors.sfc-band}"
+    backgroundColor: "{colors.sac-on-band}"
+    textColor: "{colors.sac-band}"
     padding: "calc(var(--u) * 5) calc(var(--u) * 14)"
   source-row:
-    textColor: "{colors.sfc-fg}"
+    textColor: "{colors.sac-fg}"
     typography: "{typography.metric}"
     padding: "calc(var(--u) * 3) 0"
   hero-number:
-    textColor: "{colors.sfc-fg}"
+    textColor: "{colors.sac-fg}"
     typography: "{typography.metric-hero}"
   soc-bar:
-    backgroundColor: "{colors.sfc-border}"
+    backgroundColor: "{colors.sac-border}"
     rounded: "{rounded.mark}"
     height: "calc(var(--u) * 3)"
     width: "76%"
@@ -100,23 +100,23 @@ components:
     height: "calc(var(--u) * 6)"
     width: "84%"
   hour-tile:
-    backgroundColor: "color-mix(in oklch, var(--sfc-solar) var(--level), var(--sfc-surface))"
+    backgroundColor: "color-mix(in oklch, var(--sac-solar) var(--level), var(--sac-surface))"
     rounded: "{rounded.tile}"
     height: "calc(var(--u) * 40)"
   hour-actual:
-    backgroundColor: "{colors.sfc-solar}"
+    backgroundColor: "{colors.sac-solar}"
   window-chip:
-    backgroundColor: "{colors.sfc-fg}"
-    textColor: "{colors.sfc-surface}"
+    backgroundColor: "{colors.sac-fg}"
+    textColor: "{colors.sac-surface}"
     typography: "{typography.label}"
     rounded: "{rounded.tile}"
     padding: "calc(var(--u) * 2) 0"
   fine-print:
-    textColor: "{colors.sfc-dim}"
+    textColor: "{colors.sac-dim}"
     typography: "{typography.small}"
 ---
 
-# Design System: Solar Flow Card
+# Design System: Solar Almanac
 
 ## Overview
 
@@ -140,20 +140,20 @@ Card sống trong shadow DOM của dashboard Home Assistant, cạnh những card
 Bảng màu sinh bằng palette-axi (`generate --seed 25 --mode both --roles solar=80,battery=155,grid=250`), neutral tint về hue đỏ, có đủ hai bộ sáng và tối; tên có hậu tố `-dark` là giá trị của cùng biến CSS khi `data-mode='dark'`.
 
 ### Primary
-- **Đỏ Băng Lịch** (`sfc-band`, #c4302b sáng / `sfc-band-dark`, #8f1f1b tối): nền băng đầu tờ; cũng là màu chữ của trạng thái "Mất lưới" và dòng cảnh báo. Giá trị được chỉnh tay để chữ trắng đạt 4,5:1.
-- **Trắng Trên Băng** (`sfc-on-band`, #ffffff, chung hai chế độ): chữ trên băng; đảo vai thành nền khi cần báo động.
+- **Đỏ Băng Lịch** (`sac-band`, #c4302b sáng / `sac-band-dark`, #8f1f1b tối): nền băng đầu tờ; cũng là màu chữ của trạng thái "Mất lưới" và dòng cảnh báo. Giá trị được chỉnh tay để chữ trắng đạt 4,5:1.
+- **Trắng Trên Băng** (`sac-on-band`, #ffffff, chung hai chế độ): chữ trên băng; đảo vai thành nền khi cần báo động.
 
 ### Secondary
 Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ hoạ: ô vuông nhãn, hạt, thanh tỉ lệ, thanh SOC, ô giờ.
-- **Vàng Nắng** (`sfc-solar`, #ac7a00 sáng / `sfc-solar-dark`, #e7a500 tối): Solar, và toàn bộ dải giờ.
-- **Xanh Lá Pin** (`sfc-battery`, #009655 sáng / `sfc-battery-dark`, #00ca75 tối): pin và thanh SOC.
-- **Xanh Trời Lưới** (`sfc-grid`, #0085e3 sáng / `sfc-grid-dark`, #6fb7ff tối): lưới điện.
+- **Vàng Nắng** (`sac-solar`, #ac7a00 sáng / `sac-solar-dark`, #e7a500 tối): Solar, và toàn bộ dải giờ.
+- **Xanh Lá Pin** (`sac-battery`, #009655 sáng / `sac-battery-dark`, #00ca75 tối): pin và thanh SOC.
+- **Xanh Trời Lưới** (`sac-grid`, #0085e3 sáng / `sac-grid-dark`, #6fb7ff tối): lưới điện.
 
 ### Neutral
-- **Giấy Hồng** (`sfc-surface`, #fffaf9 sáng / `sfc-surface-dark`, #2c1412 tối): nền tờ giấy. Bản tối là giấy nâu đỏ, không phải đen.
-- **Mực Nâu** (`sfc-fg`, #443331 sáng / `sfc-fg-dark`, #f2e5e3 tối): mọi con số, câu trạng thái, nền nhãn khung giờ tốt, viền giờ hiện tại, viền focus.
-- **Mực Nhạt** (`sfc-dim`, #7d5a56 sáng / `sfc-dim-dark`, #d6aca7 tối): nhãn, chú thích, chữ nhỏ cuối tờ. Bản sáng được chỉnh tay để đạt 4,5:1.
-- **Viền Giấy** (`sfc-border`, #e5d3d1 sáng / `sfc-border-dark`, #4f2d2b tối): đường nền của hạt, rãnh thanh SOC, đường kẻ trên chữ nhỏ.
+- **Giấy Hồng** (`sac-surface`, #fffaf9 sáng / `sac-surface-dark`, #2c1412 tối): nền tờ giấy. Bản tối là giấy nâu đỏ, không phải đen.
+- **Mực Nâu** (`sac-fg`, #443331 sáng / `sac-fg-dark`, #f2e5e3 tối): mọi con số, câu trạng thái, nền nhãn khung giờ tốt, viền giờ hiện tại, viền focus.
+- **Mực Nhạt** (`sac-dim`, #7d5a56 sáng / `sac-dim-dark`, #d6aca7 tối): nhãn, chú thích, chữ nhỏ cuối tờ. Bản sáng được chỉnh tay để đạt 4,5:1.
+- **Viền Giấy** (`sac-border`, #e5d3d1 sáng / `sac-border-dark`, #4f2d2b tối): đường nền của hạt, rãnh thanh SOC, đường kẻ trên chữ nhỏ.
 
 ### Named Rules
 **Quy tắc Ba Nguồn.** Chỉ Solar, pin, lưới và băng đỏ mang màu. Tải không có màu riêng: thanh tỉ lệ dưới số lớn cho thấy tải đến từ đâu bằng chính màu của nguồn.
@@ -164,7 +164,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 
 ## Typography
 
-**Display Font:** Barlow Condensed Bold (`SFC Numerals`, với Arial Narrow và font HA làm dự phòng)
+**Display Font:** Barlow Condensed Bold (`SAC Numerals`, với Arial Narrow và font HA làm dự phòng)
 **Body Font:** font thân bài của Home Assistant (`--ha-font-family-body`, với Roboto, sans-serif)
 
 **Character:** Khối số hẹp, đặc, đọc như chữ in trên tờ lịch, đặt cạnh chữ thường trung tính để card vẫn thuộc về dashboard. Toàn card bật `tabular-nums`.
@@ -179,7 +179,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 - **label** (400, sàn 11px, 12u, 1.4): nhãn nguồn và nhãn dự phòng; nhãn khung giờ tốt dùng cùng cỡ ở 600, line-height 1.25; số giờ dưới ô dùng 11u với cùng sàn.
 
 ### Named Rules
-**Quy tắc Bộ Số.** `SFC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như "giờ", "kWh" quay về font thân bài (`small`, 12u, 500).
+**Quy tắc Bộ Số.** `SAC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như "giờ", "kWh" quay về font thân bài (`small`, 12u, 500).
 
 **Quy tắc Sàn 11px.** Chữ nhỏ dùng `max(11px, …)` để không tụt dưới ngưỡng đọc được khi card hẹp.
 
@@ -251,7 +251,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Do** đặt `--u` bên trong container (`.page`), không đặt trên `:host` hay `ha-card`, vì `cqi` phải đo được `ha-card`.
 - **Do** cài `@font-face` vào `document`, vì khai báo trong shadow DOM không có tác dụng.
 - **Do** để cảnh báo là chữ có giá trị và ngưỡng: "Mất lưới" trên băng, câu đầy đủ ở dòng cảnh báo.
-- **Do** chọn màu qua các biến `--sfc-*` để hai chế độ sáng tối đổi cùng lúc.
+- **Do** chọn màu qua các biến `--sac-*` để hai chế độ sáng tối đổi cùng lúc.
 - **Do** để mỗi dấu trên dải giờ phản ánh số liệu thật.
 - **Do** bọc mọi hiệu ứng hover trong `@media (hover: hover)`.
 

@@ -1,11 +1,11 @@
 ---
 version: 1
-slug: "src-solar-flow-card-ts"
-primary_target: "src/solar-flow-card.ts"
+slug: "src-solar-almanac-card-ts"
+primary_target: "src/solar-almanac-card.ts"
 related_targets: []
 ---
 
-# Solar Flow Card: card Lovelace
+# Solar Almanac: card Lovelace
 
 Scope: toàn bộ card. Visitor mode: Operate. Người dùng liếc vài giây trên điện thoại, nhìn từ xa trên tablet treo tường, đọc chi tiết trên máy tính.
 
@@ -29,4 +29,4 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 ## Unresolved
 
-Tag mới thay cho `solar-flow-card`, và ngôn ngữ ngoài tiếng Việt.
+Ngôn ngữ ngoài tiếng Việt.

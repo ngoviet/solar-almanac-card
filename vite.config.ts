@@ -9,9 +9,9 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: 'src/solar-flow-card.ts',
+      entry: 'src/solar-almanac-card.ts',
       formats: ['es'],
-      fileName: () => 'solar-flow-card.js',
+      fileName: () => 'solar-almanac-card.js',
     },
     outDir: 'dist',
     emptyOutDir: true,
