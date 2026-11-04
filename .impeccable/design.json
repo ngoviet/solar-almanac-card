@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-04T13:26:16Z",
+  "generatedAt": "2026-11-04T18:58:09Z",
   "title": "Design System: Solar Almanac",
   "extensions": {
     "colorMeta": {
@@ -346,9 +346,9 @@
       "name": "Dòng nguồn",
       "kind": "card",
       "refersTo": "source-row",
-      "description": "Nhãn có ô màu, chiều bằng chữ, số metric, thanh SOC ở dòng pin.",
-      "html": "<button class=\"ds-row\"><span class=\"ds-row-label\"><i></i>Pin 76% · xả</span><b class=\"ds-row-num\">1,24 kW</b><span class=\"ds-soc\"><span></span></span></button>",
-      "css": ".ds-row { all: unset; display: flex; flex-direction: column; width: 112px; padding: 3px 0; cursor: pointer; color: #443331; } .ds-row:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-row-label { font-size: 12px; color: #7d5a56; white-space: nowrap; } .ds-row:hover .ds-row-label { color: #443331; } .ds-row-label i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; background: #009655; } .ds-row-num { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 23px; line-height: 1.05; } .ds-soc { display: block; height: 3px; margin-top: 3px; width: 76%; background: #e5d3d1; border-radius: 2px; overflow: hidden; } .ds-soc span { display: block; height: 100%; width: 76%; background: #009655; }"
+      "description": "Nhãn có ô màu, chiều bằng chữ, SOC là số SAC Numerals 17px màu Mực Nâu, số metric, thanh SOC ở dòng pin.",
+      "html": "<button class=\"ds-row\"><span class=\"ds-row-label\"><i></i>Pin <b class=\"ds-row-pct\">76%</b> · xả</span><b class=\"ds-row-num\">1,24 kW</b><span class=\"ds-soc\"><span></span></span></button>",
+      "css": ".ds-row { all: unset; display: flex; flex-direction: column; width: 112px; padding: 3px 0; cursor: pointer; color: #443331; } .ds-row:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-row-label { font-size: 12px; color: #7d5a56; white-space: nowrap; } .ds-row:hover .ds-row-label { color: #443331; } .ds-row-label i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; background: #009655; } .ds-row-pct { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-size: 17px; font-weight: 700; line-height: 1; color: #443331; } .ds-row-num { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 23px; line-height: 1.05; } .ds-soc { display: block; height: 3px; margin-top: 3px; width: 76%; background: #e5d3d1; border-radius: 2px; overflow: hidden; } .ds-soc span { display: block; height: 100%; width: 76%; background: #009655; }"
     },
     {
       "name": "Số lớn",
@@ -381,6 +381,30 @@
       "description": "Chi tiết hai cột dưới đường kẻ 1px.",
       "html": "<dl class=\"ds-fine\"><div><dt>Solar hôm nay</dt><dd>18,4 / 24,0 kWh</dd></div><div><dt>Tải hôm nay</dt><dd>12,6 kWh</dd></div><div><dt>Tần số lưới</dt><dd>50,0 Hz</dd></div></dl>",
       "css": ".ds-fine { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 16px; margin: 0; padding-top: 9px; border-top: 1px solid #e5d3d1; font-size: 12.5px; color: #7d5a56; } .ds-fine div { display: flex; justify-content: space-between; gap: 8px; } .ds-fine div:first-child { grid-column: 1 / -1; } .ds-fine dd { margin: 0; color: #443331; font-weight: 500; white-space: nowrap; }"
+    },
+    {
+      "name": "Khu điều khiển",
+      "kind": "card",
+      "refersTo": "control-option",
+      "description": "Nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ small; mỗi dòng một việc với nhãn bấm mở chi tiết bên trái và nút bên phải. Không khai entity thì dòng đó không vẽ, không còn dòng nào thì cả khu biến mất.",
+      "html": "<div class=\"ds-controls\"><div class=\"ds-control\"><button class=\"ds-about\"><span>Quạt tản nhiệt</span><b>1.240 vòng/phút</b></button><button class=\"ds-opt ds-opt-on\" aria-pressed=\"true\">Tự động</button></div><div class=\"ds-control\"><button class=\"ds-about\"><span>EOD lưới</span></button><div class=\"ds-opts\"><button class=\"ds-opt\">10%</button><button class=\"ds-opt ds-opt-on\" aria-pressed=\"true\">20%</button><button class=\"ds-opt\">30%</button></div></div></div>",
+      "css": ".ds-controls { display: grid; gap: 4px; margin: 10px 14px 12px; padding-top: 9px; border-top: 1px solid #e5d3d1; font-size: 12.5px; color: #7d5a56; } .ds-control { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .ds-about { all: unset; display: flex; gap: 8px; min-width: 0; white-space: nowrap; cursor: pointer; } .ds-about:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-about b { color: #443331; font-weight: 500; } .ds-opts { display: flex; gap: 4px; }"
+    },
+    {
+      "name": "Nút điều khiển",
+      "kind": "custom",
+      "refersTo": "control-option",
+      "description": "Nút bấm bằng ngón tay: viền 1px Viền Giấy, bo tile, chữ Mực Nâu 500, cao tối thiểu 36px. Chưa đọc được trạng thái thì nút khoá, chữ Mực Nhạt.",
+      "html": "<button class=\"ds-opt\">10%</button>",
+      "css": ".ds-opt { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-width: 46px; height: max(36px, 32px); padding: 0 9px; border: 1px solid #e5d3d1; border-radius: 3px; color: #443331; font-size: 12.5px; font-weight: 500; cursor: pointer; } .ds-opt:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-opt:disabled { color: #7d5a56; cursor: default; }"
+    },
+    {
+      "name": "Nút điều khiển đang chọn",
+      "kind": "custom",
+      "refersTo": "control-option-on",
+      "description": "Đang bật hoặc đang chọn thì đảo mực như nhãn khung giờ tốt: nền Mực Nâu, chữ giấy, 600. Không glow, không màu nguồn.",
+      "html": "<button class=\"ds-opt ds-opt-on\" aria-pressed=\"true\">20%</button>",
+      "css": ".ds-opt-on { background: #443331; border-color: #443331; color: #fffaf9; font-weight: 600; }"
     }
   ],
   "narrative": {
@@ -426,7 +450,7 @@
       }
     ],
     "dos": [
-      "Do tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px và sàn 11px.",
+      "Do tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px, sàn chữ 11px và sàn bấm 36px.",
       "Do đặt `--u` bên trong container (`.page`), không đặt trên `:host` hay `ha-card`, vì `cqi` phải đo được `ha-card`.",
       "Do cài `@font-face` vào `document`, vì khai báo trong shadow DOM không có tác dụng.",
       "Do để cảnh báo là chữ có giá trị và ngưỡng: \"Mất lưới\" trên băng, câu đầy đủ ở dòng cảnh báo.",
