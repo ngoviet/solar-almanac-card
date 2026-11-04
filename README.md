@@ -4,6 +4,8 @@ Card Lovelace cho Home Assistant, trình bày hệ điện mặt trời như **t
 
 Không gắn với hãng biến tần nào: chỉ cần sensor công suất `pv`, `battery`, `grid`; hệ không có pin thì khai thêm `load`. Phần còn lại là tuỳ chọn, thiếu entity nào phần tương ứng tự ẩn.
 
+![Card Solar Almanac trên dashboard Home Assistant](docs/solar-almanac-card.png)
+
 Lấy cảm hứng từ [sunsynk-power-flow-card](https://github.com/slipx06/sunsynk-power-flow-card) (MIT, © slipx06).
 
 ## Cài đặt
