@@ -277,11 +277,13 @@ export class SolarAlmanacCard extends LitElement {
 
   private _renderHero(load: number | undefined, flows?: ReturnType<typeof computeFlows>) {
     const hero = load === undefined ? undefined : heroPower(load);
+    const unknown = flows ? (load ?? 0) - flows.solarHome - flows.batteryHome - flows.gridHome : 0;
     const parts = flows
       ? [
           { w: flows.solarHome, color: 'var(--sac-solar)' },
           { w: flows.batteryHome, color: 'var(--sac-battery)' },
           { w: flows.gridHome, color: 'var(--sac-grid)' },
+          { w: unknown > (this._config?.threshold ?? 10) ? unknown : 0, color: 'var(--sac-border)' },
         ].filter((p) => p.w > 0)
       : [];
     const body = html`
@@ -786,7 +788,7 @@ export class SolarAlmanacCard extends LitElement {
           color: var(--sac-fg);
         }
       }
-      @container (max-width: 340px) {
+      @container (max-width: 367px) {
         .live {
           grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 6), 1fr) calc(var(--u) * 158);
         }
@@ -796,8 +798,6 @@ export class SolarAlmanacCard extends LitElement {
           grid-auto-columns: minmax(0, 1fr);
           padding: calc(var(--u) * 8) 0 0;
         }
-      }
-      @container (max-width: 340px) {
         .title {
           display: none;
         }

@@ -604,10 +604,12 @@ function Me({ power: e, flows: t, threshold: n, gridOnline: r, runtime: i, fullI
 			rest: `${e.join(", ")}.`
 		};
 	}
-	return l && u ? {
+	if (l && u) return {
 		lead: `Pin đang gánh ${s(t.batteryHome)}% tải,`,
 		rest: `lưới bù ${q(t.gridHome)}.`
-	} : l ? { lead: "Pin đang gánh cả nhà." } : u ? { lead: "Nhà đang dùng điện lưới." } : c ? { lead: "Solar đủ cho cả nhà." } : { lead: "Không có dòng công suất đáng kể." };
+	};
+	let d = (e) => o - e <= n;
+	return l ? { lead: d(t.batteryHome) ? "Pin đang gánh cả nhà." : `Pin đang gánh ${s(t.batteryHome)}% tải.` } : u ? { lead: d(t.gridHome) ? "Nhà đang dùng điện lưới." : `Lưới cấp ${s(t.gridHome)}% tải.` } : c ? { lead: d(t.solarHome) ? "Solar đủ cho cả nhà." : `Solar cấp ${s(t.solarHome)}% tải.` } : o > n ? void 0 : { lead: "Không có dòng công suất đáng kể." };
 }
 // src/history.ts
 function J(e) {
@@ -905,7 +907,7 @@ var $ = class extends W {
     `;
 	}
 	_renderHero(e, t) {
-		let n = e === void 0 ? void 0 : De(e), r = t ? [
+		let n = e === void 0 ? void 0 : De(e), r = t ? (e ?? 0) - t.solarHome - t.batteryHome - t.gridHome : 0, i = t ? [
 			{
 				w: t.solarHome,
 				color: "var(--sac-solar)"
@@ -917,13 +919,17 @@ var $ = class extends W {
 			{
 				w: t.gridHome,
 				color: "var(--sac-grid)"
+			},
+			{
+				w: r > (this._config?.threshold ?? 10) ? r : 0,
+				color: "var(--sac-border)"
 			}
-		].filter((e) => e.w > 0) : [], i = N`
+		].filter((e) => e.w > 0) : [], a = N`
       <b class="num">${n?.value ?? "—"}</b>
       <span>${n?.unit ?? "W"} nhà đang dùng</span>
-      ${r.length ? N`<span class="mix">${r.map((e) => N`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : F}
+      ${i.length ? N`<span class="mix">${i.map((e) => N`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : F}
     `;
-		return this._config?.entities.load ? N`<button class="hero" @click=${() => this._moreInfo("load")}>${i}</button>` : N`<div class="hero">${i}</div>`;
+		return this._config?.entities.load ? N`<button class="hero" @click=${() => this._moreInfo("load")}>${a}</button>` : N`<div class="hero">${a}</div>`;
 	}
 	_renderReserve(e, t, n) {
 		let r = this._energy("forecast_tomorrow"), i = [
@@ -1370,7 +1376,7 @@ X($, "properties", {
           color: var(--sac-fg);
         }
       }
-      @container (max-width: 340px) {
+      @container (max-width: 367px) {
         .live {
           grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 6), 1fr) calc(var(--u) * 158);
         }
@@ -1380,8 +1386,6 @@ X($, "properties", {
           grid-auto-columns: minmax(0, 1fr);
           padding: calc(var(--u) * 8) 0 0;
         }
-      }
-      @container (max-width: 340px) {
         .title {
           display: none;
         }

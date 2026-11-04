@@ -142,8 +142,9 @@ export function statusLine({ power, flows, threshold, gridOnline, runtime, fullI
   if (battery && grid) {
     return { lead: `Pin đang gánh ${share(flows.batteryHome)}% tải,`, rest: `lưới bù ${formatPower(flows.gridHome)}.` };
   }
-  if (battery) return { lead: 'Pin đang gánh cả nhà.' };
-  if (grid) return { lead: 'Nhà đang dùng điện lưới.' };
-  if (solar) return { lead: 'Solar đủ cho cả nhà.' };
-  return { lead: 'Không có dòng công suất đáng kể.' };
+  const covers = (w: number) => load - w <= threshold;
+  if (battery) return { lead: covers(flows.batteryHome) ? 'Pin đang gánh cả nhà.' : `Pin đang gánh ${share(flows.batteryHome)}% tải.` };
+  if (grid) return { lead: covers(flows.gridHome) ? 'Nhà đang dùng điện lưới.' : `Lưới cấp ${share(flows.gridHome)}% tải.` };
+  if (solar) return { lead: covers(flows.solarHome) ? 'Solar đủ cho cả nhà.' : `Solar cấp ${share(flows.solarHome)}% tải.` };
+  return load > threshold ? undefined : { lead: 'Không có dòng công suất đáng kể.' };
 }

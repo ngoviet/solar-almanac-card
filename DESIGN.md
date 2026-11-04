@@ -189,7 +189,7 @@ Mọi kích thước tính theo `--u` (`spacing.unit`), đặt trên `.page` đ�
 
 Từ trên xuống: băng đỏ, các dòng cảnh báo nếu có, vùng sống, câu trạng thái, dải giờ, chữ nhỏ. Lề hai bên luôn là 14u (`gutter`). Vùng sống là lưới bốn cột: nguồn 112u, đường nối co giãn (tối thiểu 16u), số lớn 158u, dự phòng 84u. Khi card rộng hơn mốc kẹp của `--u`, phần dư đổ hết vào cột đường nối.
 
-Container dưới 340px: cột dự phòng xuống thành hàng ngang dưới vùng sống, ẩn tiêu đề trên băng, ẩn nhãn giờ chẵn theo vị trí, chữ nhỏ về một cột. Chế độ `compact` bỏ dải giờ và chữ nhỏ. Thiếu dữ liệu thì khối đó biến mất; bố cục khép lại, không để ô rỗng.
+Từ 367px trở xuống, khi lưới bốn cột không còn đủ 398u kể cả lề: cột dự phòng xuống thành hàng ngang dưới vùng sống, ẩn tiêu đề trên băng, ẩn nhãn giờ chẵn theo vị trí, chữ nhỏ về một cột. Chế độ `compact` bỏ dải giờ và chữ nhỏ. Thiếu dữ liệu thì khối đó biến mất; bố cục khép lại, không để ô rỗng.
 
 ## Elevation & Depth
 
@@ -226,7 +226,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 
 ### Số lớn
 - **Style:** `metric-hero` màu Mực Nâu, dưới là đơn vị kèm "nhà đang dùng" màu Mực Nhạt.
-- **Thanh tỉ lệ:** cao 6u, rộng 84%, chia theo phần công suất mỗi nguồn cấp cho nhà, cách nhau 2u, mỗi đoạn tối thiểu 3u.
+- **Thanh tỉ lệ:** cao 6u, rộng 84%, chia theo phần công suất mỗi nguồn cấp cho nhà, phần tải chưa rõ nguồn là đoạn trung tính `--sac-border`, cách nhau 2u, mỗi đoạn tối thiểu 3u.
 
 ### Cột dự phòng
 - **Style:** danh sách định nghĩa ba dòng chia đều chiều cao: nhãn `label`, giá trị `metric`, đơn vị chữ `small` về font thân bài.

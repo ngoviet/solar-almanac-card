@@ -300,12 +300,8 @@
     ],
     "breakpoints": [
       {
-        "name": "reserve-stack",
-        "value": "340px (container)"
-      },
-      {
         "name": "narrow",
-        "value": "340px (container)"
+        "value": "367px (container)"
       },
       {
         "name": "unit-min",
