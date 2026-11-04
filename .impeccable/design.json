@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-04T13:26:16Z",
+  "title": "Design System: Solar Flow Card",
+  "extensions": {
+    "colorMeta": {
+      "sfc-band": {
+        "role": "primary",
+        "displayName": "Đỏ Băng Lịch",
+        "canonical": "#c4302b",
+        "tonalRamp": [
+          "#1f0000",
+          "#4d0003",
+          "#800108",
+          "#b31b1b",
+          "#db483f",
+          "#fe7467",
+          "#feb3a9",
+          "#fee9e6"
+        ]
+      },
+      "sfc-band-dark": {
+        "role": "primary",
+        "displayName": "Đỏ Băng Lịch (tối)",
+        "canonical": "#8f1f1b",
+        "tonalRamp": [
+          "#1f0000",
+          "#4d0002",
+          "#7f080b",
+          "#a5352e",
+          "#cc594e",
+          "#f47d70",
+          "#ffb3a9",
+          "#ffe9e6"
+        ]
+      },
+      "sfc-on-band": {
+        "role": "primary",
+        "displayName": "Trắng Trên Băng",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "sfc-solar": {
+        "role": "secondary",
+        "displayName": "Vàng Nắng",
+        "canonical": "#ac7a00",
+        "tonalRamp": [
+          "#120900",
+          "#322201",
+          "#573c02",
+          "#7f5902",
+          "#a97802",
+          "#cf9b39",
+          "#f5bf61",
+          "#ffeccd"
+        ]
+      },
+      "sfc-solar-dark": {
+        "role": "secondary",
+        "displayName": "Vàng Nắng (tối)",
+        "canonical": "#e7a500",
+        "tonalRamp": [
+          "#120900",
+          "#332100",
+          "#583c00",
+          "#7f5904",
+          "#a97805",
+          "#d59806",
+          "#ffbc35",
+          "#ffecce"
+        ]
+      },
+      "sfc-battery": {
+        "role": "secondary",
+        "displayName": "Xanh Lá Pin",
+        "canonical": "#009655",
+        "tonalRamp": [
+          "#000f05",
+          "#012e16",
+          "#02502b",
+          "#057441",
+          "#119b5a",
+          "#48bf7b",
+          "#71e59f",
+          "#c5ffd8"
+        ]
+      },
+      "sfc-battery-dark": {
+        "role": "secondary",
+        "displayName": "Xanh Lá Pin (tối)",
+        "canonical": "#00ca75",
+        "tonalRamp": [
+          "#001005",
+          "#012e17",
+          "#03502b",
+          "#057442",
+          "#009c59",
+          "#01c472",
+          "#48eb93",
+          "#c6ffd8"
+        ]
+      },
+      "sfc-grid": {
+        "role": "secondary",
+        "displayName": "Xanh Trời Lưới",
+        "canonical": "#0085e3",
+        "tonalRamp": [
+          "#000c1c",
+          "#002647",
+          "#024477",
+          "#0063ac",
+          "#0085e3",
+          "#53aafe",
+          "#9fceff",
+          "#e3f0fe"
+        ]
+      },
+      "sfc-grid-dark": {
+        "role": "secondary",
+        "displayName": "Xanh Trời Lưới (tối)",
+        "canonical": "#6fb7ff",
+        "tonalRamp": [
+          "#000c1c",
+          "#012647",
+          "#024477",
+          "#1764a6",
+          "#3f86cb",
+          "#62aaf1",
+          "#9fceff",
+          "#e3f0fe"
+        ]
+      },
+      "sfc-surface": {
+        "role": "neutral",
+        "displayName": "Giấy Hồng",
+        "canonical": "#fffaf9",
+        "tonalRamp": [
+          "#0d0a0a",
+          "#282423",
+          "#454140",
+          "#64605f",
+          "#868180",
+          "#a8a4a3",
+          "#cdc8c7",
+          "#f2edec"
+        ]
+      },
+      "sfc-surface-dark": {
+        "role": "neutral",
+        "displayName": "Giấy Hồng (tối)",
+        "canonical": "#2c1412",
+        "tonalRamp": [
+          "#190404",
+          "#361d1b",
+          "#553a37",
+          "#765956",
+          "#997a76",
+          "#bd9c98",
+          "#e2c0bc",
+          "#fee9e6"
+        ]
+      },
+      "sfc-fg": {
+        "role": "neutral",
+        "displayName": "Mực Nâu",
+        "canonical": "#443331",
+        "tonalRamp": [
+          "#140706",
+          "#30201f",
+          "#4f3d3b",
+          "#6f5c5a",
+          "#917d7a",
+          "#b49f9d",
+          "#d9c3c1",
+          "#fee9e6"
+        ]
+      },
+      "sfc-fg-dark": {
+        "role": "neutral",
+        "displayName": "Mực Nâu (tối)",
+        "canonical": "#f2e5e3",
+        "tonalRamp": [
+          "#110908",
+          "#2c2221",
+          "#493f3e",
+          "#695e5d",
+          "#8b7f7d",
+          "#aea2a0",
+          "#d2c6c4",
+          "#f8ebe9"
+        ]
+      },
+      "sfc-dim": {
+        "role": "neutral",
+        "displayName": "Mực Nhạt",
+        "canonical": "#7d5a56",
+        "tonalRamp": [
+          "#1b0303",
+          "#391b19",
+          "#593835",
+          "#7a5753",
+          "#9d7874",
+          "#c19a96",
+          "#e6beb9",
+          "#fee9e6"
+        ]
+      },
+      "sfc-dim-dark": {
+        "role": "neutral",
+        "displayName": "Mực Nhạt (tối)",
+        "canonical": "#d6aca7",
+        "tonalRamp": [
+          "#1c0202",
+          "#3a1b18",
+          "#5a3734",
+          "#7b5652",
+          "#9e7773",
+          "#c39a95",
+          "#e8bdb8",
+          "#fee9e6"
+        ]
+      },
+      "sfc-border": {
+        "role": "neutral",
+        "displayName": "Viền Giấy",
+        "canonical": "#e5d3d1",
+        "tonalRamp": [
+          "#130807",
+          "#2e2120",
+          "#4c3e3c",
+          "#6c5d5b",
+          "#8e7e7c",
+          "#b2a09f",
+          "#d6c4c2",
+          "#fceae8"
+        ]
+      },
+      "sfc-border-dark": {
+        "role": "neutral",
+        "displayName": "Viền Giấy (tối)",
+        "canonical": "#4f2d2b",
+        "tonalRamp": [
+          "#1c0203",
+          "#3a1a19",
+          "#5a3735",
+          "#7c5653",
+          "#9f7774",
+          "#c39996",
+          "#e9bdb9",
+          "#ffe9e7"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "metric-hero": {
+        "displayName": "Số lớn",
+        "purpose": "Công suất nhà đang dùng, mỗi card một lần."
+      },
+      "metric": {
+        "displayName": "Số vừa",
+        "purpose": "Công suất ba nguồn và ba chỉ số dự phòng."
+      },
+      "status": {
+        "displayName": "Câu trạng thái",
+        "purpose": "Một câu nói điện đang từ đâu; vế đầu đậm 600."
+      },
+      "body": {
+        "displayName": "Thân bài",
+        "purpose": "Cỡ gốc của tờ giấy."
+      },
+      "band": {
+        "displayName": "Băng đầu tờ",
+        "purpose": "Ngày và trạng thái lưới trên băng đỏ."
+      },
+      "small": {
+        "displayName": "Chữ nhỏ",
+        "purpose": "Tiêu đề dải giờ và chi tiết cuối tờ."
+      },
+      "label": {
+        "displayName": "Nhãn",
+        "purpose": "Nhãn nguồn, nhãn dự phòng, nhãn khung giờ tốt; có sàn 11px."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "flow-particle",
+        "value": "stroke-dashoffset 0 đến -15, 1000ms linear infinite, playbackRate = 1 / flowDuration(w)",
+        "purpose": "Hạt chạy về số lớn; flowDuration từ 0.4 đến 2.5 giây theo log công suất; đảo chiều khi giá trị âm; đứng yên với prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "reserve-stack",
+        "value": "340px (container)"
+      },
+      {
+        "name": "narrow",
+        "value": "340px (container)"
+      },
+      {
+        "name": "unit-min",
+        "value": "khoảng 380px: --u kẹp ở 0.92px"
+      },
+      {
+        "name": "unit-reference",
+        "value": "412px: 1u = 1px"
+      },
+      {
+        "name": "unit-max",
+        "value": "khoảng 700px: --u kẹp ở 1.7px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Băng đầu tờ",
+      "kind": "nav",
+      "refersTo": "band",
+      "description": "Băng đỏ đầu tờ: ngày, tiêu đề, trạng thái lưới. Giá trị quy về u = 1px, chế độ sáng.",
+      "html": "<header class=\"ds-band\"><span>Thứ Tư 04/11</span><span class=\"ds-band-title\">Điện nhà</span><span class=\"ds-band-state\">Có lưới · 228 V</span></header>",
+      "css": ".ds-band { display: flex; align-items: baseline; gap: 10px; padding: 9px 14px; background: #c4302b; color: #fff; font-size: 14px; font-weight: 500; line-height: 1.4; } .ds-band-title { font-weight: 400; } .ds-band-state { margin-left: auto; white-space: nowrap; }"
+    },
+    {
+      "name": "Băng khi mất lưới",
+      "kind": "chip",
+      "refersTo": "band-state-down",
+      "description": "Nhãn đảo màu khi mất lưới; chữ tự nói trạng thái.",
+      "html": "<header class=\"ds-band-down\"><span>Thứ Tư 04/11</span><span class=\"ds-band-chip\">Mất lưới</span></header>",
+      "css": ".ds-band-down { display: flex; align-items: baseline; gap: 10px; padding: 9px 14px; background: #c4302b; color: #fff; font-size: 14px; font-weight: 500; } .ds-band-chip { margin-left: auto; background: #fff; color: #c4302b; font-weight: 700; border-radius: 4px; padding: 0 7px; }"
+    },
+    {
+      "name": "Dòng cảnh báo",
+      "kind": "custom",
+      "refersTo": "alert",
+      "description": "Câu cảnh báo có giá trị và ngưỡng, ngay dưới băng.",
+      "html": "<p class=\"ds-alert\">Nhiệt biến tần 62 °C, vượt ngưỡng 60 °C</p>",
+      "css": ".ds-alert { margin: 0; padding: 5px 14px; background: #fff; color: #c4302b; border-bottom: 1px solid #c4302b; font-size: 13.5px; font-weight: 600; }"
+    },
+    {
+      "name": "Dòng nguồn",
+      "kind": "card",
+      "refersTo": "source-row",
+      "description": "Nhãn có ô màu, chiều bằng chữ, số metric, thanh SOC ở dòng pin.",
+      "html": "<button class=\"ds-row\"><span class=\"ds-row-label\"><i></i>Pin 76% · xả</span><b class=\"ds-row-num\">1,24 kW</b><span class=\"ds-soc\"><span></span></span></button>",
+      "css": ".ds-row { all: unset; display: flex; flex-direction: column; width: 112px; padding: 3px 0; cursor: pointer; color: #443331; } .ds-row:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-row-label { font-size: 12px; color: #7d5a56; white-space: nowrap; } .ds-row:hover .ds-row-label { color: #443331; } .ds-row-label i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; background: #009655; } .ds-row-num { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 23px; line-height: 1.05; } .ds-soc { display: block; height: 3px; margin-top: 3px; width: 76%; background: #e5d3d1; border-radius: 2px; overflow: hidden; } .ds-soc span { display: block; height: 100%; width: 76%; background: #009655; }"
+    },
+    {
+      "name": "Số lớn",
+      "kind": "custom",
+      "refersTo": "hero-number",
+      "description": "Con số nhà đang dùng và thanh tỉ lệ nguồn.",
+      "html": "<div class=\"ds-hero\"><b class=\"ds-hero-num\">2,48</b><span>kW nhà đang dùng</span><span class=\"ds-mix\"><i style=\"flex:5 1 0;background:#ac7a00\"></i><i style=\"flex:3 1 0;background:#009655\"></i><i style=\"flex:1 1 0;background:#0085e3\"></i></span></div>",
+      "css": ".ds-hero { display: flex; flex-direction: column; align-items: center; width: 158px; text-align: center; font-size: 13px; color: #7d5a56; } .ds-hero-num { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 92px; line-height: 1.08; letter-spacing: -0.02em; color: #443331; } .ds-mix { display: flex; gap: 2px; width: 84%; height: 6px; margin-top: 5px; } .ds-mix i { min-width: 3px; border-radius: 2px; }"
+    },
+    {
+      "name": "Đường hạt",
+      "kind": "custom",
+      "refersTo": "flow-link",
+      "description": "Đường nền 1px và hạt tròn chạy về số lớn; đứng yên khi giảm chuyển động.",
+      "html": "<svg class=\"ds-link\" viewBox=\"0 0 30 150\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path class=\"ds-track\" d=\"M0 25C16 25 14 75 30 75\"/><path class=\"ds-flow\" d=\"M0 25C16 25 14 75 30 75\"/></svg>",
+      "css": ".ds-link { width: 48px; height: 120px; overflow: visible; } .ds-track, .ds-flow { fill: none; vector-effect: non-scaling-stroke; } .ds-track { stroke: #e5d3d1; stroke-width: 1px; } .ds-flow { stroke: #ac7a00; stroke-width: 3.5px; stroke-linecap: round; stroke-dasharray: 0.1 14.9; animation: ds-flow 1s linear infinite; } @keyframes ds-flow { to { stroke-dashoffset: -15; } } @media (prefers-reduced-motion: reduce) { .ds-flow { animation: none; } }"
+    },
+    {
+      "name": "Dải giờ",
+      "kind": "custom",
+      "refersTo": "hour-tile",
+      "description": "Thành phần đặc trưng: ô giờ theo dự báo, cột sản lượng thực, nhãn khung giờ tốt, viền giờ hiện tại.",
+      "html": "<div class=\"ds-hours\"><div class=\"ds-window\" style=\"grid-column:2 / span 2\">10–12h</div><button class=\"ds-cell\" aria-label=\"9 giờ\"><span class=\"ds-tile\" style=\"--level:40%\"><i style=\"height:45%\"></i></span><span class=\"ds-hour\">9</span></button><button class=\"ds-cell ds-now\" aria-label=\"10 giờ\"><span class=\"ds-tile\" style=\"--level:70%\"><i style=\"height:60%\"></i></span><span class=\"ds-hour\">10</span></button><button class=\"ds-cell\" aria-label=\"11 giờ\"><span class=\"ds-tile\" style=\"--level:76%\"></span><span class=\"ds-hour\">11</span></button><button class=\"ds-cell\" aria-label=\"12 giờ\"><span class=\"ds-tile\" style=\"--level:50%\"></span><span class=\"ds-hour\">12</span></button></div>",
+      "css": ".ds-hours { display: grid; grid-template-columns: repeat(4, 40px); gap: 2px; } .ds-window { grid-row: 1; padding: 2px 0; border-radius: 3px; background: #443331; color: #fffaf9; font-size: 12px; font-weight: 600; line-height: 1.25; text-align: center; white-space: nowrap; } .ds-cell { all: unset; display: block; grid-row: 2; text-align: center; cursor: pointer; } .ds-cell:focus-visible { outline: 2px solid #443331; outline-offset: 1px; } .ds-tile { position: relative; display: block; height: 40px; border-radius: 3px; overflow: hidden; background: color-mix(in oklch, #ac7a00 var(--level), #fffaf9); } .ds-tile i { position: absolute; inset: auto 0 0; background: #ac7a00; } .ds-now .ds-tile { outline: 2px solid #443331; outline-offset: 1px; } .ds-hour { display: block; margin-top: 3px; font-size: 11px; color: #7d5a56; } .ds-cell:hover .ds-hour { color: #443331; }"
+    },
+    {
+      "name": "Chữ nhỏ cuối tờ",
+      "kind": "card",
+      "refersTo": "fine-print",
+      "description": "Chi tiết hai cột dưới đường kẻ 1px.",
+      "html": "<dl class=\"ds-fine\"><div><dt>Solar hôm nay</dt><dd>18,4 / 24,0 kWh</dd></div><div><dt>Tải hôm nay</dt><dd>12,6 kWh</dd></div><div><dt>Tần số lưới</dt><dd>50,0 Hz</dd></div></dl>",
+      "css": ".ds-fine { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 16px; margin: 0; padding-top: 9px; border-top: 1px solid #e5d3d1; font-size: 12.5px; color: #7d5a56; } .ds-fine div { display: flex; justify-content: space-between; gap: 8px; } .ds-fine div:first-child { grid-column: 1 / -1; } .ds-fine dd { margin: 0; color: #443331; font-weight: 500; white-space: nowrap; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Tờ Lịch Bloc",
+    "overview": "Mỗi ngày là một tờ lịch treo tường: băng đỏ đầu tờ, một con số thật to cho lúc này, và dải giờ tốt để dùng tải lớn. Người xem liếc là biết nhà đang dùng bao nhiêu; đọc xuống thì biết điện từ đâu, nên chạy máy giặt lúc nào, rồi mới đến dòng chữ nhỏ cuối tờ.\n\nHệ này in trên giấy, không phải dựng trên bảng điều khiển. Nền là giấy tint đỏ của palette-axi, chữ là mực trung tính, số là khối đặc đậm khổ lớn. Mật độ cao nhưng phân tầng rõ: một số lớn, ba số vừa, phần còn lại là chữ nhỏ. Màu chỉ xuất hiện ở nơi có nghĩa, và mọi dấu trên dải giờ đều là số liệu thật, không có trang trí.\n\nCard sống trong shadow DOM của dashboard Home Assistant, cạnh những card khác. Nó thừa kế font thân bài và chế độ sáng/tối của HA, chỉ mang theo ba thứ của riêng mình: bảng màu, bộ số nhúng và đơn vị `--u`. Hệ này từ chối sơ đồ năm vòng tròn nối về biến tần: nguồn đi vào con số, không đi vào một hình vẽ của hệ thống.",
+    "keyCharacteristics": [
+      "Một đơn vị `--u` chi phối mọi kích thước; card rộng ra thì chữ lớn theo để đọc từ xa.",
+      "Băng đỏ đầu tờ là mảng màu đặc duy nhất của card.",
+      "Số dùng Barlow Condensed Bold nhúng; chữ thường theo font của Home Assistant.",
+      "Chỉ ba nguồn và băng đỏ mang màu; tải và chữ dùng mực trung tính.",
+      "Cảnh báo luôn là chữ, không bao giờ chỉ là màu."
+    ],
+    "rules": [
+      {
+        "name": "Quy tắc Ba Nguồn",
+        "body": "Chỉ Solar, pin, lưới và băng đỏ mang màu. Tải không có màu riêng: thanh tỉ lệ dưới số lớn cho thấy tải đến từ đâu bằng chính màu của nguồn.",
+        "section": "colors"
+      },
+      {
+        "name": "Quy tắc Mực Một Hue",
+        "body": "Số và chữ thân bài luôn ở hai bậc mực trung tính, không bao giờ ở màu nguồn. Màu nguồn chế độ sáng chỉ đạt khoảng 3,7:1 trên giấy: đủ cho dấu đồ hoạ, không đủ cho chữ.",
+        "section": "colors"
+      },
+      {
+        "name": "Quy tắc palette-axi",
+        "body": "Màu mới phải sinh và kiểm tra bằng palette-axi, rồi thêm đủ cả hai chế độ vào `src/theme.ts`.",
+        "section": "colors"
+      },
+      {
+        "name": "Quy tắc Bộ Số",
+        "body": "`SFC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như \"giờ\", \"kWh\" quay về font thân bài (`small`, 12u, 500).",
+        "section": "typography"
+      },
+      {
+        "name": "Quy tắc Sàn 11px",
+        "body": "Chữ nhỏ dùng `max(11px, …)` để không tụt dưới ngưỡng đọc được khi card hẹp.",
+        "section": "typography"
+      },
+      {
+        "name": "Quy tắc Giấy Phẳng",
+        "body": "Không có bóng trong tờ giấy. Trạng thái được báo bằng đảo màu và viền mực, không bằng nâng khối.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px và sàn 11px.",
+      "Do đặt `--u` bên trong container (`.page`), không đặt trên `:host` hay `ha-card`, vì `cqi` phải đo được `ha-card`.",
+      "Do cài `@font-face` vào `document`, vì khai báo trong shadow DOM không có tác dụng.",
+      "Do để cảnh báo là chữ có giá trị và ngưỡng: \"Mất lưới\" trên băng, câu đầy đủ ở dòng cảnh báo.",
+      "Do chọn màu qua các biến `--sfc-*` để hai chế độ sáng tối đổi cùng lúc.",
+      "Do để mỗi dấu trên dải giờ phản ánh số liệu thật.",
+      "Do bọc mọi hiệu ứng hover trong `@media (hover: hover)`."
+    ],
+    "donts": [
+      "Don't cho tải một màu riêng, và don't thêm màu thứ năm nếu nó không phải một nguồn điện.",
+      "Don't dùng màu nguồn cho chữ hay số.",
+      "Don't vẽ sơ đồ năm vòng tròn nối về biến tần.",
+      "Don't thêm con số thứ hai cỡ `metric-hero`.",
+      "Don't thêm bóng vào bên trong tờ giấy.",
+      "Don't đưa chữ thường vào `.num`.",
+      "Don't hiện số giả khi thiếu dữ liệu: ẩn khối đó, hoặc dùng dấu gạch khi nguồn đã cấu hình mà chưa có giá trị."
+    ]
+  }
+}
