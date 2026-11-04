@@ -905,7 +905,7 @@ var $ = class extends W {
 			let o = e[t], s = o === void 0 || Math.abs(o) <= r ? "" : t === "battery" ? o > 0 ? " · xả" : " · sạc" : "", c = t === "grid" && o !== void 0 && Math.abs(o) > r ? o > 0 ? " · mua" : " · phát" : "";
 			return N`
             <button class="row" @click=${() => this._moreInfo(t)}>
-              <span class="label"><i style="background:${a}"></i>${i}${t === "battery" && n !== void 0 ? ` ${Math.round(n)}%` : ""}${s}${c}</span>
+              <span class="label"><i style="background:${a}"></i>${i}${t === "battery" && n !== void 0 ? N` <b class="num pct">${Math.round(n)}%</b>` : ""}${s}${c}</span>
               <b class="num">${o === void 0 ? "—" : q(o)}</b>
               ${t === "battery" && n !== void 0 ? N`<span class="soc"><span style="width:${Math.min(100, Math.max(0, n))}%"></span></span>` : F}
             </button>
@@ -1237,6 +1237,12 @@ X($, "properties", {
         font-size: max(11px, calc(var(--u) * 12));
         color: var(--sac-dim);
         white-space: nowrap;
+      }
+      /* SOC là số quan trọng nhất của dòng pin: dùng bộ số, to và đậm hơn nhãn. */
+      .row .label .pct {
+        font-size: calc(var(--u) * 17);
+        line-height: 1;
+        color: var(--sac-fg);
       }
       .label i {
         display: inline-block;

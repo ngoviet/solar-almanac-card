@@ -262,7 +262,7 @@ export class SolarAlmanacCard extends LitElement {
           const gridNote = key === 'grid' && w !== undefined && Math.abs(w) > threshold ? (w > 0 ? ' · mua' : ' · phát') : '';
           return html`
             <button class="row" @click=${() => this._moreInfo(key)}>
-              <span class="label"><i style="background:${color}"></i>${label}${key === 'battery' && soc !== undefined ? ` ${Math.round(soc)}%` : ''}${direction}${gridNote}</span>
+              <span class="label"><i style="background:${color}"></i>${label}${key === 'battery' && soc !== undefined ? html` <b class="num pct">${Math.round(soc)}%</b>` : ''}${direction}${gridNote}</span>
               <b class="num">${w === undefined ? '—' : formatPower(w)}</b>
               ${key === 'battery' && soc !== undefined
                 ? html`<span class="soc"><span style="width:${Math.min(100, Math.max(0, soc))}%"></span></span>`
@@ -667,6 +667,12 @@ export class SolarAlmanacCard extends LitElement {
         font-size: max(11px, calc(var(--u) * 12));
         color: var(--sac-dim);
         white-space: nowrap;
+      }
+      /* SOC là số quan trọng nhất của dòng pin: dùng bộ số, to và đậm hơn nhãn. */
+      .row .label .pct {
+        font-size: calc(var(--u) * 17);
+        line-height: 1;
+        color: var(--sac-fg);
       }
       .label i {
         display: inline-block;

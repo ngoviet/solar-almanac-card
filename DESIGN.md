@@ -224,6 +224,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 
 ### Dòng nguồn
 - **Cấu trúc:** nhãn `label` có ô vuông màu 9u phía trước, kèm chiều và SOC bằng chữ ("xả", "sạc", "mua", "phát"), bên dưới là số `metric`.
+- **SOC:** số phần trăm trong nhãn pin dùng bộ số `SAC Numerals` 17u, màu Mực Nâu, vì đây là thông số quan trọng nhất của dòng pin; phần nhãn còn lại giữ `label`.
 - **Thanh SOC:** chỉ ở dòng pin, cao 3u, rộng 76%, lõi màu pin trên rãnh Viền Giấy.
 - **Hover:** nhãn chuyển từ Mực Nhạt sang Mực Nâu, chỉ trên thiết bị có hover.
 
