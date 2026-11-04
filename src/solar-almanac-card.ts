@@ -921,6 +921,8 @@ export class SolarAlmanacCard extends LitElement {
       }
       .opts {
         display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
         margin-left: auto;
         gap: calc(var(--u) * 4);
       }
