@@ -34,7 +34,7 @@ Card chạy trong dashboard Home Assistant, cạnh các card khác, trên mọi 
 ## Capabilities and Constraints
 
 - Lit, TypeScript, Vite; build ra một tệp `dist/solar-almanac-card.js`; cài qua HACS.
-- Hỗ trợ `W` và `kW`, có `invert` để đảo dấu theo từng entity.
+- Quy đổi đơn vị theo `unit_of_measurement` (danh sách trong README), có `invert` để đảo dấu theo từng entity.
 - Quy ước sau khi đảo dấu: pin dương là xả, lưới dương là mua.
 - Mọi entity ngoài luồng chính phải là tuỳ chọn; thiếu dữ liệu thì card vẫn hoạt động.
 - Hỗ trợ ngôn ngữ chưa chốt: hiện chỉ có tiếng Việt, trong khi card công khai cho mọi hãng.

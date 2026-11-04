@@ -153,7 +153,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 - **Giấy Hồng** (`sac-surface`, #fffaf9 sáng / `sac-surface-dark`, #2c1412 tối): nền tờ giấy. Bản tối là giấy nâu đỏ, không phải đen.
 - **Mực Nâu** (`sac-fg`, #443331 sáng / `sac-fg-dark`, #f2e5e3 tối): mọi con số, câu trạng thái, nền nhãn khung giờ tốt, viền giờ hiện tại, viền focus.
 - **Mực Nhạt** (`sac-dim`, #7d5a56 sáng / `sac-dim-dark`, #d6aca7 tối): nhãn, chú thích, chữ nhỏ cuối tờ. Bản sáng được chỉnh tay để đạt 4,5:1.
-- **Viền Giấy** (`sac-border`, #e5d3d1 sáng / `sac-border-dark`, #4f2d2b tối): đường nền của hạt, rãnh thanh SOC, đường kẻ trên chữ nhỏ.
+- **Viền Giấy** (`sac-border`, #e5d3d1 sáng / `sac-border-dark`, #4f2d2b tối): đường nền của hạt, rãnh thanh SOC, đoạn tải chưa rõ nguồn trên thanh tỉ lệ, đường kẻ trên chữ nhỏ.
 
 ### Named Rules
 **Quy tắc Ba Nguồn.** Chỉ Solar, pin, lưới và băng đỏ mang màu. Tải không có màu riêng: thanh tỉ lệ dưới số lớn cho thấy tải đến từ đâu bằng chính màu của nguồn.

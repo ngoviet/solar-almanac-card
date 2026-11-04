@@ -74,8 +74,8 @@ entities:
 | `battery_soc`                                             | Phần trăm pin, thanh SOC                       |
 | `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Tổng ngày; `grid_import_today` và `load_today` tạo chỉ số Tự cấp |
 | `forecast_today`, `forecast_tomorrow`                     | Giá trị kWh, cộng thuộc tính dự báo theo giờ để dựng dải giờ |
-| `grid_connected`, `grid_voltage`, `grid_frequency`        | Trạng thái lưới trên băng đỏ, báo mất lưới     |
-| `savings_month`, `cell_delta`, `inverter_temperature`     | Dòng chữ nhỏ cuối tờ                           |
+| `grid_connected`, `grid_voltage`                          | Trạng thái lưới trên băng đỏ, báo mất lưới     |
+| `savings_month`, `cell_delta`, `inverter_temperature`, `grid_frequency` | Dòng chữ nhỏ cuối tờ             |
 
 Mỗi entity viết dạng chuỗi, hoặc dạng object khi cần đảo dấu:
 
