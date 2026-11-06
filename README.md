@@ -85,7 +85,7 @@ entities:
 | `battery_soc`                                             | Phần trăm pin, thanh SOC                       |
 | `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Tổng ngày; `grid_import_today` và `load_today` tạo chỉ số Tự cấp |
 | `forecast_today`, `forecast_tomorrow`                     | Giá trị kWh, cộng thuộc tính dự báo theo giờ để dựng dải giờ |
-| `grid_connected`, `grid_voltage`                          | Trạng thái lưới trên băng đỏ, báo mất lưới     |
+| `grid_connected`, `grid_voltage`                          | Trạng thái lưới trên băng đỏ, báo mất lưới; bấm vào mở lịch sử `grid_voltage` |
 | `savings_month`, `cell_delta`, `inverter_temperature`, `grid_frequency` | Dòng chữ nhỏ cuối tờ             |
 | `fan`, `fan_rpm`, `fan_auto`                              | Dòng quạt tản nhiệt: `fan` (light, fan hoặc switch) cho biết bật/tắt, `fan_rpm` một hoặc danh sách sensor vòng quay, hiện số lớn nhất; `fan_auto` (input_boolean hoặc switch) thành nút Tự động |
 | `fan_stall`                                               | binary_sensor, `on` thì hiện cảnh báo quạt kẹt dưới băng đỏ |
