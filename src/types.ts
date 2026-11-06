@@ -45,6 +45,8 @@ export interface SolarAlmanacCardConfig {
   /** Vượt các ngưỡng này thì hiện cảnh báo bằng chữ dưới băng đỏ; `cell_delta_warn` tính bằng mV. */
   cell_delta_warn?: number;
   inverter_temperature_warn?: number;
+  /** Nhãn dòng `savings_month`, khi số tiết kiệm không tính theo tháng dương lịch. */
+  savings_label?: string;
   /** Các mức SOC (%) bấm nhanh cho `entities.eod`. */
   eod_levels?: number[];
   entities: {
