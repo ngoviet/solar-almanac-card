@@ -13,6 +13,7 @@ export const themeStyles = css`
     --sac-battery: #009655;
     --sac-grid: #0085e3;
     --sac-band: #c4302b;
+    --sac-alert: #c4302b;
     --sac-on-band: #ffffff;
     color-scheme: light;
   }
@@ -25,7 +26,15 @@ export const themeStyles = css`
     --sac-battery: #00ca75;
     --sac-grid: #6fb7ff;
     --sac-band: #8f1f1b;
+    --sac-alert: #8f1f1b;
     --sac-on-band: #ffffff;
     color-scheme: dark;
+  }
+  /* band: neutral: băng đổi màu, cảnh báo vẫn đỏ nhờ --sac-alert. Chữ trắng trên băng đạt 6,3:1 và 7,9:1. */
+  :host([data-band='neutral']) {
+    --sac-band: #5b6068;
+  }
+  :host([data-mode='dark'][data-band='neutral']) {
+    --sac-band: #4d5259;
   }
 `;

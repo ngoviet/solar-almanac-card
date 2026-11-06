@@ -76,6 +76,7 @@ entities:
 | `inverter_temperature_warn` | — | Như trên, cho nhiệt độ biến tần                               |
 | `eod_levels`       | `[10, 20, 30]` | %, các mức bấm nhanh cho `eod`                           |
 | `savings_label`    | `Tiết kiệm tháng` | Nhãn dòng `savings_month`, ví dụ `Tiết kiệm kỳ này`   |
+| `band`             | `red`             | Màu băng đầu card: `red` hoặc `neutral`; cảnh báo vẫn đỏ |
 
 ### Entity
 

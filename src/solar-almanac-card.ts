@@ -561,6 +561,7 @@ export class SolarAlmanacCard extends LitElement {
     const theme = this._config?.theme ?? 'auto';
     const dark = theme === 'auto' ? (this.hass?.themes?.darkMode ?? matchMedia('(prefers-color-scheme: dark)').matches) : theme === 'dark';
     this.dataset.mode = dark ? 'dark' : 'light';
+    this.dataset.band = this._config?.band ?? 'red';
   }
 
   protected render() {
@@ -698,7 +699,7 @@ export class SolarAlmanacCard extends LitElement {
       }
       .state.down {
         background: var(--sac-on-band);
-        color: var(--sac-band);
+        color: var(--sac-alert);
         font-weight: 700;
         border-radius: calc(var(--u) * 4);
         padding: 0 calc(var(--u) * 7);
@@ -832,8 +833,8 @@ export class SolarAlmanacCard extends LitElement {
         margin: 0;
         padding: calc(var(--u) * 5) calc(var(--u) * 14);
         background: var(--sac-on-band);
-        color: var(--sac-band);
-        border-bottom: 1px solid var(--sac-band);
+        color: var(--sac-alert);
+        border-bottom: 1px solid var(--sac-alert);
         font-size: calc(var(--u) * 13.5);
         font-weight: 600;
       }

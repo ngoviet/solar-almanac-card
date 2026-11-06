@@ -34,6 +34,8 @@ export interface SolarAlmanacCardConfig {
   threshold?: number;
   /** `auto` theo chế độ sáng/tối của Home Assistant. */
   theme?: 'auto' | 'dark' | 'light';
+  /** Màu băng đầu card; `neutral` để dành màu đỏ cho cảnh báo. */
+  band?: 'red' | 'neutral';
   /** Ẩn dải giờ và dòng chữ nhỏ để card thấp hơn. */
   compact?: boolean;
   /** Dung lượng pin (kWh), dùng để tính thời gian còn chạy và thời gian đầy. */
