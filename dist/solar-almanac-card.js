@@ -669,6 +669,7 @@ var Re = o`
     --sac-battery: #009655;
     --sac-grid: #0085e3;
     --sac-band: #c4302b;
+    --sac-alert: #c4302b;
     --sac-on-band: #ffffff;
     color-scheme: light;
   }
@@ -681,8 +682,16 @@ var Re = o`
     --sac-battery: #00ca75;
     --sac-grid: #6fb7ff;
     --sac-band: #8f1f1b;
+    --sac-alert: #8f1f1b;
     --sac-on-band: #ffffff;
     color-scheme: dark;
+  }
+  /* band: neutral: băng đổi màu, cảnh báo vẫn đỏ nhờ --sac-alert. Chữ trắng trên băng đạt 6,3:1 và 7,9:1. */
+  :host([data-band='neutral']) {
+    --sac-band: #5b6068;
+  }
+  :host([data-mode='dark'][data-band='neutral']) {
+    --sac-band: #4d5259;
   }
 `;
 // \0@oxc-project+runtime@0.156.0/helpers/esm/typeof.js
@@ -1131,7 +1140,7 @@ var $ = class extends U {
 	}
 	willUpdate() {
 		let e = this._config?.theme ?? "auto", t = e === "auto" ? this.hass?.themes?.darkMode ?? matchMedia("(prefers-color-scheme: dark)").matches : e === "dark";
-		this.dataset.mode = t ? "dark" : "light";
+		this.dataset.mode = t ? "dark" : "light", this.dataset.band = this._config?.band ?? "red";
 	}
 	render() {
 		if (!this._config) return P;
@@ -1245,7 +1254,7 @@ X($, "properties", {
       }
       .state.down {
         background: var(--sac-on-band);
-        color: var(--sac-band);
+        color: var(--sac-alert);
         font-weight: 700;
         border-radius: calc(var(--u) * 4);
         padding: 0 calc(var(--u) * 7);
@@ -1379,8 +1388,8 @@ X($, "properties", {
         margin: 0;
         padding: calc(var(--u) * 5) calc(var(--u) * 14);
         background: var(--sac-on-band);
-        color: var(--sac-band);
-        border-bottom: 1px solid var(--sac-band);
+        color: var(--sac-alert);
+        border-bottom: 1px solid var(--sac-alert);
         font-size: calc(var(--u) * 13.5);
         font-weight: 600;
       }

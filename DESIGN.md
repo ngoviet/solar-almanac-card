@@ -149,6 +149,7 @@ Bảng màu sinh bằng palette-axi (`generate --seed 25 --mode both --roles sol
 
 ### Primary
 - **Đỏ Băng Lịch** (`sac-band`, #c4302b sáng / `sac-band-dark`, #8f1f1b tối): nền băng đầu tờ; cũng là màu chữ của trạng thái "Mất lưới" và dòng cảnh báo. Giá trị được chỉnh tay để chữ trắng đạt 4,5:1.
+- **Xám Băng** (`band: neutral`, #5b6068 sáng / #4d5259 tối): thay Đỏ Băng Lịch khi dashboard dành màu đỏ riêng cho cảnh báo. "Mất lưới" và dòng cảnh báo vẫn đỏ qua `--sac-alert`.
 - **Trắng Trên Băng** (`sac-on-band`, #ffffff, chung hai chế độ): chữ trên băng; đảo vai thành nền khi cần báo động.
 
 ### Secondary
