@@ -237,14 +237,18 @@ export class SolarAlmanacCard extends LitElement {
     const date = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
     const voltage = this._value('grid_voltage');
     const volt = voltage !== undefined ? ` · ${Math.round(voltage)} V` : '';
+    const state = (label: string, cls: string) =>
+      this._config?.entities.grid_voltage
+        ? html`<button class=${cls} @click=${() => this._moreInfo('grid_voltage')}>${label}</button>`
+        : html`<span class=${cls}>${label}</span>`;
     return html`
       <header class="band">
         <span class="date">${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${date}</span>
         ${this._config?.title ? html`<span class="title">${this._config.title}</span>` : nothing}
         ${online === false
-          ? html`<span class="state down">Mất lưới</span>`
+          ? state('Mất lưới', 'state down')
           : online || voltage !== undefined
-            ? html`<span class="state">${online ? 'Có lưới' : 'Lưới'}${volt}</span>`
+            ? state(`${online ? 'Có lưới' : 'Lưới'}${volt}`, 'state')
             : nothing}
       </header>
     `;
@@ -399,18 +403,21 @@ export class SolarAlmanacCard extends LitElement {
     const temp = this._value('inverter_temperature');
     const freq = this._value('grid_frequency');
     const part = (v: number | undefined) => (v === undefined ? '—' : formatNumber(v));
-    const rows: Array<[string, string | undefined]> = [
+    const rows: Array<[string, string | undefined, EntityKey?]> = [
       ['Solar hôm nay', pvToday === undefined ? undefined : forecast === undefined ? kwh(pvToday) : `${formatNumber(pvToday)} / ${formatNumber(forecast)} kWh`],
       ['Tiết kiệm tháng', savings === undefined ? undefined : `${formatNumber(savings, 0)} đ`],
       ['Tải hôm nay', kwh(this._energy('load_today'))],
       ['Mua / phát', bought === undefined && sold === undefined ? undefined : `${part(bought)} / ${part(sold)} kWh`],
       ['Lệch cell', delta === undefined ? undefined : `${formatNumber(delta, 0)} mV`],
       ['Nhiệt biến tần', temp === undefined ? undefined : `${formatNumber(temp, 0)} ${this._temperatureUnit()}`],
-      ['Tần số lưới', freq === undefined ? undefined : `${formatNumber(freq)} Hz`],
+      ['Tần số lưới', freq === undefined ? undefined : `${formatNumber(freq)} Hz`, 'grid_frequency'],
     ];
     const shown = rows.filter((r) => r[1] !== undefined);
     if (!shown.length) return nothing;
-    return html`<dl class="fine">${shown.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>`;
+    return html`<dl class="fine">${shown.map(
+      ([k, v, key]) =>
+        html`<div><dt>${k}</dt><dd>${key ? html`<button class="fact" @click=${() => this._moreInfo(key)}>${v}</button>` : v}</dd></div>`,
+    )}</dl>`;
   }
 
   private _renderFan() {
@@ -878,6 +885,7 @@ export class SolarAlmanacCard extends LitElement {
         grid-column: 1 / -1;
       }
       .fine div {
+        position: relative;
         display: flex;
         justify-content: space-between;
         gap: calc(var(--u) * 8);
@@ -889,6 +897,12 @@ export class SolarAlmanacCard extends LitElement {
         color: var(--sac-fg);
         font-weight: 500;
         white-space: nowrap;
+      }
+      /* Vùng bấm phủ cả dòng, nhãn cũng chạm được. */
+      .fact::after {
+        content: '';
+        position: absolute;
+        inset: 0;
       }
       .controls {
         display: grid;

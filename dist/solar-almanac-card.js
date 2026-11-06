@@ -888,12 +888,12 @@ var $ = class extends W {
 		};
 	}
 	_renderBand(e, t) {
-		let n = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(e), r = `${String(e.getDate()).padStart(2, "0")}/${String(e.getMonth() + 1).padStart(2, "0")}`, i = this._value("grid_voltage"), a = i === void 0 ? "" : ` · ${Math.round(i)} V`;
+		let n = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(e), r = `${String(e.getDate()).padStart(2, "0")}/${String(e.getMonth() + 1).padStart(2, "0")}`, i = this._value("grid_voltage"), a = i === void 0 ? "" : ` · ${Math.round(i)} V`, o = (e, t) => this._config?.entities.grid_voltage ? N`<button class=${t} @click=${() => this._moreInfo("grid_voltage")}>${e}</button>` : N`<span class=${t}>${e}</span>`;
 		return N`
       <header class="band">
         <span class="date">${n.charAt(0).toUpperCase() + n.slice(1)} ${r}</span>
         ${this._config?.title ? N`<span class="title">${this._config.title}</span>` : F}
-        ${t === !1 ? N`<span class="state down">Mất lưới</span>` : t || i !== void 0 ? N`<span class="state">${t ? "Có lưới" : "Lưới"}${a}</span>` : F}
+        ${t === !1 ? o("Mất lưới", "state down") : t || i !== void 0 ? o(`${t ? "Có lưới" : "Lưới"}${a}`, "state") : F}
       </header>
     `;
 	}
@@ -1029,9 +1029,13 @@ var $ = class extends W {
 			["Mua / phát", r === void 0 && i === void 0 ? void 0 : `${l(r)} / ${l(i)} kWh`],
 			["Lệch cell", o === void 0 ? void 0 : `${K(o, 0)} mV`],
 			["Nhiệt biến tần", s === void 0 ? void 0 : `${K(s, 0)} ${this._temperatureUnit()}`],
-			["Tần số lưới", c === void 0 ? void 0 : `${K(c)} Hz`]
+			[
+				"Tần số lưới",
+				c === void 0 ? void 0 : `${K(c)} Hz`,
+				"grid_frequency"
+			]
 		].filter((e) => e[1] !== void 0);
-		return u.length ? N`<dl class="fine">${u.map(([e, t]) => N`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : F;
+		return u.length ? N`<dl class="fine">${u.map(([e, t, n]) => N`<div><dt>${e}</dt><dd>${n ? N`<button class="fact" @click=${() => this._moreInfo(n)}>${t}</button>` : t}</dd></div>`)}</dl>` : F;
 	}
 	_renderFan() {
 		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();
@@ -1448,6 +1452,7 @@ X($, "properties", {
         grid-column: 1 / -1;
       }
       .fine div {
+        position: relative;
         display: flex;
         justify-content: space-between;
         gap: calc(var(--u) * 8);
@@ -1459,6 +1464,12 @@ X($, "properties", {
         color: var(--sac-fg);
         font-weight: 500;
         white-space: nowrap;
+      }
+      /* Vùng bấm phủ cả dòng, nhãn cũng chạm được. */
+      .fact::after {
+        content: '';
+        position: absolute;
+        inset: 0;
       }
       .controls {
         display: grid;
