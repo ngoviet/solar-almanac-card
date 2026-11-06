@@ -1057,19 +1057,15 @@ var $ = class extends U {
     `;
 	}
 	_renderFine() {
-		let e = (e) => e === void 0 ? void 0 : `${G(e)} kWh`, t = this._energy("grid_import_today"), n = this._energy("grid_export_today"), r = this._value("savings_month"), i = this._cellDelta(), a = this._value("inverter_temperature"), o = this._value("grid_frequency"), s = (e) => e === void 0 ? "—" : G(e), c = [
-			["Tiết kiệm tháng", r === void 0 ? void 0 : `${G(r, 0)} đ`],
-			["Tải hôm nay", e(this._energy("load_today"))],
-			["Mua / phát", t === void 0 && n === void 0 ? void 0 : `${s(t)} / ${s(n)} kWh`],
-			["Lệch cell", i === void 0 ? void 0 : `${G(i, 0)} mV`],
-			["Nhiệt biến tần", a === void 0 ? void 0 : `${G(a, 0)} ${this._temperatureUnit()}`],
-			[
-				"Tần số lưới",
-				o === void 0 ? void 0 : `${G(o)} Hz`,
-				"grid_frequency"
-			]
+		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._energy("grid_import_today"), r = this._energy("grid_export_today"), i = this._value("savings_month"), a = this._cellDelta(), o = this._value("inverter_temperature"), s = this._value("grid_frequency"), c = (e) => e === void 0 ? "—" : G(e), l = (e, t, n = "") => this._config?.entities[e] ? M`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, u = [
+			["Tiết kiệm tháng", i === void 0 ? void 0 : `${G(i, 0)} đ`],
+			["Tải hôm nay", t === void 0 ? void 0 : l("load_today", t)],
+			["Mua / phát", n === void 0 && r === void 0 ? void 0 : M`${l("grid_import_today", c(n), "left")} / ${l("grid_export_today", `${c(r)} kWh`, "right")}`],
+			["Lệch cell", a === void 0 ? void 0 : l("cell_delta", `${G(a, 0)} mV`)],
+			["Nhiệt biến tần", o === void 0 ? void 0 : l("inverter_temperature", `${G(o, 0)} ${this._temperatureUnit()}`)],
+			["Tần số lưới", s === void 0 ? void 0 : l("grid_frequency", `${G(s)} Hz`)]
 		].filter((e) => e[1] !== void 0);
-		return c.length ? M`<dl class="fine">${c.map(([e, t, n]) => M`<div><dt>${e}</dt><dd>${n ? M`<button class="fact" @click=${() => this._moreInfo(n)}>${t}</button>` : t}</dd></div>`)}</dl>` : P;
+		return u.length ? M`<dl class="fine">${u.map(([e, t]) => M`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : P;
 	}
 	_renderFan() {
 		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();
@@ -1496,6 +1492,13 @@ X($, "properties", {
         content: '';
         position: absolute;
         inset: 0;
+      }
+      /* Dòng có hai số: mỗi nửa dòng mở một entity. */
+      .fact.left::after {
+        right: 50%;
+      }
+      .fact.right::after {
+        left: 50%;
       }
       .controls {
         display: grid;
