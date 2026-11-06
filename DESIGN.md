@@ -22,7 +22,7 @@ colors:
 typography:
   metric-hero:
     fontFamily: "'SAC Numerals', 'Arial Narrow', var(--ha-font-family-body, Roboto, sans-serif)"
-    fontSize: "calc(var(--u) * 92)"
+    fontSize: "calc(var(--u) * 58)"
     fontWeight: 700
     lineHeight: 1.08
     letterSpacing: "-0.02em"
@@ -178,7 +178,7 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 **Character:** Khối số hẹp, đặc, đọc như chữ in trên tờ lịch, đặt cạnh chữ thường trung tính để card vẫn thuộc về dashboard. Toàn card bật `tabular-nums`.
 
 ### Hierarchy
-- **metric-hero** (700, 92u, 1.08, giãn chữ -0.02em): số công suất nhà đang dùng, mỗi card chỉ một lần.
+- **metric-hero** (700, 58u, 1.08, giãn chữ -0.02em): ba số chính Solar, Pin, Nhà đang dùng, card hẹp hơn 400px còn 48u.
 - **metric** (700, 23u, 1.05): công suất ba nguồn và ba chỉ số dự phòng.
 - **status** (400, 14.5u, 1.4): câu trạng thái; vế đầu đậm 600. Căn giữa, `text-wrap: balance`.
 - **body** (400, 14u, 1.4): cỡ gốc của tờ giấy.
@@ -222,24 +222,25 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Style:** dải trắng chữ đỏ đậm 600 cỡ 13.5u nằm ngay dưới băng, kẻ đỏ 1px phía dưới. Giữ nền trắng ở cả hai chế độ để nổi lên khỏi giấy.
 - **Nội dung:** luôn là một câu có giá trị và ngưỡng, ví dụ "Nhiệt biến tần 62 °C, vượt ngưỡng 60 °C". Báo động dạng bật/tắt không có số thì câu nói rõ việc cần làm: "Quạt tản nhiệt bị kẹt, cần kiểm tra".
 
-### Dòng nguồn
-- **Cấu trúc:** nhãn `label` có ô vuông màu 9u phía trước, kèm chiều và SOC bằng chữ ("xả", "sạc", "mua", "phát"), bên dưới là số `metric`.
-- **SOC:** số phần trăm trong nhãn pin dùng bộ số `SAC Numerals` 17u, màu Mực Nâu, vì đây là thông số quan trọng nhất của dòng pin; phần nhãn còn lại giữ `label`.
-- **Thanh SOC:** chỉ ở dòng pin, cao 3u, rộng 76%, lõi màu pin trên rãnh Viền Giấy.
+### Ba số chính
+- **Cấu trúc:** ba cột bằng nhau ngay dưới băng: Solar, Pin, Nhà đang dùng. Mỗi cột từ trên xuống gồm nhãn `label`, số `metric-hero`, một thanh, một dòng chữ `small`. Thiếu Solar hoặc Pin thì còn hai cột, chia đều lại.
+- **Cỡ:** cả ba số cùng cỡ vì ba câu hỏi ngang hàng: nắng bao nhiêu, pin còn bao nhiêu, nhà đang dùng bao nhiêu. Đơn vị đứng sau số, font thân bài 14u màu Mực Nhạt. Card hẹp hơn 400px thì số còn 48u.
+- **Solar:** thanh là sản lượng hôm nay so với dự báo, dòng chữ ghi hai số đó.
+- **Pin:** số to là SOC. Thanh là SOC, dòng chữ nói chiều và công suất ("sạc 2,18 kW", "xả 900 W", "đang nghỉ"). Không có SOC thì số to là công suất pin.
+- **Nhà:** thanh tỉ lệ chia theo phần công suất mỗi nguồn cấp cho nhà, phần tải chưa rõ nguồn là đoạn trung tính `--sac-border`, cách nhau 2u, mỗi đoạn tối thiểu 3u. Dòng chữ nói nguồn lớn nhất ("83% từ Solar") để không phải đọc bằng màu.
+- **Thanh:** cao 5u, bo `mark`, trên rãnh Viền Giấy; ba thanh cùng một đường ngang.
+- **Bấm:** nhãn và số mở entity tương ứng; riêng dòng chữ của Pin mở công suất pin, vì số to đã mở SOC.
 - **Hover:** nhãn chuyển từ Mực Nhạt sang Mực Nâu, chỉ trên thiết bị có hover.
 
 ### Đường hạt
+- **Vị trí:** dải cao 24u dưới ba số. Solar và Pin đi xuống từ giữa cột của mình, Lưới đi lên từ hàng dưới, cả ba chạy theo làn riêng về cột Nhà.
 - **Style:** đường nền 1px Viền Giấy, hạt 3.5px đầu tròn màu nguồn với nét đứt `0.1 14.9`, cả hai `non-scaling-stroke`.
 - **Chuyển động:** Web Animations ngoài vòng render, tốc độ theo log công suất (0.4 đến 2.5 giây mỗi chu kỳ), đảo chiều khi giá trị âm; dưới `threshold` thì hạt ẩn.
-- **Giảm chuyển động:** với `prefers-reduced-motion` hạt đứng yên; chiều dòng vẫn được nói bằng chữ ở nhãn nguồn.
+- **Giảm chuyển động:** với `prefers-reduced-motion` hạt đứng yên; chiều dòng vẫn được nói bằng chữ ở cột Pin và hàng phụ.
 
-### Số lớn
-- **Style:** `metric-hero` màu Mực Nâu, dưới là đơn vị kèm "nhà đang dùng" màu Mực Nhạt.
-- **Thanh tỉ lệ:** cao 6u, rộng 84%, chia theo phần công suất mỗi nguồn cấp cho nhà, phần tải chưa rõ nguồn là đoạn trung tính `--sac-border`, cách nhau 2u, mỗi đoạn tối thiểu 3u.
-
-### Cột dự phòng
-- **Style:** danh sách định nghĩa ba dòng chia đều chiều cao: nhãn `label`, giá trị `metric`, đơn vị chữ `small` về font thân bài.
-- **Nội dung:** thời gian chạy khi mất điện, tỉ lệ tự cấp, sản lượng dự báo ngày mai; thiếu dòng nào thì ẩn dòng đó.
+### Hàng phụ
+- **Style:** danh sách định nghĩa nằm ngang, các ô chia đều: nhãn `label`, giá trị 21u bộ số, đơn vị chữ `small` về font thân bài.
+- **Nội dung:** Lưới (kèm "mua" hoặc "phát" bằng chữ), thời gian chạy khi mất điện, tỉ lệ tự cấp, sản lượng dự báo ngày mai; thiếu ô nào thì ẩn ô đó.
 
 ### Dải giờ (thành phần đặc trưng)
 - **Ô giờ:** cao 40u, bo `tile`, cách nhau 2u. Nền trộn Vàng Nắng vào giấy theo dự báo (6% đến 76%), cột đặc Vàng Nắng từ đáy lên là sản lượng thực.
@@ -248,7 +249,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Tương tác:** hover, chạm hoặc focus một ô thì dòng đầu dải đổi từ chú giải sang số liệu của giờ đó, đậm 600 màu Mực Nâu.
 
 ### Chữ nhỏ cuối tờ
-- **Style:** lưới hai cột phía dưới đường kẻ 1px, dòng đầu trải hết chiều rộng; nhãn Mực Nhạt bên trái, giá trị Mực Nâu 500 bên phải.
+- **Style:** lưới hai cột phía dưới đường kẻ 1px; nhãn Mực Nhạt bên trái, giá trị Mực Nâu 500 bên phải. Sản lượng hôm nay đã ở cột Solar nên không lặp lại ở đây.
 
 ### Khu điều khiển
 - **Cấu trúc:** nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ `small`. Mỗi dòng một việc: nhãn Mực Nhạt kèm giá trị Mực Nâu 500 bên trái (bấm mở chi tiết), nút bên phải. Hàng hẹp không đủ chỗ thì nút xuống dòng riêng bên dưới, căn phải, và các nút tự xuống dòng trong hàng của nó; ba mức EOD mặc định vẫn vừa một dòng ở card 280px. Dòng quạt: số vòng/phút cao nhất trong các sensor, `Tắt` khi quạt tắt, nút `Tự động`. Dòng EOD lưới: một nút cho mỗi mức trong `eod_levels`; giá trị hiện tại không trùng mức nào thì hiện số cạnh nhãn.
@@ -274,7 +275,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Don't** cho tải một màu riêng, và **don't** thêm màu thứ năm nếu nó không phải một nguồn điện.
 - **Don't** dùng màu nguồn cho chữ hay số.
 - **Don't** vẽ sơ đồ năm vòng tròn nối về biến tần.
-- **Don't** thêm con số thứ hai cỡ `metric-hero`.
+- **Don't** thêm con số thứ tư cỡ `metric-hero`.
 - **Don't** thêm bóng vào bên trong tờ giấy.
 - **Don't** đưa chữ thường vào `.num`.
 - **Don't** hiện số giả khi thiếu dữ liệu: ẩn khối đó, hoặc dùng dấu gạch khi nguồn đã cấu hình mà chưa có giá trị.
