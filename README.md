@@ -81,7 +81,7 @@ entities:
 | Entity                                                    | Dùng cho                                       |
 |-----------------------------------------------------------|------------------------------------------------|
 | `pv`, `battery`, `grid`                                   | Ba nguồn và đường hạt                          |
-| `load`                                                    | Số to giữa card; bỏ trống thì tự tính pv + battery + grid, chỉ khi khai đủ cả ba. Hệ không có pin hoặc không khai `grid` (hệ 25.6V DC) phải khai `load`, nếu không thì mất số to, thời gian còn chạy và dòng "Pin còn" |
+| `load`                                                    | Số "Nhà đang dùng"; bỏ trống thì tự tính pv + battery + grid, chỉ khi khai đủ cả ba. Hệ không có pin hoặc không khai `grid` (hệ 25.6V DC) phải khai `load`, nếu không thì mất số nhà đang dùng, thời gian còn chạy và dòng "Pin còn" |
 | `battery_soc`                                             | Phần trăm pin, thanh SOC                       |
 | `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Tổng ngày; `grid_import_today` và `load_today` tạo chỉ số Tự cấp |
 | `forecast_today`, `forecast_tomorrow`                     | Giá trị kWh, cộng thuộc tính dự báo theo giờ để dựng dải giờ |
@@ -114,7 +114,7 @@ Quy ước dấu (sau `invert`):
 
 Card tự quy đổi theo `unit_of_measurement`: công suất nhận `W`, `kW`; năng lượng nhận `Wh`, `kWh`, `MWh`; `cell_delta` nhận `mV`, `V`.
 
-Nguồn đã khai mà không đọc được thì dòng của nó hiện `—`, thanh tỉ lệ và câu trạng thái ẩn; riêng lúc `grid_connected` báo mất lưới thì lưới được tính bằng 0. Không có `load` mà thiếu một trong ba nguồn thì không tính được tải: số to giữa card hiện `—`, thanh tỉ lệ và câu trạng thái ẩn. Hệ không có pin hoặc không nối lưới (không khai `grid`) luôn thiếu nguồn trong ba nguồn, nên phải khai `load` mới có số to, thời gian còn chạy và dòng "Pin còn" ở cột dự phòng.
+Nguồn đã khai mà không đọc được thì dòng của nó hiện `—`, thanh tỉ lệ và câu trạng thái ẩn; riêng lúc `grid_connected` báo mất lưới thì lưới được tính bằng 0. Không có `load` mà thiếu một trong ba nguồn thì không tính được tải: số nhà đang dùng hiện `—`, thanh tỉ lệ và câu trạng thái ẩn. Hệ không có pin hoặc không nối lưới (không khai `grid`) luôn thiếu nguồn trong ba nguồn, nên phải khai `load` mới có số nhà đang dùng, thời gian còn chạy và dòng "Pin còn" ở cột dự phòng.
 
 ### Dải giờ
 

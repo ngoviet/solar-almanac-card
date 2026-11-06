@@ -254,86 +254,142 @@ export class SolarAlmanacCard extends LitElement {
     `;
   }
 
-  private _renderSources(power: Power) {
-    const rows = SOURCES.filter(({ key }) => this._config?.entities[key]);
-    const soc = this._value('battery_soc');
+  /** Ba số chính cùng một cỡ: Solar, SOC pin, nhà đang dùng; mỗi số kèm một thanh và một dòng chữ. */
+  private _renderLead(power: Power, load: number | undefined, flows?: ReturnType<typeof computeFlows>) {
+    const entities = this._config?.entities;
     const threshold = this._config?.threshold ?? 10;
-    return html`
-      <div class="sources">
-        ${rows.map(({ key, label, color }) => {
-          const w = power[key];
-          const direction = w === undefined || Math.abs(w) <= threshold ? '' : key === 'battery' ? (w > 0 ? ' · xả' : ' · sạc') : '';
-          const gridNote = key === 'grid' && w !== undefined && Math.abs(w) > threshold ? (w > 0 ? ' · mua' : ' · phát') : '';
-          return html`
-            <button class="row" @click=${() => this._moreInfo(key)}>
-              <span class="label"><i style="background:${color}"></i>${label}${key === 'battery' && soc !== undefined ? html` <b class="num pct">${Math.round(soc)}%</b>` : ''}${direction}${gridNote}</span>
-              <b class="num">${w === undefined ? '—' : formatPower(w)}</b>
-              ${key === 'battery' && soc !== undefined
-                ? html`<span class="soc"><span style="width:${Math.min(100, Math.max(0, soc))}%"></span></span>`
-                : nothing}
-            </button>
-          `;
-        })}
-      </div>
-      <div class="links">
-      ${svg`
-        <svg viewBox="0 0 30 150" preserveAspectRatio="none" aria-hidden="true">
-          ${rows.map(({ key, color }, i) => {
-            const y = ((i + 0.5) / rows.length) * 150;
-            const d = `M0 ${y}C16 ${y} 14 75 30 75`;
-            const w = power[key] ?? 0;
-            const active = Math.abs(w) > threshold;
-            return svg`
-              <path class="track" d=${d}></path>
-              <path
-                class="flow ${active ? '' : 'idle'}"
-                d=${d}
-                stroke=${color}
-                data-key=${key}
-                data-rate=${active ? 1 / flowDuration(w) : 0}
-                data-reverse=${w < 0 ? '1' : ''}
-              ></path>
-            `;
-          })}
-        </svg>
-      `}
-      </div>
-    `;
-  }
+    const stats = [];
 
-  private _renderHero(load: number | undefined, flows?: ReturnType<typeof computeFlows>) {
-    const hero = load === undefined ? undefined : heroPower(load);
-    const unknown = flows ? (load ?? 0) - flows.solarHome - flows.batteryHome - flows.gridHome : 0;
+    if (entities?.pv) {
+      const today = this._energy('pv_today');
+      const forecast = this._energy('forecast_today');
+      const value = power.pv === undefined ? undefined : heroPower(power.pv);
+      const sub = today === undefined ? undefined : forecast === undefined ? `${formatNumber(today)} kWh` : `${formatNumber(today)} / ${formatNumber(forecast)} kWh`;
+      const fill = today !== undefined && forecast ? (today / forecast) * 100 : undefined;
+      stats.push(html`
+        <div class="stat">
+          <button class="main" @click=${() => this._moreInfo('pv')}>
+            <span class="label"><i style="background:var(--sac-solar)"></i>Solar</span>
+            ${this._figure(value)}
+          </button>
+          ${this._gauge(fill, 'var(--sac-solar)')} ${sub ? html`<span class="sub">${sub}</span>` : nothing}
+        </div>
+      `);
+    }
+
+    if (entities?.battery) {
+      const soc = this._value('battery_soc');
+      const w = power.battery;
+      const moving = w !== undefined && Math.abs(w) > threshold;
+      const value = soc !== undefined ? { value: String(Math.round(soc)), unit: '%' } : w === undefined ? undefined : heroPower(w);
+      const flow = w === undefined ? '—' : moving ? `${w > 0 ? 'xả' : 'sạc'} ${formatPower(w)}` : 'đang nghỉ';
+      stats.push(html`
+        <div class="stat">
+          <button class="main" @click=${() => this._moreInfo(soc !== undefined ? 'battery_soc' : 'battery')}>
+            <span class="label"><i style="background:var(--sac-battery)"></i>Pin</span>
+            ${this._figure(value)}
+          </button>
+          ${this._gauge(soc, 'var(--sac-battery)')}
+          <button class="sub" @click=${() => this._moreInfo('battery')}>${flow}</button>
+        </div>
+      `);
+    }
+
     const parts = flows
       ? [
-          { w: flows.solarHome, color: 'var(--sac-solar)' },
-          { w: flows.batteryHome, color: 'var(--sac-battery)' },
-          { w: flows.gridHome, color: 'var(--sac-grid)' },
-          { w: unknown > (this._config?.threshold ?? 10) ? unknown : 0, color: 'var(--sac-border)' },
+          { name: 'Solar', w: flows.solarHome, color: 'var(--sac-solar)' },
+          { name: 'pin', w: flows.batteryHome, color: 'var(--sac-battery)' },
+          { name: 'lưới', w: flows.gridHome, color: 'var(--sac-grid)' },
         ].filter((p) => p.w > 0)
       : [];
-    const body = html`
-      <b class="num">${hero?.value ?? '—'}</b>
-      <span>${hero?.unit ?? 'W'} nhà đang dùng</span>
-      ${parts.length ? html`<span class="mix">${parts.map((p) => html`<i style="flex:${p.w} 1 0;background:${p.color}"></i>`)}</span>` : nothing}
+    const unknown = flows ? (load ?? 0) - parts.reduce((sum, p) => sum + p.w, 0) : 0;
+    const top = [...parts].sort((a, b) => b.w - a.w)[0];
+    const origin = top && load && load > threshold && top.w >= unknown ? `${Math.round((top.w / load) * 100)}% từ ${top.name}` : undefined;
+    const mix = unknown > threshold ? [...parts, { name: '', w: unknown, color: 'var(--sac-border)' }] : parts;
+    const home = html`
+      <span class="label">Nhà đang dùng</span>
+      ${this._figure(load === undefined ? undefined : heroPower(load))}
     `;
-    return this._config?.entities.load
-      ? html`<button class="hero" @click=${() => this._moreInfo('load')}>${body}</button>`
-      : html`<div class="hero">${body}</div>`;
+    stats.push(html`
+      <div class="stat">
+        ${entities?.load ? html`<button class="main" @click=${() => this._moreInfo('load')}>${home}</button>` : html`<div class="main">${home}</div>`}
+        ${mix.length
+          ? html`<span class="mix">${mix.map((p) => html`<i style="flex:${p.w} 1 0;background:${p.color}"></i>`)}</span>`
+          : html`<span class="gauge"></span>`}
+        ${origin ? html`<span class="sub">${origin}</span>` : nothing}
+      </div>
+    `);
+
+    return html`<section class="lead" style="--cols:${stats.length}">${stats}</section>`;
   }
 
-  private _renderReserve(runtime: number | undefined, online: boolean | undefined, selfUse: number | undefined) {
+  private _figure(v: { value: string; unit: string } | undefined) {
+    return html`<b class="num">${v?.value ?? '—'}${v ? html`<small>${v.unit}</small>` : nothing}</b>`;
+  }
+
+  private _gauge(percent: number | undefined, color: string) {
+    const width = percent === undefined ? 0 : Math.min(100, Math.max(0, percent));
+    return html`<span class="gauge"><span style="width:${width}%;background:${color}"></span></span>`;
+  }
+
+  /** Dải hạt: Solar và pin đi xuống, lưới đi lên từ hàng dưới, cùng chạy về cột Nhà. */
+  private _renderLinks(power: Power) {
+    const entities = this._config?.entities;
+    const threshold = this._config?.threshold ?? 10;
+    const columns = (entities?.pv ? 1 : 0) + (entities?.battery ? 1 : 0) + 1;
+    const center = (i: number) => ((i + 0.5) / columns) * 300;
+    const home = center(columns - 1);
+    const lane = (from: number, y: number, start: number) =>
+      `M${from} ${start}C${from} ${y} ${from + 12} ${y} ${from + 24} ${y}L${home - 24} ${y}C${home - 12} ${y} ${home} ${y} ${home} 0`;
+    const rows = SOURCES.filter(({ key }) => entities?.[key]);
+    return html`
+      <div class="links">
+        ${svg`
+          <svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
+            ${rows.map(({ key, color }, i) => {
+              const d = key === 'grid' ? lane(36, 16, 24) : lane(center(i), key === 'pv' ? 8 : 12, 0);
+              const w = power[key] ?? 0;
+              const active = Math.abs(w) > threshold;
+              return svg`
+                <path class="track" d=${d}></path>
+                <path
+                  class="flow ${active ? '' : 'idle'}"
+                  d=${d}
+                  stroke=${color}
+                  data-key=${key}
+                  data-rate=${active ? 1 / flowDuration(w) : 0}
+                  data-reverse=${w < 0 ? '1' : ''}
+                ></path>
+              `;
+            })}
+          </svg>
+        `}
+      </div>
+    `;
+  }
+
+  private _renderReserve(power: Power, runtime: number | undefined, online: boolean | undefined, selfUse: number | undefined) {
+    const entities = this._config?.entities;
+    const threshold = this._config?.threshold ?? 10;
     const tomorrow = this._energy('forecast_tomorrow');
     // Hệ không nối lưới thì pin luôn là nguồn dự phòng, không có chuyện "mất điện".
-    const offGrid = online === false || !this._config?.entities.grid;
+    const offGrid = online === false || !entities?.grid;
+    const grid = power.grid;
+    const gridNote = grid === undefined || Math.abs(grid) <= threshold ? '' : grid > 0 ? ' · mua' : ' · phát';
     const items = [
       runtime !== undefined ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ' } : undefined,
       selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%` } : undefined,
       tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh' } : undefined,
     ].filter((item) => item !== undefined);
-    if (!items.length) return nothing;
+    if (!items.length && !entities?.grid) return nothing;
     return html`
       <dl class="reserve">
+        ${entities?.grid
+          ? html`<div>
+              <dt><i style="background:var(--sac-grid)"></i>Lưới${gridNote}</dt>
+              <dd class="num"><button class="fact" @click=${() => this._moreInfo('grid')}>${grid === undefined ? '—' : formatPower(grid)}</button></dd>
+            </div>`
+          : nothing}
         ${items.map(
           (item) => html`<div><dt>${item.label}</dt><dd class="num">${item.value}${item.unit ? html` <small>${item.unit}</small>` : nothing}</dd></div>`,
         )}
@@ -394,8 +450,6 @@ export class SolarAlmanacCard extends LitElement {
 
   private _renderFine() {
     const kwh = (v: number | undefined) => (v === undefined ? undefined : `${formatNumber(v)} kWh`);
-    const pvToday = this._energy('pv_today');
-    const forecast = this._energy('forecast_today');
     const bought = this._energy('grid_import_today');
     const sold = this._energy('grid_export_today');
     const savings = this._value('savings_month');
@@ -404,7 +458,6 @@ export class SolarAlmanacCard extends LitElement {
     const freq = this._value('grid_frequency');
     const part = (v: number | undefined) => (v === undefined ? '—' : formatNumber(v));
     const rows: Array<[string, string | undefined, EntityKey?]> = [
-      ['Solar hôm nay', pvToday === undefined ? undefined : forecast === undefined ? kwh(pvToday) : `${formatNumber(pvToday)} / ${formatNumber(forecast)} kWh`],
       ['Tiết kiệm tháng', savings === undefined ? undefined : `${formatNumber(savings, 0)} đ`],
       ['Tải hôm nay', kwh(this._energy('load_today'))],
       ['Mua / phát', bought === undefined && sold === undefined ? undefined : `${part(bought)} / ${part(sold)} kWh`],
@@ -539,9 +592,8 @@ export class SolarAlmanacCard extends LitElement {
         <div class="page">
           ${this._renderBand(now, online)}
           ${this._alerts().map((text) => html`<p class="alert">${text}</p>`)}
-          <section class="live">
-            ${this._renderSources(power)} ${this._renderHero(load, unread ? undefined : flows)} ${this._renderReserve(runtime, online, selfUse)}
-          </section>
+          ${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}
+          ${this._renderReserve(power, runtime, online, selfUse)}
           ${status ? html`<p class="say"><b>${status.lead}</b> ${status.rest ?? ''}</p>` : nothing}
           ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
@@ -651,23 +703,21 @@ export class SolarAlmanacCard extends LitElement {
         border-radius: calc(var(--u) * 4);
         padding: 0 calc(var(--u) * 7);
       }
-      .live {
+      .lead {
         display: grid;
-        grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 16), 1fr) calc(var(--u) * 158) auto;
-        align-items: stretch;
-        padding: calc(var(--u) * 12) calc(var(--u) * 14) calc(var(--u) * 4);
+        grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+        gap: calc(var(--u) * 12);
+        padding: calc(var(--u) * 12) calc(var(--u) * 14) 0;
       }
-      .sources {
-        display: grid;
-        grid-auto-rows: 1fr;
-        min-width: 0;
-      }
-      .row {
+      .stat {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         min-width: 0;
-        padding: calc(var(--u) * 3) 0;
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
       }
       .label,
       .reserve dt {
@@ -675,45 +725,63 @@ export class SolarAlmanacCard extends LitElement {
         color: var(--sac-dim);
         white-space: nowrap;
       }
-      /* SOC là số quan trọng nhất của dòng pin: dùng bộ số, to và đậm hơn nhãn. */
-      .row .label .pct {
-        font-size: calc(var(--u) * 17);
-        line-height: 1;
-        color: var(--sac-fg);
-      }
-      .label i {
+      .label i,
+      .reserve dt i {
         display: inline-block;
         width: calc(var(--u) * 9);
         height: calc(var(--u) * 9);
         border-radius: calc(var(--u) * 2);
         margin-right: calc(var(--u) * 4);
       }
-      .row .num,
-      .reserve dd {
-        font-size: calc(var(--u) * 23);
-        line-height: 1.05;
+      .main .num {
+        font-size: calc(var(--u) * 58);
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        color: var(--sac-fg);
         white-space: nowrap;
       }
-      .soc {
-        display: block;
-        height: calc(var(--u) * 3);
-        margin-top: calc(var(--u) * 3);
-        width: 76%;
+      .main small {
+        margin-left: calc(var(--u) * 3);
+        font-family: var(--ha-font-family-body, Roboto, sans-serif);
+        font-size: calc(var(--u) * 14);
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--sac-dim);
+      }
+      .gauge,
+      .mix {
+        display: flex;
+        height: calc(var(--u) * 5);
+        margin-top: calc(var(--u) * 4);
+      }
+      .gauge {
         background: var(--sac-border);
         border-radius: calc(var(--u) * 2);
         overflow: hidden;
       }
-      .soc span {
+      .gauge span {
         display: block;
         height: 100%;
-        background: var(--sac-battery);
+      }
+      .mix {
+        gap: calc(var(--u) * 2);
+      }
+      .mix i {
+        min-width: calc(var(--u) * 3);
+        border-radius: calc(var(--u) * 2);
+      }
+      .sub {
+        margin-top: calc(var(--u) * 4);
+        font-size: calc(var(--u) * 12.5);
+        color: var(--sac-dim);
+        white-space: nowrap;
       }
       .links {
-        position: relative;
+        height: calc(var(--u) * 24);
+        margin: calc(var(--u) * 5) calc(var(--u) * 14) calc(var(--u) * 2);
       }
       .links svg {
-        position: absolute;
-        inset: 0;
+        display: block;
         width: 100%;
         height: 100%;
         overflow: visible;
@@ -735,45 +803,25 @@ export class SolarAlmanacCard extends LitElement {
       .flow.idle {
         display: none;
       }
-      .hero {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-width: 0;
-        text-align: center;
-        font-size: calc(var(--u) * 13);
-        color: var(--sac-dim);
-      }
-      .hero .num {
-        font-size: calc(var(--u) * 92);
-        line-height: 1.08;
-        letter-spacing: -0.02em;
-        color: var(--sac-fg);
-      }
-      .mix {
-        display: flex;
-        gap: calc(var(--u) * 2);
-        width: 84%;
-        height: calc(var(--u) * 6);
-        margin-top: calc(var(--u) * 5);
-      }
-      .mix i {
-        min-width: calc(var(--u) * 3);
-        border-radius: calc(var(--u) * 2);
-      }
       dl,
       dd {
         margin: 0;
       }
       .reserve {
         display: grid;
-        grid-auto-rows: 1fr;
-        align-items: center;
-        box-sizing: border-box;
-        width: calc(var(--u) * 84);
-        padding-left: calc(var(--u) * 4);
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(0, 1fr);
+        gap: calc(var(--u) * 8);
+        padding: calc(var(--u) * 2) calc(var(--u) * 14) calc(var(--u) * 2);
+      }
+      .reserve div {
+        position: relative;
         min-width: 0;
+      }
+      .reserve dd {
+        font-size: calc(var(--u) * 21);
+        line-height: 1.1;
+        white-space: nowrap;
       }
       .reserve small {
         font-family: var(--ha-font-family-body, Roboto, sans-serif);
@@ -881,9 +929,6 @@ export class SolarAlmanacCard extends LitElement {
         font-size: calc(var(--u) * 12.5);
         color: var(--sac-dim);
       }
-      .fine div:first-child {
-        grid-column: 1 / -1;
-      }
       .fine div {
         position: relative;
         display: flex;
@@ -964,8 +1009,8 @@ export class SolarAlmanacCard extends LitElement {
         color: var(--sac-dim);
       }
       @media (hover: hover) {
-        .row:hover .label,
-        button.hero:hover span:not(.mix),
+        .main:hover .label,
+        button.sub:hover,
         .about:hover span,
         .cell:hover .hour {
           color: var(--sac-fg);
@@ -974,17 +1019,20 @@ export class SolarAlmanacCard extends LitElement {
           border-color: var(--sac-fg);
         }
       }
+      /* Card hẹp: bớt cỡ để cột ba số vẫn chứa đủ "2,40 kW". */
+      @container (max-width: 400px) {
+        .lead {
+          gap: calc(var(--u) * 8);
+        }
+        .main .num {
+          font-size: calc(var(--u) * 48);
+        }
+        .main small {
+          margin-left: calc(var(--u) * 2);
+          font-size: calc(var(--u) * 12.5);
+        }
+      }
       @container (max-width: 367px) {
-        .live {
-          grid-template-columns: calc(var(--u) * 112) minmax(calc(var(--u) * 6), 1fr) calc(var(--u) * 158);
-        }
-        .reserve {
-          grid-column: 1 / -1;
-          width: auto;
-          grid-auto-flow: column;
-          grid-auto-columns: minmax(0, 1fr);
-          padding: calc(var(--u) * 8) 0 0;
-        }
         .title {
           display: none;
         }
