@@ -249,7 +249,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Tương tác:** hover, chạm hoặc focus một ô thì dòng đầu dải đổi từ chú giải sang số liệu của giờ đó, đậm 600 màu Mực Nâu.
 
 ### Chữ nhỏ cuối tờ
-- **Style:** lưới hai cột phía dưới đường kẻ 1px; nhãn Mực Nhạt bên trái, giá trị Mực Nâu 500 bên phải. Sản lượng hôm nay đã ở cột Solar nên không lặp lại ở đây.
+- **Style:** lưới hai cột phía dưới đường kẻ 1px; nhãn Mực Nhạt bên trái, giá trị Mực Nâu 500 bên phải. Sản lượng hôm nay đã ở cột Solar nên không lặp lại ở đây. Bấm một dòng mở lịch sử entity của nó; dòng Mua / phát chia hai nửa, mỗi nửa một entity.
 
 ### Khu điều khiển
 - **Cấu trúc:** nằm sau chữ nhỏ, kẻ 1px Viền Giấy phía trên, cỡ `small`. Mỗi dòng một việc: nhãn Mực Nhạt kèm giá trị Mực Nâu 500 bên trái (bấm mở chi tiết), nút bên phải. Hàng hẹp không đủ chỗ thì nút xuống dòng riêng bên dưới, căn phải, và các nút tự xuống dòng trong hàng của nó; ba mức EOD mặc định vẫn vừa một dòng ở card 280px. Dòng quạt: số vòng/phút cao nhất trong các sensor, `Tắt` khi quạt tắt, nút `Tự động`. Dòng EOD lưới: một nút cho mỗi mức trong `eod_levels`; giá trị hiện tại không trùng mức nào thì hiện số cạnh nhãn.
