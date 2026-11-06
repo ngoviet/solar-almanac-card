@@ -995,16 +995,19 @@ var $ = class extends U {
 			t === void 0 ? void 0 : {
 				label: s ? "Pin còn" : "Nếu mất điện",
 				value: `~${G(t)}`,
-				unit: "giờ"
+				unit: "giờ",
+				key: "battery_soc"
 			},
 			r === void 0 ? void 0 : {
 				label: "Tự cấp",
-				value: `${r}%`
+				value: `${r}%`,
+				key: "grid_import_today"
 			},
 			o === void 0 ? void 0 : {
 				label: "Ngày mai",
 				value: `${Math.round(o)}`,
-				unit: "kWh"
+				unit: "kWh",
+				key: "forecast_tomorrow"
 			}
 		].filter((e) => e !== void 0);
 		return !u.length && !i?.grid ? P : M`
@@ -1013,7 +1016,7 @@ var $ = class extends U {
               <dt><i style="background:var(--sac-grid)"></i>Lưới${l}</dt>
               <dd class="num"><button class="fact" @click=${() => this._moreInfo("grid")}>${c === void 0 ? "—" : K(c)}</button></dd>
             </div>` : P}
-        ${u.map((e) => M`<div><dt>${e.label}</dt><dd class="num">${e.value}${e.unit ? M` <small>${e.unit}</small>` : P}</dd></div>`)}
+        ${u.map((e) => M`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? M` <small>${e.unit}</small>` : P}</button></dd></div>`)}
       </dl>
     `;
 	}
@@ -1058,7 +1061,7 @@ var $ = class extends U {
 	}
 	_renderFine() {
 		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._energy("grid_import_today"), r = this._energy("grid_export_today"), i = this._value("savings_month"), a = this._cellDelta(), o = this._value("inverter_temperature"), s = this._value("grid_frequency"), c = (e) => e === void 0 ? "—" : G(e), l = (e, t, n = "") => this._config?.entities[e] ? M`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, u = [
-			["Tiết kiệm tháng", i === void 0 ? void 0 : `${G(i, 0)} đ`],
+			[this._config?.savings_label ?? "Tiết kiệm tháng", i === void 0 ? void 0 : l("savings_month", `${G(i, 0)} đ`)],
 			["Tải hôm nay", t === void 0 ? void 0 : l("load_today", t)],
 			["Mua / phát", n === void 0 && r === void 0 ? void 0 : M`${l("grid_import_today", c(n), "left")} / ${l("grid_export_today", `${c(r)} kWh`, "right")}`],
 			["Lệch cell", a === void 0 ? void 0 : l("cell_delta", `${G(a, 0)} mV`)],

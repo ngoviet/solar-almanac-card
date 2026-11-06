@@ -377,9 +377,9 @@ export class SolarAlmanacCard extends LitElement {
     const grid = power.grid;
     const gridNote = grid === undefined || Math.abs(grid) <= threshold ? '' : grid > 0 ? ' · mua' : ' · phát';
     const items = [
-      runtime !== undefined ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ' } : undefined,
-      selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%` } : undefined,
-      tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh' } : undefined,
+      runtime !== undefined ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ', key: 'battery_soc' as EntityKey } : undefined,
+      selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%`, key: 'grid_import_today' as EntityKey } : undefined,
+      tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh', key: 'forecast_tomorrow' as EntityKey } : undefined,
     ].filter((item) => item !== undefined);
     if (!items.length && !entities?.grid) return nothing;
     return html`
@@ -391,7 +391,7 @@ export class SolarAlmanacCard extends LitElement {
             </div>`
           : nothing}
         ${items.map(
-          (item) => html`<div><dt>${item.label}</dt><dd class="num">${item.value}${item.unit ? html` <small>${item.unit}</small>` : nothing}</dd></div>`,
+          (item) => html`<div><dt>${item.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(item.key)}>${item.value}${item.unit ? html` <small>${item.unit}</small>` : nothing}</button></dd></div>`,
         )}
       </dl>
     `;
@@ -461,7 +461,7 @@ export class SolarAlmanacCard extends LitElement {
     const open = (key: EntityKey, text: string, side = '') =>
       this._config?.entities[key] ? html`<button class="fact ${side}" @click=${() => this._moreInfo(key)}>${text}</button>` : text;
     const rows: Array<[string, unknown]> = [
-      ['Tiết kiệm tháng', savings === undefined ? undefined : `${formatNumber(savings, 0)} đ`],
+      [this._config?.savings_label ?? 'Tiết kiệm tháng', savings === undefined ? undefined : open('savings_month', `${formatNumber(savings, 0)} đ`)],
       ['Tải hôm nay', load === undefined ? undefined : open('load_today', load)],
       ['Mua / phát', bought === undefined && sold === undefined ? undefined : html`${open('grid_import_today', part(bought), 'left')} / ${open('grid_export_today', `${part(sold)} kWh`, 'right')}`],
       ['Lệch cell', delta === undefined ? undefined : open('cell_delta', `${formatNumber(delta, 0)} mV`)],
