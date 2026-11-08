@@ -1069,15 +1069,20 @@ var $ = class extends U {
     `;
 	}
 	_renderFine() {
-		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._energy("grid_import_today"), r = this._energy("grid_export_today"), i = this._value("savings_month"), a = this._cellDelta(), o = this._value("inverter_temperature"), s = this._value("grid_frequency"), c = (e) => e === void 0 ? "—" : G(e), l = (e, t, n = "") => this._config?.entities[e] ? M`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, u = [
-			[this._config?.savings_label ?? "Tiết kiệm tháng", i === void 0 ? void 0 : l("savings_month", `${G(i, 0)} đ`)],
-			["Tải hôm nay", t === void 0 ? void 0 : l("load_today", t)],
-			["Mua / phát", n === void 0 && r === void 0 ? void 0 : M`${l("grid_import_today", c(n), "left")} / ${l("grid_export_today", `${c(r)} kWh`, "right")}`],
-			["Lệch cell", a === void 0 ? void 0 : l("cell_delta", `${G(a, 0)} mV`)],
-			["Nhiệt biến tần", o === void 0 ? void 0 : l("inverter_temperature", `${G(o, 0)} ${this._temperatureUnit()}`)],
-			["Tần số lưới", s === void 0 ? void 0 : l("grid_frequency", `${G(s)} Hz`)]
+		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = (e) => e === void 0 ? "—" : G(e), s = (e, t, n = "") => this._config?.entities[e] ? M`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, c = (e, t) => {
+			let n = this._energy(e), r = this._energy(t);
+			return n === void 0 && r === void 0 ? void 0 : M`${s(e, o(n), "left")} / ${s(t, `${o(r)} kWh`, "right")}`;
+		}, l = [
+			[this._config?.savings_label ?? "Tiết kiệm tháng", n === void 0 ? void 0 : s("savings_month", `${G(n, 0)} đ`)],
+			["Tải hôm nay", t === void 0 ? void 0 : s("load_today", t)],
+			["Mua / phát", c("grid_import_today", "grid_export_today")],
+			["Sạc / xả hôm nay", c("battery_charge_today", "battery_discharge_today")],
+			[this._config?.battery_period_label ?? "Sạc / xả tháng", c("battery_charge_period", "battery_discharge_period")],
+			["Lệch cell", r === void 0 ? void 0 : s("cell_delta", `${G(r, 0)} mV`)],
+			["Nhiệt biến tần", i === void 0 ? void 0 : s("inverter_temperature", `${G(i, 0)} ${this._temperatureUnit()}`)],
+			["Tần số lưới", a === void 0 ? void 0 : s("grid_frequency", `${G(a)} Hz`)]
 		].filter((e) => e[1] !== void 0);
-		return u.length ? M`<dl class="fine">${u.map(([e, t]) => M`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : P;
+		return l.length ? M`<dl class="fine">${l.map(([e, t]) => M`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : P;
 	}
 	_renderFan() {
 		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();

@@ -49,6 +49,8 @@ export interface SolarAlmanacCardConfig {
   inverter_temperature_warn?: number;
   /** Nhãn dòng `savings_month`, khi số tiết kiệm không tính theo tháng dương lịch. */
   savings_label?: string;
+  /** Nhãn dòng sạc/xả theo kỳ (`battery_charge_period`, `battery_discharge_period`). */
+  battery_period_label?: string;
   /** Các mức SOC (%) bấm nhanh cho `entities.eod`. */
   eod_levels?: number[];
   entities: {
@@ -62,6 +64,11 @@ export interface SolarAlmanacCardConfig {
     load_today?: EntityRef;
     grid_import_today?: EntityRef;
     grid_export_today?: EntityRef;
+    /** Năng lượng sạc vào / xả ra khỏi pin trong ngày và trong kỳ (Wh, kWh hoặc MWh). */
+    battery_charge_today?: EntityRef;
+    battery_discharge_today?: EntityRef;
+    battery_charge_period?: EntityRef;
+    battery_discharge_period?: EntityRef;
     /** Dự báo kWh; thuộc tính `detailedHourly` của Solcast tạo ra dải giờ. */
     forecast_today?: EntityRef;
     forecast_tomorrow?: EntityRef;
