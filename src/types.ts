@@ -45,6 +45,8 @@ export interface SolarAlmanacCardConfig {
   layout?: 'columns' | 'flow';
   /** Công suất (W) ứng với dây dày nhất ở `layout: flow`; mặc định 5000. */
   flow_max_power?: number;
+  /** Từng MPPT / chuỗi PV, hiện thành các ô trên nút Solar ở `layout: flow`. */
+  mppts?: MpptConfig[];
   /** Dung lượng pin (kWh), dùng để tính thời gian còn chạy và thời gian đầy. */
   battery_capacity?: number;
   /** SOC (%) biến tần ngừng xả khi mất lưới. */
@@ -101,3 +103,15 @@ export interface SolarAlmanacCardConfig {
 }
 
 export type FlowKey = 'pv' | 'battery' | 'grid';
+
+export interface MpptConfig {
+  name?: string;
+  /** Công suất (W hoặc kW). */
+  power: EntityRef;
+  /** Điện áp phía tấm pin (V). */
+  voltage?: EntityRef;
+  /** Dòng phía tấm pin (A). */
+  current?: EntityRef;
+  /** Năng lượng hôm nay (Wh, kWh hoặc MWh). */
+  energy_today?: EntityRef;
+}

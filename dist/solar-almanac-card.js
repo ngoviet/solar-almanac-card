@@ -253,86 +253,86 @@ var S = class extends HTMLElement {
 };
 S.elementStyles = [], S.shadowRootOptions = { mode: "open" }, S[v("elementProperties")] = /* @__PURE__ */ new Map(), S[v("finalized")] = /* @__PURE__ */ new Map(), ee?.({ ReactiveElement: S }), (h.reactiveElementVersions ??= []).push("2.1.2");
 // ../solar-almanac-card/node_modules/lit-html/lit-html.js
-var C = globalThis, w = (e) => e, T = C.trustedTypes, te = T ? T.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, ne = "$lit$", E = `lit$${Math.random().toFixed(9).slice(2)}$`, re = "?" + E, ie = `<${re}>`, D = document, O = () => D.createComment(""), k = (e) => e === null || typeof e != "object" && typeof e != "function", A = Array.isArray, ae = (e) => A(e) || typeof e?.[Symbol.iterator] == "function", j = "[ 	\n\f\r]", M = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, oe = /-->/g, se = />/g, N = RegExp(`>|${j}(?:([^\\s"'>=/]+)(${j}*=${j}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ce = /'/g, le = /"/g, ue = /^(?:script|style|textarea|title)$/i, de = (e) => (t, ...n) => ({
+var C = globalThis, w = (e) => e, T = C.trustedTypes, E = T ? T.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, te = "$lit$", D = `lit$${Math.random().toFixed(9).slice(2)}$`, ne = "?" + D, re = `<${ne}>`, O = document, k = () => O.createComment(""), A = (e) => e === null || typeof e != "object" && typeof e != "function", j = Array.isArray, ie = (e) => j(e) || typeof e?.[Symbol.iterator] == "function", M = "[ 	\n\f\r]", N = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ae = /-->/g, oe = />/g, P = RegExp(`>|${M}(?:([^\\s"'>=/]+)(${M}*=${M}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), se = /'/g, ce = /"/g, le = /^(?:script|style|textarea|title)$/i, ue = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}), P = de(1), F = de(2), I = Symbol.for("lit-noChange"), L = Symbol.for("lit-nothing"), fe = /* @__PURE__ */ new WeakMap(), R = D.createTreeWalker(D, 129);
-function pe(e, t) {
-	if (!A(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-	return te === void 0 ? t : te.createHTML(t);
+}), F = ue(1), I = ue(2), L = Symbol.for("lit-noChange"), R = Symbol.for("lit-nothing"), de = /* @__PURE__ */ new WeakMap(), z = O.createTreeWalker(O, 129);
+function fe(e, t) {
+	if (!j(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+	return E === void 0 ? t : E.createHTML(t);
 }
-var me = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = M;
+var pe = (e, t) => {
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = N;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === M ? c[1] === "!--" ? o = oe : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = N) : (ue.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = N) : o = se : o === N ? c[0] === ">" ? (o = i ?? M, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? N : c[3] === "\"" ? le : ce) : o === le || o === ce ? o = N : o === oe || o === se ? o = M : (o = N, i = void 0);
-		let d = o === N && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === M ? n + ie : l >= 0 ? (r.push(s), n.slice(0, l) + ne + n.slice(l) + E + d) : n + E + (l === -2 ? t : d);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === N ? c[1] === "!--" ? o = ae : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = P) : (le.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = P) : o = oe : o === P ? c[0] === ">" ? (o = i ?? N, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? P : c[3] === "\"" ? ce : se) : o === ce || o === se ? o = P : o === ae || o === oe ? o = N : (o = P, i = void 0);
+		let d = o === P && e[t + 1].startsWith("/>") ? " " : "";
+		a += o === N ? n + re : l >= 0 ? (r.push(s), n.slice(0, l) + te + n.slice(l) + D + d) : n + D + (l === -2 ? t : d);
 	}
-	return [pe(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
-}, z = class e {
+	return [fe(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
+}, B = class e {
 	constructor({ strings: t, _$litType$: n }, r) {
 		let i;
 		this.parts = [];
-		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = me(t, n);
-		if (this.el = e.createElement(l, r), R.currentNode = this.el.content, n === 2 || n === 3) {
+		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = pe(t, n);
+		if (this.el = e.createElement(l, r), z.currentNode = this.el.content, n === 2 || n === 3) {
 			let e = this.el.content.firstChild;
 			e.replaceWith(...e.childNodes);
 		}
-		for (; (i = R.nextNode()) !== null && c.length < s;) {
+		for (; (i = z.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
-				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(ne)) {
-					let t = u[o++], n = i.getAttribute(e).split(E), r = /([.?@])?(.*)/.exec(t);
+				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(te)) {
+					let t = u[o++], n = i.getAttribute(e).split(D), r = /([.?@])?(.*)/.exec(t);
 					c.push({
 						type: 1,
 						index: a,
 						name: r[2],
 						strings: n,
-						ctor: r[1] === "." ? ge : r[1] === "?" ? _e : r[1] === "@" ? ve : H
+						ctor: r[1] === "." ? he : r[1] === "?" ? ge : r[1] === "@" ? _e : U
 					}), i.removeAttribute(e);
-				} else e.startsWith(E) && (c.push({
+				} else e.startsWith(D) && (c.push({
 					type: 6,
 					index: a
 				}), i.removeAttribute(e));
-				if (ue.test(i.tagName)) {
-					let e = i.textContent.split(E), t = e.length - 1;
+				if (le.test(i.tagName)) {
+					let e = i.textContent.split(D), t = e.length - 1;
 					if (t > 0) {
 						i.textContent = T ? T.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], O()), R.nextNode(), c.push({
+						for (let n = 0; n < t; n++) i.append(e[n], k()), z.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
-						i.append(e[t], O());
+						i.append(e[t], k());
 					}
 				}
 			} else if (i.nodeType === 8) {
-				if (i.data === re) c.push({
+				if (i.data === ne) c.push({
 					type: 2,
 					index: a
 				});
 				else {
 					let e = -1;
-					for (; (e = i.data.indexOf(E, e + 1)) !== -1;) c.push({
+					for (; (e = i.data.indexOf(D, e + 1)) !== -1;) c.push({
 						type: 7,
 						index: a
-					}), e += E.length - 1;
+					}), e += D.length - 1;
 				}
 			}
 			a++;
 		}
 	}
 	static createElement(e, t) {
-		let n = D.createElement("template");
+		let n = O.createElement("template");
 		return n.innerHTML = e, n;
 	}
 };
-function B(e, t, n = e, r) {
-	if (t === I) return t;
-	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = k(t) ? void 0 : t._$litDirective$;
-	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = B(e, i._$AS(e, t.values), i, r)), t;
+function V(e, t, n = e, r) {
+	if (t === L) return t;
+	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = A(t) ? void 0 : t._$litDirective$;
+	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = V(e, i._$AS(e, t.values), i, r)), t;
 }
-var he = class {
+var me = class {
 	constructor(e, t) {
 		this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
 	}
@@ -343,28 +343,28 @@ var he = class {
 		return this._$AM._$AU;
 	}
 	u(e) {
-		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? D).importNode(t, !0);
-		R.currentNode = r;
-		let i = R.nextNode(), a = 0, o = 0, s = n[0];
+		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? O).importNode(t, !0);
+		z.currentNode = r;
+		let i = z.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
 			if (a === s.index) {
 				let t;
-				s.type === 2 ? t = new V(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new ye(i, this, e)), this._$AV.push(t), s = n[++o];
+				s.type === 2 ? t = new H(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new ve(i, this, e)), this._$AV.push(t), s = n[++o];
 			}
-			a !== s?.index && (i = R.nextNode(), a++);
+			a !== s?.index && (i = z.nextNode(), a++);
 		}
-		return R.currentNode = D, r;
+		return z.currentNode = O, r;
 	}
 	p(e) {
 		let t = 0;
 		for (let n of this._$AV) n !== void 0 && (n.strings === void 0 ? n._$AI(e[t]) : (n._$AI(e, n, t), t += n.strings.length - 2)), t++;
 	}
-}, V = class e {
+}, H = class e {
 	get _$AU() {
 		return this._$AM?._$AU ?? this._$Cv;
 	}
 	constructor(e, t, n, r) {
-		this.type = 2, this._$AH = L, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
+		this.type = 2, this._$AH = R, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
 	}
 	get parentNode() {
 		let e = this._$AA.parentNode, t = this._$AM;
@@ -377,7 +377,7 @@ var he = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = B(this, e, t), k(e) ? e === L || e == null || e === "" ? (this._$AH !== L && this._$AR(), this._$AH = L) : e !== this._$AH && e !== I && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? ae(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = V(this, e, t), A(e) ? e === R || e == null || e === "" ? (this._$AH !== R && this._$AR(), this._$AH = R) : e !== this._$AH && e !== L && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? ie(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -386,24 +386,24 @@ var he = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== L && k(this._$AH) ? this._$AA.nextSibling.data = e : this.T(D.createTextNode(e)), this._$AH = e;
+		this._$AH !== R && A(this._$AH) ? this._$AA.nextSibling.data = e : this.T(O.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
-		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = z.createElement(pe(n.h, n.h[0]), this.options)), n);
+		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = B.createElement(fe(n.h, n.h[0]), this.options)), n);
 		if (this._$AH?._$AD === r) this._$AH.p(t);
 		else {
-			let e = new he(r, this), n = e.u(this.options);
+			let e = new me(r, this), n = e.u(this.options);
 			e.p(t), this.T(n), this._$AH = e;
 		}
 	}
 	_$AC(e) {
-		let t = fe.get(e.strings);
-		return t === void 0 && fe.set(e.strings, t = new z(e)), t;
+		let t = de.get(e.strings);
+		return t === void 0 && de.set(e.strings, t = new B(e)), t;
 	}
 	k(t) {
-		A(this._$AH) || (this._$AH = [], this._$AR());
+		j(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
-		for (let a of t) i === n.length ? n.push(r = new e(this.O(O()), this.O(O()), this, this.options)) : r = n[i], r._$AI(a), i++;
+		for (let a of t) i === n.length ? n.push(r = new e(this.O(k()), this.O(k()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
 	}
 	_$AR(e = this._$AA.nextSibling, t) {
@@ -415,7 +415,7 @@ var he = class {
 	setConnected(e) {
 		this._$AM === void 0 && (this._$Cv = e, this._$AP?.(e));
 	}
-}, H = class {
+}, U = class {
 	get tagName() {
 		return this.element.tagName;
 	}
@@ -423,47 +423,47 @@ var he = class {
 		return this._$AM._$AU;
 	}
 	constructor(e, t, n, r, i) {
-		this.type = 1, this._$AH = L, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = L;
+		this.type = 1, this._$AH = R, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = R;
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = B(this, e, t, 0), a = !k(e) || e !== this._$AH && e !== I, a && (this._$AH = e);
+		if (i === void 0) e = V(this, e, t, 0), a = !A(e) || e !== this._$AH && e !== L, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = B(this, r[n + o], t, o), s === I && (s = this._$AH[o]), a ||= !k(s) || s !== this._$AH[o], s === L ? e = L : e !== L && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = V(this, r[n + o], t, o), s === L && (s = this._$AH[o]), a ||= !A(s) || s !== this._$AH[o], s === R ? e = R : e !== R && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
 	j(e) {
-		e === L ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
+		e === R ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
 	}
-}, ge = class extends H {
+}, he = class extends U {
 	constructor() {
 		super(...arguments), this.type = 3;
 	}
 	j(e) {
-		this.element[this.name] = e === L ? void 0 : e;
+		this.element[this.name] = e === R ? void 0 : e;
 	}
-}, _e = class extends H {
+}, ge = class extends U {
 	constructor() {
 		super(...arguments), this.type = 4;
 	}
 	j(e) {
-		this.element.toggleAttribute(this.name, !!e && e !== L);
+		this.element.toggleAttribute(this.name, !!e && e !== R);
 	}
-}, ve = class extends H {
+}, _e = class extends U {
 	constructor(e, t, n, r, i) {
 		super(e, t, n, r, i), this.type = 5;
 	}
 	_$AI(e, t = this) {
-		if ((e = B(this, e, t, 0) ?? L) === I) return;
-		let n = this._$AH, r = e === L && n !== L || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== L && (n === L || r);
+		if ((e = V(this, e, t, 0) ?? R) === L) return;
+		let n = this._$AH, r = e === R && n !== R || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== R && (n === R || r);
 		r && this.element.removeEventListener(this.name, this, n), i && this.element.addEventListener(this.name, this, e), this._$AH = e;
 	}
 	handleEvent(e) {
 		typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
 	}
-}, ye = class {
+}, ve = class {
 	constructor(e, t, n) {
 		this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = n;
 	}
@@ -471,18 +471,18 @@ var he = class {
 		return this._$AM._$AU;
 	}
 	_$AI(e) {
-		B(this, e);
+		V(this, e);
 	}
-}, be = C.litHtmlPolyfillSupport;
-be?.(z, V), (C.litHtmlVersions ??= []).push("3.3.3");
-var xe = (e, t, n) => {
+}, ye = C.litHtmlPolyfillSupport;
+ye?.(B, H), (C.litHtmlVersions ??= []).push("3.3.3");
+var be = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new V(t.insertBefore(O(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new H(t.insertBefore(k(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
-}, U = globalThis, W = class extends S {
+}, xe = globalThis, W = class extends S {
 	constructor() {
 		super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
 	}
@@ -492,7 +492,7 @@ var xe = (e, t, n) => {
 	}
 	update(e) {
 		let t = this.render();
-		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = xe(t, this.renderRoot, this.renderOptions);
+		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = be(t, this.renderRoot, this.renderOptions);
 	}
 	connectedCallback() {
 		super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -501,12 +501,12 @@ var xe = (e, t, n) => {
 		super.disconnectedCallback(), this._$Do?.setConnected(!1);
 	}
 	render() {
-		return I;
+		return L;
 	}
 };
-W._$litElement$ = !0, W.finalized = !0, U.litElementHydrateSupport?.({ LitElement: W });
-var Se = U.litElementPolyfillSupport;
-Se?.({ LitElement: W }), (U.litElementVersions ??= []).push("4.2.2");
+W._$litElement$ = !0, W.finalized = !0, xe.litElementHydrateSupport?.({ LitElement: W });
+var Se = xe.litElementPolyfillSupport;
+Se?.({ LitElement: W }), (xe.litElementVersions ??= []).push("4.2.2");
 // src/font.ts
 var Ce = "d09GMgABAAAAABa0ABEAAAAAMdwAABZUAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhwbhAQcTgZgAIEUCIEgCZwVEQgKtQitTAE2AiQDgRQLTAAEIAWDPgcgDIFWG6wssxERbBwAQK0nIfi/HNBDVFuK+TPETsEJxhUd3cwULzq8UtJi6U2p2fgyj7UURVlpiLr761PeJ2QcjNUQq3bAJY5GyCElOGpF+myEJLP+U23We/9XVUNPlqgxUeIGEUaMEWV9xLyPq2pnEb+Z5se5z5c0afupwJ9L6e9nzuGQ1aERE/om1Iw71DvtRlCtYT1zEHKxiDIVYYDYwqPR7xyQkV8eyEjaATytrEmGZE7lTKk1t5OKdQd25gFgD8IL8PSaNh+hqEISYcSQ/bSEdHcsaZwgmyNJRAkvLuor6u2qryVb/ba/RbQTKqEwHV5IiH5TzX9YgMO5zG2cdlwCNf3CDjwQG9Pa1AZGBMIymWZL+wNElizvw05RBWh0VZj2HtQnTZkA9P/zZ9rOnf9lhhKpKImqpGiAi3L0BP4zI1n7V4avXZZpAeWAbNYCVyHCXZu1BsQqJz2fPl2XonSZss9jqIaILx/wIW139/ezGhSWaY2RiBAhVHXL170bAQRkAIUk7ECQ51MBfDW6yfL0nBIg8nRlSx0QYQD49nCerG06i0MAsZTvvAm7jasM+9wCqmAsttzqVP3iZkpZUhMxfQ0xkVlOlhMV7u3yh4wYjPqbetDFlHJe//Gifx0c9K9q2Ygf3SOgCxA3PlMFUph84o5v6aXKmPRIdxGhQZ1nZJRAut8MBSOEZGnsSxx1nccgYrL9IMLedAg64t/lXzD5tfCca54wLVSCxpa2A/QVNH5pSzxdVaTJjzBqp3HK6A8v+Isk/9dDL2I5K0TbspElLZ4bRitERqsDgEadhQYm7/fUp5/xEkzedC9Hxc5nDg0Z6/5WmOJO0Qm31jKDQfOK0ADHJ9or9Y5N3JPPUJBXuQLAHLZl3qIzugEg1OJuRnVQSw5TSoEbEB22hO+LATDzzMEdAEl5RkcNIdD0PAqiUutAHn8W5Yuq1WbAhHmW22CzYx6IWv//B5Dba9bOzHD5WeZ98jtmry2WWGSV5h8y6G62BcTZvUJpjbFAkfgN+QqQnPyvGBQ2zgV28BtyDJD1yT/VJFMAQYPrS+cZoCrbO96er5Q/8sP0xYKixopWSZrr5f3/7iMI8BRnSeTZP5i9e4b48DEy2SJ9y2vpv72Co/yXRZarlX533gNvAHU6gMpRtgACflkHMNSrDwiQ7qewfGhkE0xKzlbx8sQqGzoC8+2ukHcwJ6WD3O4OuNFgNoLBCQ/mZFBWNg5PCJhqg6nmJJsCt/FHGhzFjhkpJ2RsRhRW5vg0j9ZJJzwvJ+njkGqBs9UMsYoeIdLOpzhV3vU/jY+3Lcn3VBaKosVbkspyS0fqfEqh4wM1MGDPZWQt/U0psazMHeVDVFbBZ2zm5JRmkoCDPFfAfQQupPR1yzlei61dlH+arIDN/qNymVJXEigfPiIsnUccqqUAhcwEEqUTJC4jkhuym/M+gUpAjLtAlguq1DXRorADLgx6caAl50I7fujoKb3/f7uR62CEQdLrmJeu7KSoySeBP0RULj2+OW0qIIEMxwM08s3k7WfcVAC3Au6uQb1jJaROIAPxeiWFq39ELsVSFF6SbjhPu61lMWRm5Whml30FsVxiRQXy1naOsgKERJZZH9XSRT0VtjJTir8Fj5yDEMrA1FVTCtPYxGZApZwpFNie/yxMi1Ato3fq02UfUFFxo+JanxvQkGNEUPl0InfBcUtdUuJea2VjehgtOnHyj8hVH9WtI2aW/tzQ3TRg4NnbWEl/ms5SGOhuwMTFr+OzNwfb+WyYw1uosDh5ZxkiOag29JwAgsOqyqHFg1ZVEGI5TnGMhYT1N+I+V+t4nferAg7GsJt6znkJlYskVne3gqxVJZetVpBcnYIIHA9I9XR0NkYVGtXbiOEmMxQ3Cg4tJlidpBlU//XWN0AfHRiZWUIs6w0E2YNqjbf5M946kwIOKqyMJXM5Yh7HrMgFVuKElTllFS6yKpdYjcuszjNZbWhGNohYnr2NKg3oa/mIVLej1dYxfyfstk3Mvy/Ixwg1B06Uzd+0T6CJAIYQhgiGGAYGQwJDA4YUhiYMLdiiHqRtYNYvn/GKTLSsJyWOokKvilMGUFk5/zCdwBAiC8lvVMumftNXHahcEtjIu49WZbSqwY0x7FSqK7N4NZHV4zhVA7poArlFIHOKEWukwn5+UPaJhpPC6i8QAMn7ulknalP+QmaQVhY0HIDxbxSYoznSBhZjckFczSVZomJxzkkjC8CXz3l80t8sfKFF4nfnE8htWChaOXg5sAKwiusGCUjob7vm5ZAcxz/6nou0/WKZxDosjSwRRDcj4dT5JhPP7+JPYvt9J1pJ+0vJTIUspY8MHZ3n2CDXr8rbn/dnqhnC3CmUpYvuol0cqrz1VWgaKSqm1pPOy6ZTspyDgyzRHjcLV8qkKmSWnxkaBWo9AknfpgMJKQjf1roe5tIU2KRESnc+TczRdnOk7TZMFmbNgZxTMefuIJ6gvAkXnfEeYyOtejfnkC3QnEQQo1rvyZ8ZbzYrbXpf0ZTX/tz9jYrgP4vjOf2yFv5cOxyqp2QKum2Xcel2UpQ2NXWg1lg18cFtd9yy8UMbVTb8wEdglR2XPQbr3Ps7tdoT7BdjyiGyYWBkJ2FYbdNAKkBRIe8WA6rUh6u00ugmTuwpanY4bGxN1/YtsWhmokbfZ+9sddP5tpnvk7/sRRbsj5MjX1bFPt+rIFIJscCrwMryTx1gpVsH+u1mnSl5nfcGFbRoM8fct2DJ2bstwepMpZF5H9VJS32PyrZ5Vyr3AQMohOkBLifzOgDwOVUAxQweEmNRBwAxZ/lE8kDAhEdqkGUdAeQMqjyckxd48CInL3GqMjam8Qr1rNoBQI1T1aGYyRvEWLMDgBanbvuHpNFB0ugiafSQNPpYNgZIGkMsGyMkS8eSOxrOpJ4o7Vs7mVM4ahZ9Twe2ZC65A5QtXDCWLrDVQhqxjrU5go05Eti+A2M7ALa5p2vgwMDk8Wobx8mM42zGcTHjuJpx3Mw47mYcj7YJPM0EXmYCbzOBj5nA10zgZyYW/Zvv9b+6B79dLH1IEJ22Ag/Kwa9fKeJbZe0DQs2C3z/aIq0MxPI/1V2HWqc7G9AB9jdwXwBCgCwInwIAKBoS1fMqGZqx/H+kZAnOtbbTrqYUd51M923LTy2rbRlKWefd/riT4ljCKUSyHlaotXeWI/cjku/cBXDEPTrpFsBsXEEARqxhsoJktSnXqy0LqTJiCLeRjyhakWZcDEpudohSUXo40ao4QfJRJs5tUJqkVjK9OtKatPDtp9aySK8Xe1tpWMUbWJ2t1KzLPt5BYl0veZFol07iDda6W+9DoTC9+l2eUkHVWggHyJxiuJJHEQ5zAiQnA25uY/+2OZe675TIegquOByoCo/wPQMAkC1oFV3b94X+5Mw30chU8CNYQGgmaXMF/0cB/eYGoneuhUA8DwWMwQ3JWbbHyzHW0EZMlHitUsYh1KsFFwCd5m51cgUNpN1bwT+2OEKIB0c8U+ooYLuGrp4pDElA6KUHismjakCZ5K7hoJNav1M/Ts4cffmQ3r51vmYuO4BQXTWQqf9EJh4evQ0jvKkfsmCMAAEnzHdFc/Vm4Xmo2qEn0yu/pRxyVoGAveGqRdVYQBgbNwvqEXetotZRpVS1TDJiuIschr1ooUdFaKBX3/bWT4OvUjO5slAC7RfnXc4FKP00jckJ3941RoLAMXaGk0mfKl7nRK7y5tDVHGeTQebxp4YCspLu6ZCiLvstZbDLXAggaQ7VP/FLbd9O6VIyoVNizmqETULK1ychm3DlhYtFQj6x9kA0eF7It/+RhLYGw7pNunqLQgWF4bHnmXU9f4FEfUpkV8YepL/cm/jGOUwODEot4vq4H3J2cxfXiLIxQalkygosfXj3DhqSuHVPHejHRc8f9/AUjLhCJl4AwQn0tUFdPyTRmreuvdyNeW9HNTzP2zxFwWHzjUz1aqq8aaU1ld4yut+lKOyDW6BQlMn5yWL+5JRyfjBZPzisQffuIN7aqfyG+kNoS1GudrIVmzkBmejcCQ4QdIgl0RB04kJ6cc2Iw7MUx510j5Yyx64CQ9CuUMRQDkKgthwJHVzjJqjy2sLYQ1fdsqaFxnaaxjWqeZ6Q1NLC4mm/MYNTT6UN59pR6PUbroBW/atRJx040mxIEe2aq0c7ghza6nUYqVMXAIagnQiReIbUTgJRTRoRlzABqa4rs5Wx8T2mUqWizGKziEJLJnrHW0Ge4C2D4Q+f7GdIqg8FdbrdKyEE5wSTUJTkREYt5Mef7MHAG23Zn6JpLwaHpLf8cDdkap1m4WoabXcocch2OFNysLB2gLPEV+nW8Hun7091ffTOCoiR2IIcfYoKisvdYIaIFxraimeFhhOLKeRFemGsPEs3Hov4VEyC0g6rYQjvmB2FgbutD+4H8GxrULC9fnIARNo17BjccFXuUL6EB8PLfbaWl/DXwRSFUEbPIpBhgS5qezsM94bhCk1WsQ8847Lv6wIpmDPI6Szonx+SJ/Zmr9BAxog48kQ9waFYdeOwuJUipM0m51BX/4v6ELbrVRkN3GAm5RSDWXOX/+NUCilvsMtZMCA/OE8jDEgpqujnLvT1L+S6vRpU1qwo6k72YFARhYrsJWVgzkQzylLFdWLkifFxFHosMYlMniJqcrspK2WUwDoYxgO8GQC1JP9FfBBjtZJAegrza1KgX00m2b/2MpvVWmZ1/KE2MO7Yi4riX4qVurg8r8ZsKlX1NWqUope6jctpNJ+6PCqqQ11MZ/ZP8UVG+dL6DojmOtMroqI7dXYGW63vxrDJCZpZnop+7qLB/YpmP8KoaOpK9iD+16ugHBE/4NUTaUDKuYgwlh5EUhpOi9N1YthEfeMhpEypai/BRCHLYun1lvVqgdURL8gTxLPZtCOHxpY8tyRUWx6LpIqc/CwDQukw0H73Pz+N+cD1zBw1fGKep9pncg2EmMxfOEbbeSloHOjxVFW51MK+Rb6U3HfeQ1CCyBgABaZXlBQ4a1xwppQjk9PxzEd02kN7Oi6uS7tIjfxnt5ktWhBSj5yZHnwO1ajeXNrQWemoPDnd2eLvJuab/2IchqJz4n6XmG88QQ3Qxsr5UE5Fiad4cB6SKwJJCNoaipJkhnNU2kWdns/MsO+jylZlhlSdq4F9YBuOJgrA2an5hYGZY84C8XQczKt0eYp9eSF5Kspyl9p+Xmf1CC8pzB/sjrMQHcNKK3DC2ROzWbjJfoBKO+iQcvlSwyUa/TLRONxF3eUnNZ6P6BlM2fOLrq8pigWzzKo/XX1tyYn9rO4/VVppYFpKaizFqNLo63prrZY+qvoMrcpIjtu/BGM1pa7DyHvTwNTQYHpT6l4MW1dSX8Eg19v3kbH97t7RkfmOTVTq5QzNwY0BTFRj/mynjF6enVpYAueoSfescHlvhoW1ffRFvT6GEWO8SKM/MnLCcZPuPrUzBO/vgylvmYgvXKJ5K0LS6VQX9cEqAmkNfM3AuB/SOh+EWQaP+1QGtQNtta6QX1UIT3mBvWTgjg4UA7dvHPN6DPFflkVKzTGfuGJwmyrnpCTMyepJNRKKJeMdBJEhFhMOh0gksosSHGJxQoadECnG62Or1+jR7KBuW9k3TkT4dYHwGR7zTJj2YMY7vr2daE8QjBAlR5B5Q82esevNXRfOHO3Pkohz5DKalyWWybIPJ0cmh73Olsh43s0CwWY+77BAcJhn6DBfFuKHcLSEhSRxnRTkocbr/y4CZLm74VPLP/7hqlHEJ6WSamTunO35BSuScGAa4S6YSs0OSGIlYHwH0MqucrR2wqZKOQPbJvBvQIweE9cwnRQOoFHDBIunTPJLm7jfisqKswS3lcDwDiY5wlSM1auJT/yiJl7BFMAq1IjqiKamOrLY/Hw+Ef2SJj4uIaNVpMlRAau50CozSGJWWhozbR6JwAjjUevVTbKENc8EErEJJ2eEEjoCSRLzBIqMSKpp1WQEXqdJ6ObAVOVKQ3KCqSwNkDWgVVwbMkUmnF/YxGNNEYELisyFIIkAgUKz6lM3wS9eOVtBFY9ErJEdng2akGoHkmYlTD0+DwB4Z5xRyqt6j49ArJTel7BeYtCo7lRbj7Gx8RhWE6ZQcRgeV9MoA4ztuSPWngbbDM+jiFWfOCHVx2Pw6xvKMXEhL5JC6ipSNmWiX9bEZ8NmKhirhOn1w0rotqMRgjU2lWOBbWacU8CclOYwyS+Hm+T1EuxsNz3XQ/XiNOqrCO3cOdv1jz+TlOC16jwNaO3UHIMJZ3gsjNm6tmkjU+WCmq1rm0VjdUmYxhMm+xVxZ2ouRatoTbwRO6sLYcQYkMqoxLKtsRvRDAzuc6lrsdKPANN/4iYQq18kIbFYI2GNdKyeL87GkK6QVAW84WlAiuMBcgfJYU/zZ5RyD/CYVSCWS+9NE2bXbeqwUQZqwleZRowvXWyzsZ3s1GTjvN+tV5v1+9uUcjqbT3WOQvKKhREwnKPhdL5tWjAx+Yrpv3GlBILIqyahAla1tdVajgHIGTJqRReyZU3tvtFVnBDcXk/5dTr2i/CWKt+ZXefJQiHIyaMicHVlxQQ0jPKqLqUG26OqvqJykVhdx99RDckv726O2xjAYLGl0KymR4vBVFSz/L8Yj9aeblxHdTtGSmfvO1V9BfVks0Yb5T+r5LdquptK80H2ctNTzcsctb8aAwom9FyxT8KjaJM8iQ6KlIjmR3Tf2XXjsO+h7Jc13RE//bt42uY2gIHlAK8L8aB6skbqasumY22cWcnpgvIb8ruXea+O6UXvpDXJclowWRoEDWwkqStNqC0vBDBVdLzJqF9sKUBya3upTS9SjtYnneVGOKEuF9oEU2NlEhjfCWM4rCszPMlmY2MjKqhnrMIlYPCMZ965oudNeKl0Utxq1WrVaoDBldUxt7WWrcVoUGvW0jislh3rN7z9ZMRDREnbhFXrPFgqqelNKl258Hc/s08rmRoujKS5ZiUHaWFiwrAGgCn8cQUfFwJ4v6s27q9xpg7/FvL0ewC83/Hv5a+icaB3/psTqT/VrSCPAADC/57Z+kfFsumSeHd1a+MSwBuAn4VZg4Z8UF48ry5elMSralGGcDymKB5RGF9T4nGV8YTKuNwJsuWKeFhO/Ixu/IyjBT10YGKKCboY7W3DZwJvqcb1smIOiuIIinLhgh9v7v/oxHpEYNKLgFo7WJfCI6rMcS6ACyP5MAzAcyLFOgzgIkA1hKIuGiJCHhqi4p4aYjT6c4hVElVH78RiGBO22+GgXTZab4M9ojq169AX5JIO1kbGrVTKLRa5/5ALaiLITQq92iwyZq+UG3qxu+wWFbPnjnJHNTKojaSvtxEo9PmrtFod5dZu9012yLawHkpDDZjkZ2SbNSAEdkfWGO9gyz/ToVW3dv2GLLHIuLQhK5V9hVpYtdBCUSmX1Yme3gitE8WvGcywurvHyT112vScT/DGYdyBeN7FdvTv7yQvd4C3+BhMW4CpDRrf7mQ0dLYZDLW6OlPkWf/TRlIy7rpNo1Ta3fYzFp8znpUXel7oeqEdhTXFs+yFMPpALOmTpJB8HaMzDjzb+fifaraGpxn7ZYgYJC9Yd6Ysc1AOsNYvuCrRoLs9TgqdK8Ou3cSkxNpI4xOYHLM597WMxb6laxySywAAAA==";
 function we() {
@@ -897,12 +897,12 @@ var $ = class extends W {
 		};
 	}
 	_renderBand(e, t) {
-		let n = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(e), r = `${String(e.getDate()).padStart(2, "0")}/${String(e.getMonth() + 1).padStart(2, "0")}`, i = this._value("grid_voltage"), a = i === void 0 ? "" : ` · ${Math.round(i)} V`, o = (e, t) => this._config?.entities.grid_voltage ? P`<button class=${t} @click=${() => this._moreInfo("grid_voltage")}>${e}</button>` : P`<span class=${t}>${e}</span>`;
-		return P`
+		let n = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(e), r = `${String(e.getDate()).padStart(2, "0")}/${String(e.getMonth() + 1).padStart(2, "0")}`, i = this._value("grid_voltage"), a = i === void 0 ? "" : ` · ${Math.round(i)} V`, o = (e, t) => this._config?.entities.grid_voltage ? F`<button class=${t} @click=${() => this._moreInfo("grid_voltage")}>${e}</button>` : F`<span class=${t}>${e}</span>`;
+		return F`
       <header class="band">
         <span class="date">${n.charAt(0).toUpperCase() + n.slice(1)} ${r}</span>
-        ${this._config?.title ? P`<span class="title">${this._config.title}</span>` : L}
-        ${t === !1 ? o("Mất lưới", "state down") : t || i !== void 0 ? o(`${t ? "Có lưới" : "Lưới"}${a}`, "state") : L}
+        ${this._config?.title ? F`<span class="title">${this._config.title}</span>` : R}
+        ${t === !1 ? o("Mất lưới", "state down") : t || i !== void 0 ? o(`${t ? "Có lưới" : "Lưới"}${a}`, "state") : R}
       </header>
     `;
 	}
@@ -910,13 +910,13 @@ var $ = class extends W {
 		let r = this._config?.entities, i = this._config?.threshold ?? 10, a = [];
 		if (r?.pv) {
 			let t = this._energy("pv_today"), n = this._energy("forecast_today"), r = e.pv === void 0 ? void 0 : q(e.pv), i = t === void 0 ? void 0 : n === void 0 ? `${G(t)} kWh` : `${G(t)} / ${G(n)} kWh`, o = t !== void 0 && n ? t / n * 100 : void 0;
-			a.push(P`
+			a.push(F`
         <div class="stat">
           <button class="main" @click=${() => this._moreInfo("pv")}>
             <span class="label"><i style="background:var(--sac-solar)"></i>Solar</span>
             ${this._figure(r)}
           </button>
-          ${this._gauge(o, "var(--sac-solar)")} ${i ? P`<span class="sub">${i}</span>` : L}
+          ${this._gauge(o, "var(--sac-solar)")} ${i ? F`<span class="sub">${i}</span>` : R}
         </div>
       `);
 		}
@@ -925,7 +925,7 @@ var $ = class extends W {
 				value: String(Math.round(t)),
 				unit: "%"
 			}, s = n === void 0 ? "—" : r ? `${n > 0 ? "xả" : "sạc"} ${K(n)}` : "đang nghỉ";
-			a.push(P`
+			a.push(F`
         <div class="stat">
           <button class="main" @click=${() => this._moreInfo(t === void 0 ? "battery" : "battery_soc")}>
             <span class="label"><i style="background:var(--sac-battery)"></i>Pin</span>
@@ -936,17 +936,17 @@ var $ = class extends W {
         </div>
       `);
 		}
-		let { mix: o, origin: s } = this._homeMix(t, n), c = P`
+		let { mix: o, origin: s } = this._homeMix(t, n), c = F`
       <span class="label">Nhà đang dùng</span>
       ${this._figure(t === void 0 ? void 0 : q(t))}
     `;
-		return a.push(P`
+		return a.push(F`
       <div class="stat">
-        ${r?.load ? P`<button class="main" @click=${() => this._moreInfo("load")}>${c}</button>` : P`<div class="main">${c}</div>`}
-        ${o.length ? P`<span class="mix">${o.map((e) => P`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : P`<span class="gauge"></span>`}
-        ${s ? P`<span class="sub">${s}</span>` : L}
+        ${r?.load ? F`<button class="main" @click=${() => this._moreInfo("load")}>${c}</button>` : F`<div class="main">${c}</div>`}
+        ${o.length ? F`<span class="mix">${o.map((e) => F`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : F`<span class="gauge"></span>`}
+        ${s ? F`<span class="sub">${s}</span>` : R}
       </div>
-    `), P`<section class="lead" style="--cols:${a.length}">${a}</section>`;
+    `), F`<section class="lead" style="--cols:${a.length}">${a}</section>`;
 	}
 	_homeMix(e, t) {
 		let n = this._config?.threshold ?? 10, r = t ? [
@@ -977,47 +977,49 @@ var $ = class extends W {
 		};
 	}
 	_mixBar(e) {
-		return e.length ? P`<span class="mix">${e.map((e) => P`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : P`<span class="gauge"></span>`;
+		return e.length ? F`<span class="mix">${e.map((e) => F`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : F`<span class="gauge"></span>`;
 	}
 	_renderFlow(e, t, n) {
 		let r = this._config?.entities, i = this._config?.threshold ?? 10, a = this._config?.flow_max_power ?? 5e3, o = !!r?.pv, s = !!r?.grid, c = !!r?.battery, l = c && !s, u = c && s, d = (e, t, n, r, o, s) => {
 			let c = t !== void 0 && Math.abs(t) > i, l = c ? 2 + 6 * Math.sqrt(Math.min(1, Math.abs(t) / a)) : 1;
-			return P`
+			return F`
         <span class="wire ${r} ${c ? "on" : ""}" style="grid-area:${s};--wire:${l.toFixed(1)}px;--wire-color:${n}" aria-hidden="true">
           <i class="dots" data-key=${e} data-axis=${r} data-rate=${c ? 1 / Oe(t) : 0} data-reverse=${o ? "" : "1"}></i>
         </span>
       `;
-		}, f = (e) => P`<i style="background:${e}"></i>`, { mix: p, origin: m, top: h } = this._homeMix(t, n), g = this._value("battery_soc"), _ = e.battery, ee = _ === void 0 ? "—" : _ !== void 0 && Math.abs(_) > i ? `${_ > 0 ? "xả" : "sạc"} ${K(_)}` : "đang nghỉ", v = this._energy("pv_today"), y = this._energy("forecast_today"), b = v === void 0 ? void 0 : y === void 0 ? `${G(v)} kWh` : `${G(v)} / ${G(y)} kWh`, x = e.grid, S = x !== void 0 && Math.abs(x) > i, C = this._energy("grid_import_today"), w = this._energy("grid_export_today"), T = [C === void 0 ? "" : `mua ${G(C)}`, w ? `phát ${G(w)}` : ""].filter(Boolean).join(" · ");
-		return P`
+		}, f = (e) => F`<i style="background:${e}"></i>`, { mix: p, origin: m, top: h } = this._homeMix(t, n), g = this._value("battery_soc"), _ = e.battery, ee = _ === void 0 ? "—" : _ !== void 0 && Math.abs(_) > i ? `${_ > 0 ? "xả" : "sạc"} ${K(_)}` : "đang nghỉ", v = this._energy("pv_today"), y = this._energy("forecast_today"), b = v === void 0 ? void 0 : y === void 0 ? `${G(v)} kWh` : `${G(v)} / ${G(y)} kWh`, x = e.grid, S = x !== void 0 && Math.abs(x) > i, C = this._energy("grid_import_today"), w = this._energy("grid_export_today"), T = [C === void 0 ? "" : `mua ${G(C)}`, w ? `phát ${G(w)}` : ""].filter(Boolean).join(" · "), E = o ? this._config?.mppts ?? [] : [];
+		return F`
       <section class="map" style="grid-template-areas:${[
+			E.length ? "\"mp mp mp mp mp\"" : "",
 			o ? "\"pv pv pv pv pv\"" : "",
 			o ? "\". . ws . .\"" : "",
 			`"${s ? "grid wg" : l ? "bat wb" : ". ."} hub wh home"`,
 			u ? "\". . wb . .\"" : "",
 			u ? "\"bat bat bat bat bat\"" : ""
 		].filter(Boolean).join(" ")}">
-        ${o ? P`
+        ${E.length ? this._renderMppts(E, d) : R}
+        ${o ? F`
               <div class="node" style="grid-area:pv">
                 <button class="main" @click=${() => this._moreInfo("pv")}>
                   <span class="label">${f("var(--sac-solar)")}Solar</span>
                   ${this._figure(e.pv === void 0 ? void 0 : q(e.pv))}
                 </button>
                 ${this._gauge(v !== void 0 && y ? v / y * 100 : void 0, "var(--sac-solar)")}
-                ${b ? P`<span class="sub">${b}</span>` : L}
+                ${b ? F`<span class="sub">${b}</span>` : R}
               </div>
               ${d("pv", e.pv, "var(--sac-solar)", "v", !0, "ws")}
-            ` : L}
-        ${s ? P`
+            ` : R}
+        ${s ? F`
               <div class="node side" style="grid-area:grid">
                 <button class="main" @click=${() => this._moreInfo("grid")}>
                   <span class="label">${f("var(--sac-grid)")}Lưới${S ? x > 0 ? " · mua" : " · phát" : ""}</span>
                   ${this._figure(x === void 0 ? void 0 : q(x))}
                 </button>
-                ${T ? P`<button class="sub" @click=${() => this._moreInfo("grid_import_today")}>${T} kWh</button>` : L}
+                ${T ? F`<button class="sub" @click=${() => this._moreInfo("grid_import_today")}>${T} kWh</button>` : R}
               </div>
               ${d("grid", x, "var(--sac-grid)", "h", (x ?? 0) >= 0, "wg")}
-            ` : L}
-        ${c ? P`
+            ` : R}
+        ${c ? F`
               <div class="node ${l ? "side" : ""}" style="grid-area:bat">
                 <button class="main" @click=${() => this._moreInfo(g === void 0 ? "battery" : "battery_soc")}>
                   <span class="label">${f("var(--sac-battery)")}Pin</span>
@@ -1030,35 +1032,63 @@ var $ = class extends W {
                 <button class="sub" @click=${() => this._moreInfo("battery")}>${ee}</button>
               </div>
               ${l ? d("battery", _, "var(--sac-battery)", "h", (_ ?? 0) >= 0, "wb") : d("battery", _, "var(--sac-battery)", "v", (_ ?? 0) < 0, "wb")}
-            ` : L}
+            ` : R}
         <span class="hub" style="grid-area:hub" aria-hidden="true">
-          ${F`<svg viewBox="0 0 24 24"><path d="M4 12c2.7-5.3 5.3-5.3 8 0s5.3 5.3 8 0"></path></svg>`}
+          ${I`<svg viewBox="0 0 24 24"><path d="M4 12c2.7-5.3 5.3-5.3 8 0s5.3 5.3 8 0"></path></svg>`}
         </span>
         ${d("home", t, h?.color ?? "var(--sac-fg)", "h", !0, "wh")}
         <div class="node side home" style="grid-area:home">
-          ${r?.load ? P`<button class="main" @click=${() => this._moreInfo("load")}>
+          ${r?.load ? F`<button class="main" @click=${() => this._moreInfo("load")}>
                 <span class="label">Nhà đang dùng</span>${this._figure(t === void 0 ? void 0 : q(t))}
-              </button>` : P`<div class="main"><span class="label">Nhà đang dùng</span>${this._figure(t === void 0 ? void 0 : q(t))}</div>`}
-          ${this._mixBar(p)} ${m ? P`<span class="sub">${m}</span>` : L}
+              </button>` : F`<div class="main"><span class="label">Nhà đang dùng</span>${this._figure(t === void 0 ? void 0 : q(t))}</div>`}
+          ${this._mixBar(p)} ${m ? F`<span class="sub">${m}</span>` : R}
         </div>
       </section>
     `;
 	}
+	_read(e) {
+		let t = Q(e), n = t && this.hass?.states[t.entity], r = parseFloat(n?.state ?? ""), i = String(n?.attributes.unit_of_measurement ?? "").toLowerCase();
+		return {
+			id: t?.entity,
+			v: Number.isNaN(r) ? void 0 : t?.invert ? -r : r,
+			unit: i
+		};
+	}
+	_renderMppts(e, t) {
+		return F`
+      <div class="mppts" style="grid-area:mp;--n:${e.length}">
+        ${e.map((e, n) => {
+			let r = this._read(e.power), i = r.v === void 0 ? void 0 : r.v * (r.unit === "kw" ? 1e3 : 1), a = this._read(e.voltage).v, o = this._read(e.current).v, s = this._read(e.energy_today), c = s.v === void 0 ? void 0 : s.v * (We[s.unit] ?? 1), l = [a === void 0 ? "" : `${G(a, a >= 100 ? 0 : 1)} V`, o === void 0 ? "" : `${G(o, 1)} A`].filter(Boolean).join(" · ");
+			return F`
+            <div class="mppt">
+              <button class="box" @click=${() => this._openEntity(r.id)}>
+                <span class="label">${e.name ?? `PV${n + 1}`}</span>
+                <b class="num">${i === void 0 ? "—" : K(i)}</b>
+                ${l ? F`<span class="sub">${l}</span>` : R}
+                ${c === void 0 ? R : F`<span class="sub">${G(c)} kWh</span>`}
+              </button>
+              ${t(`mppt${n}`, i, "var(--sac-solar)", "v", !0, "auto")}
+            </div>
+          `;
+		})}
+      </div>
+    `;
+	}
 	_figure(e) {
-		return P`<b class="num">${e?.value ?? "—"}${e ? P`<small>${e.unit}</small>` : L}</b>`;
+		return F`<b class="num">${e?.value ?? "—"}${e ? F`<small>${e.unit}</small>` : R}</b>`;
 	}
 	_gauge(e, t) {
-		return P`<span class="gauge"><span style="width:${e === void 0 ? 0 : Math.min(100, Math.max(0, e))}%;background:${t}"></span></span>`;
+		return F`<span class="gauge"><span style="width:${e === void 0 ? 0 : Math.min(100, Math.max(0, e))}%;background:${t}"></span></span>`;
 	}
 	_renderLinks(e) {
 		let t = this._config?.entities, n = this._config?.threshold ?? 10, r = +!!t?.pv + +!!t?.battery + 1, i = (e) => (e + .5) / r * 300, a = i(r - 1), o = (e, t, n) => `M${e} ${n}C${e} ${t} ${e + 12} ${t} ${e + 24} ${t}L${a - 24} ${t}C${a - 12} ${t} ${a} ${t} ${a} 0`;
-		return P`
+		return F`
       <div class="links">
-        ${F`
+        ${I`
           <svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
             ${Ke.filter(({ key: e }) => t?.[e]).map(({ key: t, color: r }, a) => {
 			let s = t === "grid" ? o(36, 16, 24) : o(i(a), t === "pv" ? 8 : 12, 0), c = e[t] ?? 0, l = Math.abs(c) > n;
-			return F`
+			return I`
                 <path class="track" d=${s}></path>
                 <path
                   class="flow ${l ? "" : "idle"}"
@@ -1095,35 +1125,35 @@ var $ = class extends W {
 				key: "forecast_tomorrow"
 			}
 		].filter((e) => e !== void 0), d = !!i?.grid && this._config?.layout !== "flow";
-		return !u.length && !d ? L : P`
+		return !u.length && !d ? R : F`
       <dl class="reserve">
-        ${d ? P`<div>
+        ${d ? F`<div>
               <dt><i style="background:var(--sac-grid)"></i>Lưới${l}</dt>
               <dd class="num"><button class="fact" @click=${() => this._moreInfo("grid")}>${c === void 0 ? "—" : K(c)}</button></dd>
-            </div>` : L}
-        ${u.map((e) => P`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? P` <small>${e.unit}</small>` : L}</button></dd></div>`)}
+            </div>` : R}
+        ${u.map((e) => F`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? F` <small>${e.unit}</small>` : R}</button></dd></div>`)}
       </dl>
     `;
 	}
 	_renderHours(e) {
 		let { cells: t, tomorrow: n, window: r } = this._hourCells(e), i = Math.max(1, ...t.map((e) => Math.max(e.forecast ?? 0, e.actual ?? 0))), a = t.some((e) => e.forecast !== void 0), o = t.some((e) => e.actual);
-		if (!a && !o) return L;
+		if (!a && !o) return R;
 		let s = a && o ? "Nền dự báo · Cột thực" : a ? "Nền: dự báo" : "Cột: thực tế", c = t.find((e) => e.hour === this._focusHour), l = c ? [
 			`${c.hour}h`,
 			c.forecast === void 0 ? "" : `Dự báo ${K(c.forecast)}`,
 			c.actual === void 0 ? "" : `Thực ${K(c.actual)}`
 		].filter(Boolean).join(" · ") : s, u = t.findIndex((e) => e.good), d = t.filter((e) => e.good).length;
-		return P`
+		return F`
       <section class="hours" aria-label="Sản lượng theo giờ">
         <div class="hours-head">
           <span>${r ? `Giờ tốt dùng tải lớn${n ? " ngày mai" : ""}` : "Solar theo giờ"}</span>
           <b class=${c ? "" : "legend"}>${l}</b>
         </div>
         <div class="cells" style="--count:${t.length}">
-          ${r && d ? P`<div class="window" style="grid-column:${u + 1} / span ${d}">${r.start}–${r.end}h</div>` : L}
+          ${r && d ? F`<div class="window" style="grid-column:${u + 1} / span ${d}">${r.start}–${r.end}h</div>` : R}
           ${t.map((e) => {
 			let t = (e.forecast ?? 0) / i, n = `${e.hour} giờ${e.good ? ", giờ tốt" : ""}${e.forecast === void 0 ? "" : `, dự báo ${K(e.forecast)}`}${e.actual === void 0 ? "" : `, thực ${K(e.actual)}`}`;
-			return P`
+			return F`
               <button
                 class="cell ${e.now ? "now" : ""}"
                 aria-label=${n}
@@ -1134,7 +1164,7 @@ var $ = class extends W {
                 @blur=${() => this._focusHour = void 0}
               >
                 <span class="tile" style="--level:${Math.round(t * 70 + 6)}%">
-                  ${e.actual ? P`<i style="height:${Math.round(e.actual / i * 100)}%"></i>` : L}
+                  ${e.actual ? F`<i style="height:${Math.round(e.actual / i * 100)}%"></i>` : R}
                 </span>
                 <span class="hour">${e.hour}</span>
               </button>
@@ -1145,9 +1175,9 @@ var $ = class extends W {
     `;
 	}
 	_renderFine() {
-		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = (e) => e === void 0 ? "—" : G(e), s = (e, t, n = "") => this._config?.entities[e] ? P`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, c = (e, t) => {
+		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = (e) => e === void 0 ? "—" : G(e), s = (e, t, n = "") => this._config?.entities[e] ? F`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, c = (e, t) => {
 			let n = this._energy(e), r = this._energy(t);
-			return n === void 0 && r === void 0 ? void 0 : P`${s(e, o(n), "left")} / ${s(t, `${o(r)} kWh`, "right")}`;
+			return n === void 0 && r === void 0 ? void 0 : F`${s(e, o(n), "left")} / ${s(t, `${o(r)} kWh`, "right")}`;
 		}, l = [
 			[this._config?.savings_label ?? "Tiết kiệm tháng", n === void 0 ? void 0 : s("savings_month", `${G(n, 0)} đ`)],
 			["Tải hôm nay", t === void 0 ? void 0 : s("load_today", t)],
@@ -1158,31 +1188,31 @@ var $ = class extends W {
 			["Nhiệt biến tần", i === void 0 ? void 0 : s("inverter_temperature", `${G(i, 0)} ${this._temperatureUnit()}`)],
 			["Tần số lưới", a === void 0 ? void 0 : s("grid_frequency", `${G(a)} Hz`)]
 		].filter((e) => e[1] !== void 0);
-		return l.length ? P`<dl class="fine">${l.map(([e, t]) => P`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : L;
+		return l.length ? F`<dl class="fine">${l.map(([e, t]) => F`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : R;
 	}
 	_renderFan() {
 		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();
-		if (!e && !n.length) return L;
+		if (!e && !n.length) return R;
 		let i = e?.st.state === "on" ? "Đang chạy" : "—";
-		return P`
+		return F`
       <div class="control">
         <button class="about" @click=${() => this._openEntity(e?.cfg.entity ?? n[0])}>
           <span>Quạt tản nhiệt</span><b>${e?.st.state === "off" ? "Tắt" : r === void 0 ? i : `${G(r, 0)} vòng/phút`}</b>
         </button>
-        ${t ? P`<button
+        ${t ? F`<button
               class="opt"
               aria-pressed=${t.st.state === "on" ? "true" : "false"}
               ?disabled=${t.st.state !== "on" && t.st.state !== "off"}
               @click=${() => this._perform(t.cfg.entity, { action: "toggle" })}
             >
               Tự động
-            </button>` : L}
+            </button>` : R}
       </div>
     `;
 	}
 	_renderEod() {
 		let e = this._entity("eod");
-		if (!e) return L;
+		if (!e) return R;
 		let t = e.cfg.entity, n = this._config?.eod_levels ?? Ge, r = this._value("eod"), i = (e) => this._perform(t, {
 			action: "perform-action",
 			perform_action: `${t.split(".")[0]}.set_value`,
@@ -1190,13 +1220,13 @@ var $ = class extends W {
 			data: { value: e },
 			confirmation: { text: `Đặt EOD lưới = ${e}%? Pin sẽ xả tới ${e}% mới lấy lưới.` }
 		});
-		return P`
+		return F`
       <div class="control">
         <button class="about" @click=${() => this._moreInfo("eod")}>
-          <span>EOD lưới</span>${r === void 0 ? P`<b>—</b>` : n.includes(r) ? L : P`<b>${G(r, 0)}%</b>`}
+          <span>EOD lưới</span>${r === void 0 ? F`<b>—</b>` : n.includes(r) ? R : F`<b>${G(r, 0)}%</b>`}
         </button>
         <div class="opts" role="group" aria-label="Đặt EOD lưới">
-          ${n.map((e) => P`<button
+          ${n.map((e) => F`<button
               class="opt"
               aria-pressed=${e === r ? "true" : "false"}
               ?disabled=${r === void 0}
@@ -1210,7 +1240,7 @@ var $ = class extends W {
 	}
 	_renderControls() {
 		let e = this._renderFan(), t = this._renderEod();
-		return e === L && t === L ? L : P`<div class="controls">${e} ${t}</div>`;
+		return e === R && t === R ? R : F`<div class="controls">${e} ${t}</div>`;
 	}
 	shouldUpdate(e) {
 		let t = e.get("hass");
@@ -1224,7 +1254,7 @@ var $ = class extends W {
 		this.dataset.mode = t ? "dark" : "light", this.dataset.band = this._config?.band ?? "red";
 	}
 	render() {
-		if (!this._config) return L;
+		if (!this._config) return R;
 		let e = this.now ?? /* @__PURE__ */ new Date(), t = this._config.threshold ?? 10, n = this._gridOnline(), r = {
 			pv: this._power("pv"),
 			battery: this._power("battery"),
@@ -1238,15 +1268,15 @@ var $ = class extends W {
 			runtime: l,
 			fullIn: u
 		});
-		return P`
+		return F`
       <ha-card>
         <div class="page">
           ${this._renderBand(e, n)}
-          ${this._alerts().map((e) => P`<p class="alert">${e}</p>`)}
-          ${this._config.layout === "flow" ? this._renderFlow(r, a, i ? void 0 : o) : P`${this._renderLead(r, a, i ? void 0 : o)} ${this._renderLinks(r)}`}
+          ${this._alerts().map((e) => F`<p class="alert">${e}</p>`)}
+          ${this._config.layout === "flow" ? this._renderFlow(r, a, i ? void 0 : o) : F`${this._renderLead(r, a, i ? void 0 : o)} ${this._renderLinks(r)}`}
           ${this._renderReserve(r, l, n, p)}
-          ${m ? P`<p class="say"><b>${m.lead}</b> ${m.rest ?? ""}</p>` : L}
-          ${this._config.compact ? L : P`${this._renderHours(e)} ${this._renderFine()}`} ${this._renderControls()}
+          ${m ? F`<p class="say"><b>${m.lead}</b> ${m.rest ?? ""}</p>` : R}
+          ${this._config.compact ? R : F`${this._renderHours(e)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
       </ha-card>
     `;
@@ -1489,6 +1519,44 @@ X($, "properties", {
       .node.side .gauge,
       .node.side .mix {
         min-width: 0;
+      }
+      .mppts {
+        display: grid;
+        grid-template-columns: repeat(var(--n), minmax(0, calc(var(--u) * 150)));
+        justify-content: center;
+        gap: calc(var(--u) * 10);
+      }
+      .mppt {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+      }
+      .mppt .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+        padding: calc(var(--u) * 5) calc(var(--u) * 6);
+        border: 1px solid var(--sac-solar);
+        border-radius: calc(var(--u) * 4);
+        text-align: center;
+      }
+      .mppt .num {
+        font-size: calc(var(--u) * 22);
+        line-height: 1.05;
+        white-space: nowrap;
+      }
+      .mppt .sub {
+        margin-top: calc(var(--u) * 1);
+        font-size: max(11px, calc(var(--u) * 12));
+      }
+      .mppt .wire.v {
+        align-self: center;
+        width: calc(var(--u) * 12);
+        min-height: calc(var(--u) * 16);
+        margin: 0;
       }
       .hub {
         display: grid;

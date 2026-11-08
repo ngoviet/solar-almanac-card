@@ -16,7 +16,7 @@ import {
 import type { Power } from './flows';
 import { FORECAST_ATTRIBUTES, fetchToday, parseForecast, toHourly } from './history';
 import { themeStyles } from './theme';
-import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, SolarAlmanacCardConfig } from './types';
+import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, MpptConfig, SolarAlmanacCardConfig } from './types';
 
 const CARD_TAG = 'solar-almanac-card';
 const HISTORY_REFRESH_MS = 5 * 60_000;
@@ -378,7 +378,9 @@ export class SolarAlmanacCard extends LitElement {
     const sold = this._energy('grid_export_today');
     const gridSub = [bought !== undefined ? `mua ${formatNumber(bought)}` : '', sold ? `phát ${formatNumber(sold)}` : ''].filter(Boolean).join(' · ');
 
+    const mppts = hasPv ? (this._config?.mppts ?? []) : [];
     const rows = [
+      mppts.length ? '"mp mp mp mp mp"' : '',
       hasPv ? '"pv pv pv pv pv"' : '',
       hasPv ? '". . ws . ."' : '',
       `"${hasGrid ? 'grid wg' : batteryLeft ? 'bat wb' : '. .'} hub wh home"`,
@@ -388,6 +390,7 @@ export class SolarAlmanacCard extends LitElement {
 
     return html`
       <section class="map" style="grid-template-areas:${rows.join(' ')}">
+        ${mppts.length ? this._renderMppts(mppts, wire) : nothing}
         ${hasPv
           ? html`
               <div class="node" style="grid-area:pv">
@@ -441,6 +444,45 @@ export class SolarAlmanacCard extends LitElement {
           ${this._mixBar(mix)} ${origin ? html`<span class="sub">${origin}</span>` : nothing}
         </div>
       </section>
+    `;
+  }
+
+  /** Đọc một entity bất kỳ (không nằm trong `entities`): số và đơn vị. */
+  private _read(ref: EntityRef | undefined): { id?: string; v?: number; unit: string } {
+    const cfg = toEntityConfig(ref);
+    const st = cfg && this.hass?.states[cfg.entity];
+    const v = parseFloat(st?.state ?? '');
+    const unit = String(st?.attributes.unit_of_measurement ?? '').toLowerCase();
+    return { id: cfg?.entity, v: Number.isNaN(v) ? undefined : cfg?.invert ? -v : v, unit };
+  }
+
+  /** Các ô MPPT trên nút Solar: công suất, điện áp · dòng, kWh hôm nay; dây nhỏ chảy xuống Solar. */
+  private _renderMppts(list: MpptConfig[], wire: (key: string, w: number | undefined, color: string, axis: 'h' | 'v', forward: boolean, area: string) => unknown) {
+    return html`
+      <div class="mppts" style="grid-area:mp;--n:${list.length}">
+        ${list.map((m, i) => {
+          const p = this._read(m.power);
+          const w = p.v === undefined ? undefined : p.v * (p.unit === 'kw' ? 1000 : 1);
+          const volt = this._read(m.voltage).v;
+          const amp = this._read(m.current).v;
+          const e = this._read(m.energy_today);
+          const kwh = e.v === undefined ? undefined : e.v * (ENERGY_TO_KWH[e.unit] ?? 1);
+          const va = [volt !== undefined ? `${formatNumber(volt, volt >= 100 ? 0 : 1)} V` : '', amp !== undefined ? `${formatNumber(amp, 1)} A` : '']
+            .filter(Boolean)
+            .join(' · ');
+          return html`
+            <div class="mppt">
+              <button class="box" @click=${() => this._openEntity(p.id)}>
+                <span class="label">${m.name ?? `PV${i + 1}`}</span>
+                <b class="num">${w === undefined ? '—' : formatPower(w)}</b>
+                ${va ? html`<span class="sub">${va}</span>` : nothing}
+                ${kwh !== undefined ? html`<span class="sub">${formatNumber(kwh)} kWh</span>` : nothing}
+              </button>
+              ${wire(`mppt${i}`, w, 'var(--sac-solar)', 'v', true, 'auto')}
+            </div>
+          `;
+        })}
+      </div>
     `;
   }
 
@@ -986,6 +1028,44 @@ export class SolarAlmanacCard extends LitElement {
       .node.side .gauge,
       .node.side .mix {
         min-width: 0;
+      }
+      .mppts {
+        display: grid;
+        grid-template-columns: repeat(var(--n), minmax(0, calc(var(--u) * 150)));
+        justify-content: center;
+        gap: calc(var(--u) * 10);
+      }
+      .mppt {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+      }
+      .mppt .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+        padding: calc(var(--u) * 5) calc(var(--u) * 6);
+        border: 1px solid var(--sac-solar);
+        border-radius: calc(var(--u) * 4);
+        text-align: center;
+      }
+      .mppt .num {
+        font-size: calc(var(--u) * 22);
+        line-height: 1.05;
+        white-space: nowrap;
+      }
+      .mppt .sub {
+        margin-top: calc(var(--u) * 1);
+        font-size: max(11px, calc(var(--u) * 12));
+      }
+      .mppt .wire.v {
+        align-self: center;
+        width: calc(var(--u) * 12);
+        min-height: calc(var(--u) * 16);
+        margin: 0;
       }
       .hub {
         display: grid;
