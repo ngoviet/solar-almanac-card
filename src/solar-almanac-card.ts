@@ -451,8 +451,6 @@ export class SolarAlmanacCard extends LitElement {
   private _renderFine() {
     const consumed = this._energy('load_today');
     const load = consumed === undefined ? undefined : `${formatNumber(consumed)} kWh`;
-    const bought = this._energy('grid_import_today');
-    const sold = this._energy('grid_export_today');
     const savings = this._value('savings_month');
     const delta = this._cellDelta();
     const temp = this._value('inverter_temperature');
@@ -460,10 +458,20 @@ export class SolarAlmanacCard extends LitElement {
     const part = (v: number | undefined) => (v === undefined ? '—' : formatNumber(v));
     const open = (key: EntityKey, text: string, side = '') =>
       this._config?.entities[key] ? html`<button class="fact ${side}" @click=${() => this._moreInfo(key)}>${text}</button>` : text;
+    // Hai số trên một dòng, mỗi nửa mở lịch sử entity của nó; thiếu cả hai thì ẩn dòng.
+    const pair = (a: EntityKey, b: EntityKey) => {
+      const x = this._energy(a);
+      const y = this._energy(b);
+      return x === undefined && y === undefined
+        ? undefined
+        : html`${open(a, part(x), 'left')} / ${open(b, `${part(y)} kWh`, 'right')}`;
+    };
     const rows: Array<[string, unknown]> = [
       [this._config?.savings_label ?? 'Tiết kiệm tháng', savings === undefined ? undefined : open('savings_month', `${formatNumber(savings, 0)} đ`)],
       ['Tải hôm nay', load === undefined ? undefined : open('load_today', load)],
-      ['Mua / phát', bought === undefined && sold === undefined ? undefined : html`${open('grid_import_today', part(bought), 'left')} / ${open('grid_export_today', `${part(sold)} kWh`, 'right')}`],
+      ['Mua / phát', pair('grid_import_today', 'grid_export_today')],
+      ['Sạc / xả hôm nay', pair('battery_charge_today', 'battery_discharge_today')],
+      [this._config?.battery_period_label ?? 'Sạc / xả tháng', pair('battery_charge_period', 'battery_discharge_period')],
       ['Lệch cell', delta === undefined ? undefined : open('cell_delta', `${formatNumber(delta, 0)} mV`)],
       ['Nhiệt biến tần', temp === undefined ? undefined : open('inverter_temperature', `${formatNumber(temp, 0)} ${this._temperatureUnit()}`)],
       ['Tần số lưới', freq === undefined ? undefined : open('grid_frequency', `${formatNumber(freq)} Hz`)],

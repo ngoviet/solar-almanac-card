@@ -46,6 +46,8 @@ entities:
   load_today: sensor.luxpower_inverter_home_consumption_today_calculated
   grid_import_today: sensor.luxpower_inverter_grid_energy_from_grid_today
   grid_export_today: sensor.luxpower_inverter_grid_energy_to_grid_today
+  battery_charge_today: sensor.luxpower_inverter_charge_energy_today
+  battery_discharge_today: sensor.luxpower_inverter_discharge_energy_today
   forecast_today: sensor.technology_solcast_pv_forecast_forecast_today
   forecast_tomorrow: sensor.technology_solcast_pv_forecast_forecast_tomorrow
   grid_voltage: sensor.luxpower_inverter_grid_grid_voltage
@@ -76,6 +78,7 @@ entities:
 | `inverter_temperature_warn` | — | Như trên, cho nhiệt độ biến tần                               |
 | `eod_levels`       | `[10, 20, 30]` | %, các mức bấm nhanh cho `eod`                           |
 | `savings_label`    | `Tiết kiệm tháng` | Nhãn dòng `savings_month`, ví dụ `Tiết kiệm kỳ này`   |
+| `battery_period_label` | `Sạc / xả tháng` | Nhãn dòng `battery_charge_period` và `battery_discharge_period` |
 | `band`             | `red`             | Màu băng đầu card: `red` hoặc `neutral`; cảnh báo vẫn đỏ |
 
 ### Entity
@@ -86,6 +89,8 @@ entities:
 | `load`                                                    | Số "Nhà đang dùng"; bỏ trống thì tự tính pv + battery + grid, chỉ khi khai đủ cả ba. Hệ không có pin hoặc không khai `grid` (hệ 25.6V DC) phải khai `load`, nếu không thì mất số nhà đang dùng, thời gian còn chạy và dòng "Pin còn" |
 | `battery_soc`                                             | Phần trăm pin, thanh SOC                       |
 | `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Tổng ngày; `grid_import_today` và `load_today` tạo chỉ số Tự cấp |
+| `battery_charge_today`, `battery_discharge_today` | kWh sạc vào và xả ra khỏi pin trong ngày, dòng "Sạc / xả hôm nay" |
+| `battery_charge_period`, `battery_discharge_period` | Như trên nhưng theo tháng hoặc kỳ; nhãn dòng đặt bằng `battery_period_label` (mặc định "Sạc / xả tháng") |
 | `forecast_today`, `forecast_tomorrow`                     | Giá trị kWh, cộng thuộc tính dự báo theo giờ để dựng dải giờ |
 | `grid_connected`, `grid_voltage`                          | Trạng thái lưới trên băng đỏ, báo mất lưới; bấm vào mở lịch sử `grid_voltage` |
 | `savings_month`, `cell_delta`, `inverter_temperature`, `grid_frequency` | Dòng chữ nhỏ cuối tờ             |
