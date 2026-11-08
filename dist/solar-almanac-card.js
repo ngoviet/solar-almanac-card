@@ -1,4 +1,4 @@
-// node_modules/@lit/reactive-element/css-tag.js
+// ../solar-almanac-card/node_modules/@lit/reactive-element/css-tag.js
 var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, n = Symbol(), r = /* @__PURE__ */ new WeakMap(), i = class {
 	constructor(e, t, r) {
 		if (this._$cssResult$ = !0, r !== n) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
@@ -29,11 +29,11 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 	let t = "";
 	for (let n of e.cssRules) t += n.cssText;
 	return a(t);
-})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: ee, getPrototypeOf: p } = Object, m = globalThis, te = m.trustedTypes, ne = te ? te.emptyScript : "", re = m.reactiveElementPolyfillSupport, h = (e, t) => e, g = {
+})(e) : e, { is: l, defineProperty: u, getOwnPropertyDescriptor: d, getOwnPropertyNames: f, getOwnPropertySymbols: p, getPrototypeOf: m } = Object, h = globalThis, g = h.trustedTypes, _ = g ? g.emptyScript : "", ee = h.reactiveElementPolyfillSupport, v = (e, t) => e, y = {
 	toAttribute(e, t) {
 		switch (t) {
 			case Boolean:
-				e = e ? ne : null;
+				e = e ? _ : null;
 				break;
 			case Object:
 			case Array: e = e == null ? e : JSON.stringify(e);
@@ -58,23 +58,23 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 		}
 		return n;
 	}
-}, _ = (e, t) => !l(e, t), ie = {
+}, b = (e, t) => !l(e, t), x = {
 	attribute: !0,
 	type: String,
-	converter: g,
+	converter: y,
 	reflect: !1,
 	useDefault: !1,
-	hasChanged: _
+	hasChanged: b
 };
-Symbol.metadata ??= Symbol("metadata"), m.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-var v = class extends HTMLElement {
+Symbol.metadata ??= Symbol("metadata"), h.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
+var S = class extends HTMLElement {
 	static addInitializer(e) {
 		this._$Ei(), (this.l ??= []).push(e);
 	}
 	static get observedAttributes() {
 		return this.finalize(), this._$Eh && [...this._$Eh.keys()];
 	}
-	static createProperty(e, t = ie) {
+	static createProperty(e, t = x) {
 		if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
 			let n = Symbol(), r = this.getPropertyDescriptor(e, n, t);
 			r !== void 0 && u(this.prototype, e, r);
@@ -100,17 +100,17 @@ var v = class extends HTMLElement {
 		};
 	}
 	static getPropertyOptions(e) {
-		return this.elementProperties.get(e) ?? ie;
+		return this.elementProperties.get(e) ?? x;
 	}
 	static _$Ei() {
-		if (this.hasOwnProperty(h("elementProperties"))) return;
-		let e = p(this);
+		if (this.hasOwnProperty(v("elementProperties"))) return;
+		let e = m(this);
 		e.finalize(), e.l !== void 0 && (this.l = [...e.l]), this.elementProperties = new Map(e.elementProperties);
 	}
 	static finalize() {
-		if (this.hasOwnProperty(h("finalized"))) return;
-		if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(h("properties"))) {
-			let e = this.properties, t = [...f(e), ...ee(e)];
+		if (this.hasOwnProperty(v("finalized"))) return;
+		if (this.finalized = !0, this._$Ei(), this.hasOwnProperty(v("properties"))) {
+			let e = this.properties, t = [...f(e), ...p(e)];
 			for (let n of t) this.createProperty(n, e[n]);
 		}
 		let e = this[Symbol.metadata];
@@ -171,14 +171,14 @@ var v = class extends HTMLElement {
 	_$ET(e, t) {
 		let n = this.constructor.elementProperties.get(e), r = this.constructor._$Eu(e, n);
 		if (r !== void 0 && !0 === n.reflect) {
-			let i = (n.converter?.toAttribute === void 0 ? g : n.converter).toAttribute(t, n.type);
+			let i = (n.converter?.toAttribute === void 0 ? y : n.converter).toAttribute(t, n.type);
 			this._$Em = e, i == null ? this.removeAttribute(r) : this.setAttribute(r, i), this._$Em = null;
 		}
 	}
 	_$AK(e, t) {
 		let n = this.constructor, r = n._$Eh.get(e);
 		if (r !== void 0 && this._$Em !== r) {
-			let e = n.getPropertyOptions(r), i = typeof e.converter == "function" ? { fromAttribute: e.converter } : e.converter?.fromAttribute === void 0 ? g : e.converter;
+			let e = n.getPropertyOptions(r), i = typeof e.converter == "function" ? { fromAttribute: e.converter } : e.converter?.fromAttribute === void 0 ? y : e.converter;
 			this._$Em = r;
 			let a = i.fromAttribute(t, e.type);
 			this[r] = a ?? this._$Ej?.get(r) ?? a, this._$Em = null;
@@ -187,7 +187,7 @@ var v = class extends HTMLElement {
 	requestUpdate(e, t, n, r = !1, i) {
 		if (e !== void 0) {
 			let a = this.constructor;
-			if (!1 === r && (i = this[e]), n ??= a.getPropertyOptions(e), !((n.hasChanged ?? _)(i, t) || n.useDefault && n.reflect && i === this._$Ej?.get(e) && !this.hasAttribute(a._$Eu(e, n)))) return;
+			if (!1 === r && (i = this[e]), n ??= a.getPropertyOptions(e), !((n.hasChanged ?? b)(i, t) || n.useDefault && n.reflect && i === this._$Ej?.get(e) && !this.hasAttribute(a._$Eu(e, n)))) return;
 			this.C(e, t, n);
 		}
 		!1 === this.isUpdatePending && (this._$ES = this._$EP());
@@ -251,88 +251,88 @@ var v = class extends HTMLElement {
 	updated(e) {}
 	firstUpdated(e) {}
 };
-v.elementStyles = [], v.shadowRootOptions = { mode: "open" }, v[h("elementProperties")] = /* @__PURE__ */ new Map(), v[h("finalized")] = /* @__PURE__ */ new Map(), re?.({ ReactiveElement: v }), (m.reactiveElementVersions ??= []).push("2.1.2");
-// node_modules/lit-html/lit-html.js
-var y = globalThis, b = (e) => e, x = y.trustedTypes, ae = x ? x.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, S = "$lit$", C = `lit$${Math.random().toFixed(9).slice(2)}$`, w = "?" + C, oe = `<${w}>`, T = document, E = () => T.createComment(""), D = (e) => e === null || typeof e != "object" && typeof e != "function", O = Array.isArray, se = (e) => O(e) || typeof e?.[Symbol.iterator] == "function", k = "[ 	\n\f\r]", A = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ce = /-->/g, le = />/g, j = RegExp(`>|${k}(?:([^\\s"'>=/]+)(${k}*=${k}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ue = /'/g, de = /"/g, fe = /^(?:script|style|textarea|title)$/i, pe = (e) => (t, ...n) => ({
+S.elementStyles = [], S.shadowRootOptions = { mode: "open" }, S[v("elementProperties")] = /* @__PURE__ */ new Map(), S[v("finalized")] = /* @__PURE__ */ new Map(), ee?.({ ReactiveElement: S }), (h.reactiveElementVersions ??= []).push("2.1.2");
+// ../solar-almanac-card/node_modules/lit-html/lit-html.js
+var C = globalThis, w = (e) => e, T = C.trustedTypes, te = T ? T.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, ne = "$lit$", E = `lit$${Math.random().toFixed(9).slice(2)}$`, re = "?" + E, ie = `<${re}>`, D = document, O = () => D.createComment(""), k = (e) => e === null || typeof e != "object" && typeof e != "function", A = Array.isArray, ae = (e) => A(e) || typeof e?.[Symbol.iterator] == "function", j = "[ 	\n\f\r]", M = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, oe = /-->/g, se = />/g, N = RegExp(`>|${j}(?:([^\\s"'>=/]+)(${j}*=${j}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ce = /'/g, le = /"/g, ue = /^(?:script|style|textarea|title)$/i, de = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}), M = pe(1), me = pe(2), N = Symbol.for("lit-noChange"), P = Symbol.for("lit-nothing"), F = /* @__PURE__ */ new WeakMap(), I = T.createTreeWalker(T, 129);
-function L(e, t) {
-	if (!O(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-	return ae === void 0 ? t : ae.createHTML(t);
+}), P = de(1), F = de(2), I = Symbol.for("lit-noChange"), L = Symbol.for("lit-nothing"), fe = /* @__PURE__ */ new WeakMap(), R = D.createTreeWalker(D, 129);
+function pe(e, t) {
+	if (!A(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+	return te === void 0 ? t : te.createHTML(t);
 }
-var he = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = A;
+var me = (e, t) => {
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = M;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === A ? c[1] === "!--" ? o = ce : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = j) : (fe.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = j) : o = le : o === j ? c[0] === ">" ? (o = i ?? A, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? j : c[3] === "\"" ? de : ue) : o === de || o === ue ? o = j : o === ce || o === le ? o = A : (o = j, i = void 0);
-		let d = o === j && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === A ? n + oe : l >= 0 ? (r.push(s), n.slice(0, l) + S + n.slice(l) + C + d) : n + C + (l === -2 ? t : d);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === M ? c[1] === "!--" ? o = oe : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = N) : (ue.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = N) : o = se : o === N ? c[0] === ">" ? (o = i ?? M, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? N : c[3] === "\"" ? le : ce) : o === le || o === ce ? o = N : o === oe || o === se ? o = M : (o = N, i = void 0);
+		let d = o === N && e[t + 1].startsWith("/>") ? " " : "";
+		a += o === M ? n + ie : l >= 0 ? (r.push(s), n.slice(0, l) + ne + n.slice(l) + E + d) : n + E + (l === -2 ? t : d);
 	}
-	return [L(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
-}, R = class e {
+	return [pe(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
+}, z = class e {
 	constructor({ strings: t, _$litType$: n }, r) {
 		let i;
 		this.parts = [];
-		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = he(t, n);
-		if (this.el = e.createElement(l, r), I.currentNode = this.el.content, n === 2 || n === 3) {
+		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = me(t, n);
+		if (this.el = e.createElement(l, r), R.currentNode = this.el.content, n === 2 || n === 3) {
 			let e = this.el.content.firstChild;
 			e.replaceWith(...e.childNodes);
 		}
-		for (; (i = I.nextNode()) !== null && c.length < s;) {
+		for (; (i = R.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
-				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(S)) {
-					let t = u[o++], n = i.getAttribute(e).split(C), r = /([.?@])?(.*)/.exec(t);
+				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(ne)) {
+					let t = u[o++], n = i.getAttribute(e).split(E), r = /([.?@])?(.*)/.exec(t);
 					c.push({
 						type: 1,
 						index: a,
 						name: r[2],
 						strings: n,
-						ctor: r[1] === "." ? _e : r[1] === "?" ? ve : r[1] === "@" ? ye : V
+						ctor: r[1] === "." ? ge : r[1] === "?" ? _e : r[1] === "@" ? ve : H
 					}), i.removeAttribute(e);
-				} else e.startsWith(C) && (c.push({
+				} else e.startsWith(E) && (c.push({
 					type: 6,
 					index: a
 				}), i.removeAttribute(e));
-				if (fe.test(i.tagName)) {
-					let e = i.textContent.split(C), t = e.length - 1;
+				if (ue.test(i.tagName)) {
+					let e = i.textContent.split(E), t = e.length - 1;
 					if (t > 0) {
-						i.textContent = x ? x.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], E()), I.nextNode(), c.push({
+						i.textContent = T ? T.emptyScript : "";
+						for (let n = 0; n < t; n++) i.append(e[n], O()), R.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
-						i.append(e[t], E());
+						i.append(e[t], O());
 					}
 				}
 			} else if (i.nodeType === 8) {
-				if (i.data === w) c.push({
+				if (i.data === re) c.push({
 					type: 2,
 					index: a
 				});
 				else {
 					let e = -1;
-					for (; (e = i.data.indexOf(C, e + 1)) !== -1;) c.push({
+					for (; (e = i.data.indexOf(E, e + 1)) !== -1;) c.push({
 						type: 7,
 						index: a
-					}), e += C.length - 1;
+					}), e += E.length - 1;
 				}
 			}
 			a++;
 		}
 	}
 	static createElement(e, t) {
-		let n = T.createElement("template");
+		let n = D.createElement("template");
 		return n.innerHTML = e, n;
 	}
 };
-function z(e, t, n = e, r) {
-	if (t === N) return t;
-	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = D(t) ? void 0 : t._$litDirective$;
-	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = z(e, i._$AS(e, t.values), i, r)), t;
+function B(e, t, n = e, r) {
+	if (t === I) return t;
+	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = k(t) ? void 0 : t._$litDirective$;
+	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = B(e, i._$AS(e, t.values), i, r)), t;
 }
-var ge = class {
+var he = class {
 	constructor(e, t) {
 		this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
 	}
@@ -343,28 +343,28 @@ var ge = class {
 		return this._$AM._$AU;
 	}
 	u(e) {
-		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? T).importNode(t, !0);
-		I.currentNode = r;
-		let i = I.nextNode(), a = 0, o = 0, s = n[0];
+		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? D).importNode(t, !0);
+		R.currentNode = r;
+		let i = R.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
 			if (a === s.index) {
 				let t;
-				s.type === 2 ? t = new B(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new be(i, this, e)), this._$AV.push(t), s = n[++o];
+				s.type === 2 ? t = new V(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new ye(i, this, e)), this._$AV.push(t), s = n[++o];
 			}
-			a !== s?.index && (i = I.nextNode(), a++);
+			a !== s?.index && (i = R.nextNode(), a++);
 		}
-		return I.currentNode = T, r;
+		return R.currentNode = D, r;
 	}
 	p(e) {
 		let t = 0;
 		for (let n of this._$AV) n !== void 0 && (n.strings === void 0 ? n._$AI(e[t]) : (n._$AI(e, n, t), t += n.strings.length - 2)), t++;
 	}
-}, B = class e {
+}, V = class e {
 	get _$AU() {
 		return this._$AM?._$AU ?? this._$Cv;
 	}
 	constructor(e, t, n, r) {
-		this.type = 2, this._$AH = P, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
+		this.type = 2, this._$AH = L, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
 	}
 	get parentNode() {
 		let e = this._$AA.parentNode, t = this._$AM;
@@ -377,7 +377,7 @@ var ge = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = z(this, e, t), D(e) ? e === P || e == null || e === "" ? (this._$AH !== P && this._$AR(), this._$AH = P) : e !== this._$AH && e !== N && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? se(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = B(this, e, t), k(e) ? e === L || e == null || e === "" ? (this._$AH !== L && this._$AR(), this._$AH = L) : e !== this._$AH && e !== I && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? ae(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -386,36 +386,36 @@ var ge = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== P && D(this._$AH) ? this._$AA.nextSibling.data = e : this.T(T.createTextNode(e)), this._$AH = e;
+		this._$AH !== L && k(this._$AH) ? this._$AA.nextSibling.data = e : this.T(D.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
-		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = R.createElement(L(n.h, n.h[0]), this.options)), n);
+		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = z.createElement(pe(n.h, n.h[0]), this.options)), n);
 		if (this._$AH?._$AD === r) this._$AH.p(t);
 		else {
-			let e = new ge(r, this), n = e.u(this.options);
+			let e = new he(r, this), n = e.u(this.options);
 			e.p(t), this.T(n), this._$AH = e;
 		}
 	}
 	_$AC(e) {
-		let t = F.get(e.strings);
-		return t === void 0 && F.set(e.strings, t = new R(e)), t;
+		let t = fe.get(e.strings);
+		return t === void 0 && fe.set(e.strings, t = new z(e)), t;
 	}
 	k(t) {
-		O(this._$AH) || (this._$AH = [], this._$AR());
+		A(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
-		for (let a of t) i === n.length ? n.push(r = new e(this.O(E()), this.O(E()), this, this.options)) : r = n[i], r._$AI(a), i++;
+		for (let a of t) i === n.length ? n.push(r = new e(this.O(O()), this.O(O()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
 	}
 	_$AR(e = this._$AA.nextSibling, t) {
 		for (this._$AP?.(!1, !0, t); e !== this._$AB;) {
-			let t = b(e).nextSibling;
-			b(e).remove(), e = t;
+			let t = w(e).nextSibling;
+			w(e).remove(), e = t;
 		}
 	}
 	setConnected(e) {
 		this._$AM === void 0 && (this._$Cv = e, this._$AP?.(e));
 	}
-}, V = class {
+}, H = class {
 	get tagName() {
 		return this.element.tagName;
 	}
@@ -423,47 +423,47 @@ var ge = class {
 		return this._$AM._$AU;
 	}
 	constructor(e, t, n, r, i) {
-		this.type = 1, this._$AH = P, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = P;
+		this.type = 1, this._$AH = L, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = L;
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = z(this, e, t, 0), a = !D(e) || e !== this._$AH && e !== N, a && (this._$AH = e);
+		if (i === void 0) e = B(this, e, t, 0), a = !k(e) || e !== this._$AH && e !== I, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = z(this, r[n + o], t, o), s === N && (s = this._$AH[o]), a ||= !D(s) || s !== this._$AH[o], s === P ? e = P : e !== P && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = B(this, r[n + o], t, o), s === I && (s = this._$AH[o]), a ||= !k(s) || s !== this._$AH[o], s === L ? e = L : e !== L && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
 	j(e) {
-		e === P ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
+		e === L ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
 	}
-}, _e = class extends V {
+}, ge = class extends H {
 	constructor() {
 		super(...arguments), this.type = 3;
 	}
 	j(e) {
-		this.element[this.name] = e === P ? void 0 : e;
+		this.element[this.name] = e === L ? void 0 : e;
 	}
-}, ve = class extends V {
+}, _e = class extends H {
 	constructor() {
 		super(...arguments), this.type = 4;
 	}
 	j(e) {
-		this.element.toggleAttribute(this.name, !!e && e !== P);
+		this.element.toggleAttribute(this.name, !!e && e !== L);
 	}
-}, ye = class extends V {
+}, ve = class extends H {
 	constructor(e, t, n, r, i) {
 		super(e, t, n, r, i), this.type = 5;
 	}
 	_$AI(e, t = this) {
-		if ((e = z(this, e, t, 0) ?? P) === N) return;
-		let n = this._$AH, r = e === P && n !== P || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== P && (n === P || r);
+		if ((e = B(this, e, t, 0) ?? L) === I) return;
+		let n = this._$AH, r = e === L && n !== L || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== L && (n === L || r);
 		r && this.element.removeEventListener(this.name, this, n), i && this.element.addEventListener(this.name, this, e), this._$AH = e;
 	}
 	handleEvent(e) {
 		typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
 	}
-}, be = class {
+}, ye = class {
 	constructor(e, t, n) {
 		this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = n;
 	}
@@ -471,18 +471,18 @@ var ge = class {
 		return this._$AM._$AU;
 	}
 	_$AI(e) {
-		z(this, e);
+		B(this, e);
 	}
-}, xe = y.litHtmlPolyfillSupport;
-xe?.(R, B), (y.litHtmlVersions ??= []).push("3.3.3");
-var Se = (e, t, n) => {
+}, be = C.litHtmlPolyfillSupport;
+be?.(z, V), (C.litHtmlVersions ??= []).push("3.3.3");
+var xe = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new B(t.insertBefore(E(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new V(t.insertBefore(O(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
-}, H = globalThis, U = class extends v {
+}, U = globalThis, W = class extends S {
 	constructor() {
 		super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
 	}
@@ -492,7 +492,7 @@ var Se = (e, t, n) => {
 	}
 	update(e) {
 		let t = this.render();
-		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Se(t, this.renderRoot, this.renderOptions);
+		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = xe(t, this.renderRoot, this.renderOptions);
 	}
 	connectedCallback() {
 		super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -501,26 +501,26 @@ var Se = (e, t, n) => {
 		super.disconnectedCallback(), this._$Do?.setConnected(!1);
 	}
 	render() {
-		return N;
+		return I;
 	}
 };
-U._$litElement$ = !0, U.finalized = !0, H.litElementHydrateSupport?.({ LitElement: U });
-var Ce = H.litElementPolyfillSupport;
-Ce?.({ LitElement: U }), (H.litElementVersions ??= []).push("4.2.2");
+W._$litElement$ = !0, W.finalized = !0, U.litElementHydrateSupport?.({ LitElement: W });
+var Se = U.litElementPolyfillSupport;
+Se?.({ LitElement: W }), (U.litElementVersions ??= []).push("4.2.2");
 // src/font.ts
-var we = "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";
-function Te() {
+var Ce = "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";
+function we() {
 	if (document.getElementById("sac-font")) return;
 	let e = document.createElement("style");
-	e.id = "sac-font", e.textContent = `@font-face{font-family:'SAC Numerals';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,${we}) format('woff2')}`, document.head.appendChild(e);
+	e.id = "sac-font", e.textContent = `@font-face{font-family:'SAC Numerals';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,${Ce}) format('woff2')}`, document.head.appendChild(e);
 }
 // src/flows.ts
-function W(e) {
+function Te(e) {
 	if (e.load !== void 0) return e.load;
 	if (e.pv !== void 0 && e.battery !== void 0 && e.grid !== void 0) return Math.max(0, e.pv + e.battery + e.grid);
 }
 function Ee(e) {
-	let t = Math.max(0, e.pv ?? 0), n = Math.max(0, W(e) ?? 0), r = Math.max(0, e.battery ?? 0), i = Math.max(0, -(e.battery ?? 0)), a = Math.max(0, e.grid ?? 0), o = Math.max(0, -(e.grid ?? 0)), s = Math.min(t, n), c = Math.min(r, n - s), l = Math.min(a, Math.max(0, n - s - c)), u = t - s, d = Math.min(u, i);
+	let t = Math.max(0, e.pv ?? 0), n = Math.max(0, Te(e) ?? 0), r = Math.max(0, e.battery ?? 0), i = Math.max(0, -(e.battery ?? 0)), a = Math.max(0, e.grid ?? 0), o = Math.max(0, -(e.grid ?? 0)), s = Math.min(t, n), c = Math.min(r, n - s), l = Math.min(a, Math.max(0, n - s - c)), u = t - s, d = Math.min(u, i);
 	return {
 		solarHome: s,
 		batteryHome: c,
@@ -574,7 +574,7 @@ function je(e) {
 	};
 }
 function Me({ power: e, flows: t, threshold: n, gridOnline: r, runtime: i, fullIn: a }) {
-	let o = W(e);
+	let o = Te(e);
 	if (o === void 0) return;
 	let s = (e) => Math.round(e / Math.max(o, 1) * 100);
 	if (r === !1) return {
@@ -729,14 +729,14 @@ function X(e, t, n) {
 	}) : e[t] = n, e;
 }
 // src/solar-almanac-card.ts
-var Z = "solar-almanac-card", Ve = 3e5, He = [6, 17], Ue = {
+var Ve = "solar-almanac-card", He = 3e5, Z = 18, Ue = [6, 17], We = {
 	wh: .001,
 	mwh: 1e3
-}, We = [
+}, Ge = [
 	10,
 	20,
 	30
-], Ge = [
+], Ke = [
 	{
 		key: "pv",
 		label: "Solar",
@@ -756,7 +756,7 @@ var Z = "solar-almanac-card", Ve = 3e5, He = [6, 17], Ue = {
 function Q(e) {
 	if (e) return typeof e == "string" ? { entity: e } : e;
 }
-var $ = class extends U {
+var $ = class extends W {
 	constructor(...e) {
 		super(...e), X(this, "_animations", /* @__PURE__ */ new Map()), X(this, "_lastFetch", 0);
 	}
@@ -783,7 +783,7 @@ var $ = class extends U {
 		};
 	}
 	connectedCallback() {
-		super.connectedCallback(), Te(), this.requestUpdate();
+		super.connectedCallback(), we(), this.requestUpdate();
 	}
 	disconnectedCallback() {
 		super.disconnectedCallback();
@@ -814,7 +814,7 @@ var $ = class extends U {
 	}
 	_energy(e) {
 		let t = this._value(e);
-		return t === void 0 ? void 0 : t * (Ue[this._unit(e)] ?? 1);
+		return t === void 0 ? void 0 : t * (We[this._unit(e)] ?? 1);
 	}
 	_cellDelta() {
 		let e = this._value("cell_delta");
@@ -824,7 +824,7 @@ var $ = class extends U {
 		return this._entity("inverter_temperature")?.st.attributes.unit_of_measurement || "°C";
 	}
 	_unread(e) {
-		return Ge.some(({ key: t }) => this._config?.entities[t] && e[t] === void 0);
+		return Ke.some(({ key: t }) => this._config?.entities[t] && e[t] === void 0);
 	}
 	_openEntity(e) {
 		e && this.dispatchEvent(new CustomEvent("hass-more-info", {
@@ -882,7 +882,7 @@ var $ = class extends U {
 	_hourCells(e) {
 		let t = this._forecast("forecast_today", e), n = this._forecast("forecast_tomorrow", new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1)), r = je(t), i = n.size > 0 && (!r || e.getHours() >= r.end), a = i ? n : t, o = i ? je(n) : r, s = i ? void 0 : this._hourly, c = Math.max(0, ...a.values()), l = [...a].filter(([, e]) => e >= c * .02 && e > 0).map(([e]) => e);
 		for (let [e, t] of s ?? []) t > 50 && l.push(e);
-		let [u, d] = l.length ? [Math.min(...l), Math.max(...l)] : He, f = [];
+		let [u, d] = l.length ? [Math.min(...l), Math.max(...l)] : Ue, f = [];
 		for (let t = u; t <= d; t++) f.push({
 			hour: t,
 			forecast: a.get(t),
@@ -897,12 +897,12 @@ var $ = class extends U {
 		};
 	}
 	_renderBand(e, t) {
-		let n = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(e), r = `${String(e.getDate()).padStart(2, "0")}/${String(e.getMonth() + 1).padStart(2, "0")}`, i = this._value("grid_voltage"), a = i === void 0 ? "" : ` · ${Math.round(i)} V`, o = (e, t) => this._config?.entities.grid_voltage ? M`<button class=${t} @click=${() => this._moreInfo("grid_voltage")}>${e}</button>` : M`<span class=${t}>${e}</span>`;
-		return M`
+		let n = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(e), r = `${String(e.getDate()).padStart(2, "0")}/${String(e.getMonth() + 1).padStart(2, "0")}`, i = this._value("grid_voltage"), a = i === void 0 ? "" : ` · ${Math.round(i)} V`, o = (e, t) => this._config?.entities.grid_voltage ? P`<button class=${t} @click=${() => this._moreInfo("grid_voltage")}>${e}</button>` : P`<span class=${t}>${e}</span>`;
+		return P`
       <header class="band">
         <span class="date">${n.charAt(0).toUpperCase() + n.slice(1)} ${r}</span>
-        ${this._config?.title ? M`<span class="title">${this._config.title}</span>` : P}
-        ${t === !1 ? o("Mất lưới", "state down") : t || i !== void 0 ? o(`${t ? "Có lưới" : "Lưới"}${a}`, "state") : P}
+        ${this._config?.title ? P`<span class="title">${this._config.title}</span>` : L}
+        ${t === !1 ? o("Mất lưới", "state down") : t || i !== void 0 ? o(`${t ? "Có lưới" : "Lưới"}${a}`, "state") : L}
       </header>
     `;
 	}
@@ -910,13 +910,13 @@ var $ = class extends U {
 		let r = this._config?.entities, i = this._config?.threshold ?? 10, a = [];
 		if (r?.pv) {
 			let t = this._energy("pv_today"), n = this._energy("forecast_today"), r = e.pv === void 0 ? void 0 : q(e.pv), i = t === void 0 ? void 0 : n === void 0 ? `${G(t)} kWh` : `${G(t)} / ${G(n)} kWh`, o = t !== void 0 && n ? t / n * 100 : void 0;
-			a.push(M`
+			a.push(P`
         <div class="stat">
           <button class="main" @click=${() => this._moreInfo("pv")}>
             <span class="label"><i style="background:var(--sac-solar)"></i>Solar</span>
             ${this._figure(r)}
           </button>
-          ${this._gauge(o, "var(--sac-solar)")} ${i ? M`<span class="sub">${i}</span>` : P}
+          ${this._gauge(o, "var(--sac-solar)")} ${i ? P`<span class="sub">${i}</span>` : L}
         </div>
       `);
 		}
@@ -925,7 +925,7 @@ var $ = class extends U {
 				value: String(Math.round(t)),
 				unit: "%"
 			}, s = n === void 0 ? "—" : r ? `${n > 0 ? "xả" : "sạc"} ${K(n)}` : "đang nghỉ";
-			a.push(M`
+			a.push(P`
         <div class="stat">
           <button class="main" @click=${() => this._moreInfo(t === void 0 ? "battery" : "battery_soc")}>
             <span class="label"><i style="background:var(--sac-battery)"></i>Pin</span>
@@ -936,53 +936,129 @@ var $ = class extends U {
         </div>
       `);
 		}
-		let o = n ? [
+		let { mix: o, origin: s } = this._homeMix(t, n), c = P`
+      <span class="label">Nhà đang dùng</span>
+      ${this._figure(t === void 0 ? void 0 : q(t))}
+    `;
+		return a.push(P`
+      <div class="stat">
+        ${r?.load ? P`<button class="main" @click=${() => this._moreInfo("load")}>${c}</button>` : P`<div class="main">${c}</div>`}
+        ${o.length ? P`<span class="mix">${o.map((e) => P`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : P`<span class="gauge"></span>`}
+        ${s ? P`<span class="sub">${s}</span>` : L}
+      </div>
+    `), P`<section class="lead" style="--cols:${a.length}">${a}</section>`;
+	}
+	_homeMix(e, t) {
+		let n = this._config?.threshold ?? 10, r = t ? [
 			{
 				name: "Solar",
-				w: n.solarHome,
+				w: t.solarHome,
 				color: "var(--sac-solar)"
 			},
 			{
 				name: "pin",
-				w: n.batteryHome,
+				w: t.batteryHome,
 				color: "var(--sac-battery)"
 			},
 			{
 				name: "lưới",
-				w: n.gridHome,
+				w: t.gridHome,
 				color: "var(--sac-grid)"
 			}
-		].filter((e) => e.w > 0) : [], s = n ? (t ?? 0) - o.reduce((e, t) => e + t.w, 0) : 0, c = [...o].sort((e, t) => t.w - e.w)[0], l = c && t && t > i && c.w >= s ? `${Math.round(c.w / t * 100)}% từ ${c.name}` : void 0, u = s > i ? [...o, {
-			name: "",
-			w: s,
-			color: "var(--sac-border)"
-		}] : o, d = M`
-      <span class="label">Nhà đang dùng</span>
-      ${this._figure(t === void 0 ? void 0 : q(t))}
+		].filter((e) => e.w > 0) : [], i = t ? (e ?? 0) - r.reduce((e, t) => e + t.w, 0) : 0, a = [...r].sort((e, t) => t.w - e.w)[0], o = a && e && e > n && a.w >= i ? `${Math.round(a.w / e * 100)}% từ ${a.name}` : void 0;
+		return {
+			mix: i > n ? [...r, {
+				name: "",
+				w: i,
+				color: "var(--sac-border)"
+			}] : r,
+			origin: o,
+			top: a
+		};
+	}
+	_mixBar(e) {
+		return e.length ? P`<span class="mix">${e.map((e) => P`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : P`<span class="gauge"></span>`;
+	}
+	_renderFlow(e, t, n) {
+		let r = this._config?.entities, i = this._config?.threshold ?? 10, a = this._config?.flow_max_power ?? 5e3, o = !!r?.pv, s = !!r?.grid, c = !!r?.battery, l = c && !s, u = c && s, d = (e, t, n, r, o, s) => {
+			let c = t !== void 0 && Math.abs(t) > i, l = c ? 2 + 6 * Math.sqrt(Math.min(1, Math.abs(t) / a)) : 1;
+			return P`
+        <span class="wire ${r} ${c ? "on" : ""}" style="grid-area:${s};--wire:${l.toFixed(1)}px;--wire-color:${n}" aria-hidden="true">
+          <i class="dots" data-key=${e} data-axis=${r} data-rate=${c ? 1 / Oe(t) : 0} data-reverse=${o ? "" : "1"}></i>
+        </span>
+      `;
+		}, f = (e) => P`<i style="background:${e}"></i>`, { mix: p, origin: m, top: h } = this._homeMix(t, n), g = this._value("battery_soc"), _ = e.battery, ee = _ === void 0 ? "—" : _ !== void 0 && Math.abs(_) > i ? `${_ > 0 ? "xả" : "sạc"} ${K(_)}` : "đang nghỉ", v = this._energy("pv_today"), y = this._energy("forecast_today"), b = v === void 0 ? void 0 : y === void 0 ? `${G(v)} kWh` : `${G(v)} / ${G(y)} kWh`, x = e.grid, S = x !== void 0 && Math.abs(x) > i, C = this._energy("grid_import_today"), w = this._energy("grid_export_today"), T = [C === void 0 ? "" : `mua ${G(C)}`, w ? `phát ${G(w)}` : ""].filter(Boolean).join(" · ");
+		return P`
+      <section class="map" style="grid-template-areas:${[
+			o ? "\"pv pv pv pv pv\"" : "",
+			o ? "\". . ws . .\"" : "",
+			`"${s ? "grid wg" : l ? "bat wb" : ". ."} hub wh home"`,
+			u ? "\". . wb . .\"" : "",
+			u ? "\"bat bat bat bat bat\"" : ""
+		].filter(Boolean).join(" ")}">
+        ${o ? P`
+              <div class="node" style="grid-area:pv">
+                <button class="main" @click=${() => this._moreInfo("pv")}>
+                  <span class="label">${f("var(--sac-solar)")}Solar</span>
+                  ${this._figure(e.pv === void 0 ? void 0 : q(e.pv))}
+                </button>
+                ${this._gauge(v !== void 0 && y ? v / y * 100 : void 0, "var(--sac-solar)")}
+                ${b ? P`<span class="sub">${b}</span>` : L}
+              </div>
+              ${d("pv", e.pv, "var(--sac-solar)", "v", !0, "ws")}
+            ` : L}
+        ${s ? P`
+              <div class="node side" style="grid-area:grid">
+                <button class="main" @click=${() => this._moreInfo("grid")}>
+                  <span class="label">${f("var(--sac-grid)")}Lưới${S ? x > 0 ? " · mua" : " · phát" : ""}</span>
+                  ${this._figure(x === void 0 ? void 0 : q(x))}
+                </button>
+                ${T ? P`<button class="sub" @click=${() => this._moreInfo("grid_import_today")}>${T} kWh</button>` : L}
+              </div>
+              ${d("grid", x, "var(--sac-grid)", "h", (x ?? 0) >= 0, "wg")}
+            ` : L}
+        ${c ? P`
+              <div class="node ${l ? "side" : ""}" style="grid-area:bat">
+                <button class="main" @click=${() => this._moreInfo(g === void 0 ? "battery" : "battery_soc")}>
+                  <span class="label">${f("var(--sac-battery)")}Pin</span>
+                  ${this._figure(g === void 0 ? _ === void 0 ? void 0 : q(_) : {
+			value: String(Math.round(g)),
+			unit: "%"
+		})}
+                </button>
+                ${this._gauge(g, "var(--sac-battery)")}
+                <button class="sub" @click=${() => this._moreInfo("battery")}>${ee}</button>
+              </div>
+              ${l ? d("battery", _, "var(--sac-battery)", "h", (_ ?? 0) >= 0, "wb") : d("battery", _, "var(--sac-battery)", "v", (_ ?? 0) < 0, "wb")}
+            ` : L}
+        <span class="hub" style="grid-area:hub" aria-hidden="true">
+          ${F`<svg viewBox="0 0 24 24"><path d="M4 12c2.7-5.3 5.3-5.3 8 0s5.3 5.3 8 0"></path></svg>`}
+        </span>
+        ${d("home", t, h?.color ?? "var(--sac-fg)", "h", !0, "wh")}
+        <div class="node side home" style="grid-area:home">
+          ${r?.load ? P`<button class="main" @click=${() => this._moreInfo("load")}>
+                <span class="label">Nhà đang dùng</span>${this._figure(t === void 0 ? void 0 : q(t))}
+              </button>` : P`<div class="main"><span class="label">Nhà đang dùng</span>${this._figure(t === void 0 ? void 0 : q(t))}</div>`}
+          ${this._mixBar(p)} ${m ? P`<span class="sub">${m}</span>` : L}
+        </div>
+      </section>
     `;
-		return a.push(M`
-      <div class="stat">
-        ${r?.load ? M`<button class="main" @click=${() => this._moreInfo("load")}>${d}</button>` : M`<div class="main">${d}</div>`}
-        ${u.length ? M`<span class="mix">${u.map((e) => M`<i style="flex:${e.w} 1 0;background:${e.color}"></i>`)}</span>` : M`<span class="gauge"></span>`}
-        ${l ? M`<span class="sub">${l}</span>` : P}
-      </div>
-    `), M`<section class="lead" style="--cols:${a.length}">${a}</section>`;
 	}
 	_figure(e) {
-		return M`<b class="num">${e?.value ?? "—"}${e ? M`<small>${e.unit}</small>` : P}</b>`;
+		return P`<b class="num">${e?.value ?? "—"}${e ? P`<small>${e.unit}</small>` : L}</b>`;
 	}
 	_gauge(e, t) {
-		return M`<span class="gauge"><span style="width:${e === void 0 ? 0 : Math.min(100, Math.max(0, e))}%;background:${t}"></span></span>`;
+		return P`<span class="gauge"><span style="width:${e === void 0 ? 0 : Math.min(100, Math.max(0, e))}%;background:${t}"></span></span>`;
 	}
 	_renderLinks(e) {
 		let t = this._config?.entities, n = this._config?.threshold ?? 10, r = +!!t?.pv + +!!t?.battery + 1, i = (e) => (e + .5) / r * 300, a = i(r - 1), o = (e, t, n) => `M${e} ${n}C${e} ${t} ${e + 12} ${t} ${e + 24} ${t}L${a - 24} ${t}C${a - 12} ${t} ${a} ${t} ${a} 0`;
-		return M`
+		return P`
       <div class="links">
-        ${me`
+        ${F`
           <svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
-            ${Ge.filter(({ key: e }) => t?.[e]).map(({ key: t, color: r }, a) => {
+            ${Ke.filter(({ key: e }) => t?.[e]).map(({ key: t, color: r }, a) => {
 			let s = t === "grid" ? o(36, 16, 24) : o(i(a), t === "pv" ? 8 : 12, 0), c = e[t] ?? 0, l = Math.abs(c) > n;
-			return me`
+			return F`
                 <path class="track" d=${s}></path>
                 <path
                   class="flow ${l ? "" : "idle"}"
@@ -1018,36 +1094,36 @@ var $ = class extends U {
 				unit: "kWh",
 				key: "forecast_tomorrow"
 			}
-		].filter((e) => e !== void 0);
-		return !u.length && !i?.grid ? P : M`
+		].filter((e) => e !== void 0), d = !!i?.grid && this._config?.layout !== "flow";
+		return !u.length && !d ? L : P`
       <dl class="reserve">
-        ${i?.grid ? M`<div>
+        ${d ? P`<div>
               <dt><i style="background:var(--sac-grid)"></i>Lưới${l}</dt>
               <dd class="num"><button class="fact" @click=${() => this._moreInfo("grid")}>${c === void 0 ? "—" : K(c)}</button></dd>
-            </div>` : P}
-        ${u.map((e) => M`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? M` <small>${e.unit}</small>` : P}</button></dd></div>`)}
+            </div>` : L}
+        ${u.map((e) => P`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? P` <small>${e.unit}</small>` : L}</button></dd></div>`)}
       </dl>
     `;
 	}
 	_renderHours(e) {
 		let { cells: t, tomorrow: n, window: r } = this._hourCells(e), i = Math.max(1, ...t.map((e) => Math.max(e.forecast ?? 0, e.actual ?? 0))), a = t.some((e) => e.forecast !== void 0), o = t.some((e) => e.actual);
-		if (!a && !o) return P;
+		if (!a && !o) return L;
 		let s = a && o ? "Nền dự báo · Cột thực" : a ? "Nền: dự báo" : "Cột: thực tế", c = t.find((e) => e.hour === this._focusHour), l = c ? [
 			`${c.hour}h`,
 			c.forecast === void 0 ? "" : `Dự báo ${K(c.forecast)}`,
 			c.actual === void 0 ? "" : `Thực ${K(c.actual)}`
 		].filter(Boolean).join(" · ") : s, u = t.findIndex((e) => e.good), d = t.filter((e) => e.good).length;
-		return M`
+		return P`
       <section class="hours" aria-label="Sản lượng theo giờ">
         <div class="hours-head">
           <span>${r ? `Giờ tốt dùng tải lớn${n ? " ngày mai" : ""}` : "Solar theo giờ"}</span>
           <b class=${c ? "" : "legend"}>${l}</b>
         </div>
         <div class="cells" style="--count:${t.length}">
-          ${r && d ? M`<div class="window" style="grid-column:${u + 1} / span ${d}">${r.start}–${r.end}h</div>` : P}
+          ${r && d ? P`<div class="window" style="grid-column:${u + 1} / span ${d}">${r.start}–${r.end}h</div>` : L}
           ${t.map((e) => {
 			let t = (e.forecast ?? 0) / i, n = `${e.hour} giờ${e.good ? ", giờ tốt" : ""}${e.forecast === void 0 ? "" : `, dự báo ${K(e.forecast)}`}${e.actual === void 0 ? "" : `, thực ${K(e.actual)}`}`;
-			return M`
+			return P`
               <button
                 class="cell ${e.now ? "now" : ""}"
                 aria-label=${n}
@@ -1058,7 +1134,7 @@ var $ = class extends U {
                 @blur=${() => this._focusHour = void 0}
               >
                 <span class="tile" style="--level:${Math.round(t * 70 + 6)}%">
-                  ${e.actual ? M`<i style="height:${Math.round(e.actual / i * 100)}%"></i>` : P}
+                  ${e.actual ? P`<i style="height:${Math.round(e.actual / i * 100)}%"></i>` : L}
                 </span>
                 <span class="hour">${e.hour}</span>
               </button>
@@ -1069,9 +1145,9 @@ var $ = class extends U {
     `;
 	}
 	_renderFine() {
-		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = (e) => e === void 0 ? "—" : G(e), s = (e, t, n = "") => this._config?.entities[e] ? M`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, c = (e, t) => {
+		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${G(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = (e) => e === void 0 ? "—" : G(e), s = (e, t, n = "") => this._config?.entities[e] ? P`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, c = (e, t) => {
 			let n = this._energy(e), r = this._energy(t);
-			return n === void 0 && r === void 0 ? void 0 : M`${s(e, o(n), "left")} / ${s(t, `${o(r)} kWh`, "right")}`;
+			return n === void 0 && r === void 0 ? void 0 : P`${s(e, o(n), "left")} / ${s(t, `${o(r)} kWh`, "right")}`;
 		}, l = [
 			[this._config?.savings_label ?? "Tiết kiệm tháng", n === void 0 ? void 0 : s("savings_month", `${G(n, 0)} đ`)],
 			["Tải hôm nay", t === void 0 ? void 0 : s("load_today", t)],
@@ -1082,45 +1158,45 @@ var $ = class extends U {
 			["Nhiệt biến tần", i === void 0 ? void 0 : s("inverter_temperature", `${G(i, 0)} ${this._temperatureUnit()}`)],
 			["Tần số lưới", a === void 0 ? void 0 : s("grid_frequency", `${G(a)} Hz`)]
 		].filter((e) => e[1] !== void 0);
-		return l.length ? M`<dl class="fine">${l.map(([e, t]) => M`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : P;
+		return l.length ? P`<dl class="fine">${l.map(([e, t]) => P`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : L;
 	}
 	_renderFan() {
 		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();
-		if (!e && !n.length) return P;
+		if (!e && !n.length) return L;
 		let i = e?.st.state === "on" ? "Đang chạy" : "—";
-		return M`
+		return P`
       <div class="control">
         <button class="about" @click=${() => this._openEntity(e?.cfg.entity ?? n[0])}>
           <span>Quạt tản nhiệt</span><b>${e?.st.state === "off" ? "Tắt" : r === void 0 ? i : `${G(r, 0)} vòng/phút`}</b>
         </button>
-        ${t ? M`<button
+        ${t ? P`<button
               class="opt"
               aria-pressed=${t.st.state === "on" ? "true" : "false"}
               ?disabled=${t.st.state !== "on" && t.st.state !== "off"}
               @click=${() => this._perform(t.cfg.entity, { action: "toggle" })}
             >
               Tự động
-            </button>` : P}
+            </button>` : L}
       </div>
     `;
 	}
 	_renderEod() {
 		let e = this._entity("eod");
-		if (!e) return P;
-		let t = e.cfg.entity, n = this._config?.eod_levels ?? We, r = this._value("eod"), i = (e) => this._perform(t, {
+		if (!e) return L;
+		let t = e.cfg.entity, n = this._config?.eod_levels ?? Ge, r = this._value("eod"), i = (e) => this._perform(t, {
 			action: "perform-action",
 			perform_action: `${t.split(".")[0]}.set_value`,
 			target: { entity_id: t },
 			data: { value: e },
 			confirmation: { text: `Đặt EOD lưới = ${e}%? Pin sẽ xả tới ${e}% mới lấy lưới.` }
 		});
-		return M`
+		return P`
       <div class="control">
         <button class="about" @click=${() => this._moreInfo("eod")}>
-          <span>EOD lưới</span>${r === void 0 ? M`<b>—</b>` : n.includes(r) ? P : M`<b>${G(r, 0)}%</b>`}
+          <span>EOD lưới</span>${r === void 0 ? P`<b>—</b>` : n.includes(r) ? L : P`<b>${G(r, 0)}%</b>`}
         </button>
         <div class="opts" role="group" aria-label="Đặt EOD lưới">
-          ${n.map((e) => M`<button
+          ${n.map((e) => P`<button
               class="opt"
               aria-pressed=${e === r ? "true" : "false"}
               ?disabled=${r === void 0}
@@ -1134,7 +1210,7 @@ var $ = class extends U {
 	}
 	_renderControls() {
 		let e = this._renderFan(), t = this._renderEod();
-		return e === P && t === P ? P : M`<div class="controls">${e} ${t}</div>`;
+		return e === L && t === L ? L : P`<div class="controls">${e} ${t}</div>`;
 	}
 	shouldUpdate(e) {
 		let t = e.get("hass");
@@ -1148,13 +1224,13 @@ var $ = class extends U {
 		this.dataset.mode = t ? "dark" : "light", this.dataset.band = this._config?.band ?? "red";
 	}
 	render() {
-		if (!this._config) return P;
+		if (!this._config) return L;
 		let e = this.now ?? /* @__PURE__ */ new Date(), t = this._config.threshold ?? 10, n = this._gridOnline(), r = {
 			pv: this._power("pv"),
 			battery: this._power("battery"),
 			grid: this._power("grid") ?? (n === !1 && this._config.entities.grid ? 0 : void 0),
 			load: this._power("load")
-		}, i = this._unread(r), a = W(r), o = Ee(r), s = this._value("battery_soc"), c = this._config.battery_capacity, l = s !== void 0 && c && a !== void 0 ? ke(s, c, this._config.battery_reserve ?? 0, a) : void 0, u = s !== void 0 && c ? Ae(s, c, Math.max(0, -(r.battery ?? 0))) : void 0, d = this._energy("grid_import_today"), f = this._energy("load_today"), ee = d !== void 0 && f ? Math.max(0, Math.round((1 - d / f) * 100)) : void 0, p = i ? void 0 : Me({
+		}, i = this._unread(r), a = Te(r), o = Ee(r), s = this._value("battery_soc"), c = this._config.battery_capacity, l = s !== void 0 && c && a !== void 0 ? ke(s, c, this._config.battery_reserve ?? 0, a) : void 0, u = s !== void 0 && c ? Ae(s, c, Math.max(0, -(r.battery ?? 0))) : void 0, d = this._energy("grid_import_today"), f = this._energy("load_today"), p = d !== void 0 && f ? Math.max(0, Math.round((1 - d / f) * 100)) : void 0, m = i ? void 0 : Me({
 			power: r,
 			flows: o,
 			threshold: t,
@@ -1162,15 +1238,15 @@ var $ = class extends U {
 			runtime: l,
 			fullIn: u
 		});
-		return M`
+		return P`
       <ha-card>
         <div class="page">
           ${this._renderBand(e, n)}
-          ${this._alerts().map((e) => M`<p class="alert">${e}</p>`)}
-          ${this._renderLead(r, a, i ? void 0 : o)} ${this._renderLinks(r)}
-          ${this._renderReserve(r, l, n, ee)}
-          ${p ? M`<p class="say"><b>${p.lead}</b> ${p.rest ?? ""}</p>` : P}
-          ${this._config.compact ? P : M`${this._renderHours(e)} ${this._renderFine()}`} ${this._renderControls()}
+          ${this._alerts().map((e) => P`<p class="alert">${e}</p>`)}
+          ${this._config.layout === "flow" ? this._renderFlow(r, a, i ? void 0 : o) : P`${this._renderLead(r, a, i ? void 0 : o)} ${this._renderLinks(r)}`}
+          ${this._renderReserve(r, l, n, p)}
+          ${m ? P`<p class="say"><b>${m.lead}</b> ${m.rest ?? ""}</p>` : L}
+          ${this._config.compact ? L : P`${this._renderHours(e)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
       </ha-card>
     `;
@@ -1180,17 +1256,24 @@ var $ = class extends U {
 	}
 	_syncFlows() {
 		let e = matchMedia("(prefers-reduced-motion: reduce)").matches;
-		for (let t of this.renderRoot.querySelectorAll(".flow")) {
-			let n = t.dataset.key, r = Number(t.dataset.rate), i = this._animations.get(n);
-			!e && t.animate && (i && i.effect.target === t || (i?.cancel(), i = t.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -15 }], {
-				duration: 1e3,
-				iterations: Infinity
-			}), this._animations.set(n, i)), i.effect?.updateTiming({ direction: t.dataset.reverse ? "reverse" : "normal" }), r > 0 ? (i.updatePlaybackRate(r), i.playState !== "running" && i.play()) : i.pause());
+		for (let t of this.renderRoot.querySelectorAll(".flow, .dots")) {
+			let n = t.classList.contains("dots"), r = `${n ? "w" : "f"}-${t.dataset.key}`, i = Number(t.dataset.rate), a = this._animations.get(r);
+			if (!e && t.animate) {
+				if (!a || a.effect.target !== t) {
+					a?.cancel();
+					let e = n ? t.dataset.axis === "v" ? [{ backgroundPosition: "50% 0px" }, { backgroundPosition: `50% ${Z}px` }] : [{ backgroundPosition: "0px 50%" }, { backgroundPosition: `${Z}px 50%` }] : [{ strokeDashoffset: 0 }, { strokeDashoffset: -15 }];
+					a = t.animate(e, {
+						duration: 1e3,
+						iterations: Infinity
+					}), this._animations.set(r, a);
+				}
+				a.effect?.updateTiming({ direction: t.dataset.reverse ? "reverse" : "normal" }), i > 0 ? (a.updatePlaybackRate(i), a.playState !== "running" && a.play()) : a.pause();
+			}
 		}
 	}
 	async _maybeFetchHistory() {
 		let e = Q(this._config?.entities.pv)?.entity;
-		if (!e || !this.hass || this._config?.compact || Date.now() - this._lastFetch < Ve) return;
+		if (!e || !this.hass || this._config?.compact || Date.now() - this._lastFetch < He) return;
 		this._lastFetch = Date.now();
 		let t = this.now ?? /* @__PURE__ */ new Date();
 		try {
@@ -1363,6 +1446,135 @@ X($, "properties", {
       }
       .flow.idle {
         display: none;
+      }
+      /* ---- layout: flow ---- */
+      .map {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(calc(var(--u) * 26), 0.8fr) auto minmax(calc(var(--u) * 26), 0.8fr) minmax(0, 1.15fr);
+        align-items: center;
+        padding: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 6);
+      }
+      .node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-self: center;
+        min-width: 0;
+        text-align: center;
+      }
+      .node .main {
+        align-items: center;
+      }
+      .node .gauge,
+      .node .mix {
+        align-self: stretch;
+        min-width: calc(var(--u) * 92);
+      }
+      .node .main .num {
+        font-size: calc(var(--u) * 32);
+        line-height: 1;
+      }
+      .node.side .main .num {
+        font-size: calc(var(--u) * 30);
+      }
+      .node.home .main .num {
+        font-size: calc(var(--u) * 44);
+      }
+      .node .sub {
+        margin-top: calc(var(--u) * 2);
+      }
+      .node.side {
+        justify-self: stretch;
+      }
+      .node.side .gauge,
+      .node.side .mix {
+        min-width: 0;
+      }
+      .hub {
+        display: grid;
+        place-items: center;
+        width: calc(var(--u) * 34);
+        height: calc(var(--u) * 34);
+        border: 1.5px solid var(--sac-dim);
+        border-radius: calc(var(--u) * 4);
+        color: var(--sac-dim);
+      }
+      .hub svg {
+        width: 62%;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+      .wire {
+        position: relative;
+        display: block;
+        align-self: stretch;
+        justify-self: stretch;
+      }
+      .wire.v {
+        min-height: calc(var(--u) * 22);
+        margin: calc(var(--u) * 3) 0;
+      }
+      .wire.h {
+        margin: 0 calc(var(--u) * 3);
+      }
+      .wire::before {
+        content: '';
+        position: absolute;
+        background: var(--sac-border);
+      }
+      .wire.on::before {
+        background: var(--wire-color);
+        opacity: 0.45;
+      }
+      .wire.h::before {
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: var(--wire);
+        transform: translateY(-50%);
+      }
+      .wire.v::before {
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: var(--wire);
+        transform: translateX(-50%);
+      }
+      .dots {
+        position: absolute;
+        display: none;
+        background-image: radial-gradient(circle closest-side, var(--wire-color) 85%, transparent 100%);
+      }
+      .wire.on .dots {
+        display: block;
+      }
+      .wire.h .dots {
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: calc(var(--wire) + 4px);
+        transform: translateY(-50%);
+        background-size: ${Z}px 100%;
+        background-repeat: repeat-x;
+      }
+      .wire.v .dots {
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: calc(var(--wire) + 4px);
+        transform: translateX(-50%);
+        background-size: 100% ${Z}px;
+        background-repeat: repeat-y;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .dots {
+          display: none !important;
+        }
+        .wire.on::before {
+          opacity: 1;
+        }
       }
       dl,
       dd {
@@ -1600,6 +1812,21 @@ X($, "properties", {
           font-size: calc(var(--u) * 12.5);
         }
       }
+      @container (max-width: 400px) {
+        .node .main .num {
+          font-size: calc(var(--u) * 30);
+        }
+        .node.side .main .num {
+          font-size: calc(var(--u) * 28);
+        }
+        .node.home .main .num {
+          font-size: calc(var(--u) * 38);
+        }
+        .node .gauge,
+        .node .mix {
+          min-width: calc(var(--u) * 70);
+        }
+      }
       @container (max-width: 367px) {
         .title {
           display: none;
@@ -1611,8 +1838,8 @@ X($, "properties", {
           grid-template-columns: minmax(0, 1fr);
         }
       }
-    `]), customElements.get(Z) || (customElements.define(Z, $), window.customCards = window.customCards || [], window.customCards.push({
-	type: Z,
+    `]), customElements.get(Ve) || (customElements.define(Ve, $), window.customCards = window.customCards || [], window.customCards.push({
+	type: Ve,
 	name: "Solar Almanac",
 	description: "Luồng năng lượng và giờ tốt dùng tải lớn, trình bày như một tờ lịch",
 	preview: !0

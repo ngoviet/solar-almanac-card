@@ -38,6 +38,13 @@ export interface SolarAlmanacCardConfig {
   band?: 'red' | 'neutral';
   /** Ẩn dải giờ và dòng chữ nhỏ để card thấp hơn. */
   compact?: boolean;
+  /**
+   * `columns` (mặc định): ba số lớn ngang hàng và dải hạt.
+   * `flow`: sơ đồ Solar trên, lưới trái, nhà phải, pin dưới, nối qua biến tần; dây dày theo công suất.
+   */
+  layout?: 'columns' | 'flow';
+  /** Công suất (W) ứng với dây dày nhất ở `layout: flow`; mặc định 5000. */
+  flow_max_power?: number;
   /** Dung lượng pin (kWh), dùng để tính thời gian còn chạy và thời gian đầy. */
   battery_capacity?: number;
   /** SOC (%) biến tần ngừng xả khi mất lưới. */
