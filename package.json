@@ -1,6 +1,6 @@
 {
   "name": "solar-almanac-card",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Home Assistant Lovelace card: live solar / battery / grid / load power flow",
   "type": "module",
   "main": "dist/solar-almanac-card.js",

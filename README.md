@@ -70,6 +70,9 @@ entities:
 | `title`            | —        | Tên hiện trên băng đỏ, ẩn khi card quá hẹp                     |
 | `theme`            | `auto`   | `auto` theo chế độ sáng/tối của HA, hoặc `light`, `dark`       |
 | `compact`          | `false`  | Ẩn dải giờ và dòng chữ nhỏ; khu điều khiển vẫn hiện            |
+| `layout`           | `columns` | `flow`: thay ba số lớn và dải hạt bằng sơ đồ Solar trên, lưới trái, nhà phải, pin dưới, nối qua biến tần; dây dày theo công suất, chấm chạy theo chiều dòng. Không có lưới thì pin sang trái. Phần còn lại của card giữ nguyên |
+| `flow_max_power`   | `5000`   | W, công suất ứng với dây dày nhất ở `layout: flow`              |
+| `mppts`            | —        | Danh sách MPPT cho `layout: flow`: mỗi mục `name`, `power`, `voltage`, `current`, `energy_today`. Hiện thành các ô trên nút Solar (công suất, điện áp · dòng, kWh hôm nay), dây nhỏ chảy vào Solar |
 | `threshold`        | `10`     | W, dưới mức này coi như không có dòng chảy                     |
 | `battery_capacity` | —        | kWh, cần để hiện "Nếu mất điện" và "Đầy sau"                   |
 | `battery_reserve`  | `0`      | %, phần pin không dùng khi tính thời gian còn chạy             |

@@ -134,7 +134,7 @@ Mỗi ngày là một tờ lịch treo tường: băng đỏ đầu tờ, một 
 
 Hệ này in trên giấy, không phải dựng trên bảng điều khiển. Nền là giấy tint đỏ của palette-axi, chữ là mực trung tính, số là khối đặc đậm khổ lớn. Mật độ cao nhưng phân tầng rõ: một số lớn, ba số vừa, phần còn lại là chữ nhỏ. Màu chỉ xuất hiện ở nơi có nghĩa, và mọi dấu trên dải giờ đều là số liệu thật, không có trang trí.
 
-Card sống trong shadow DOM của dashboard Home Assistant, cạnh những card khác. Nó thừa kế font thân bài và chế độ sáng/tối của HA, chỉ mang theo ba thứ của riêng mình: bảng màu, bộ số nhúng và đơn vị `--u`. Hệ này từ chối sơ đồ năm vòng tròn nối về biến tần: nguồn đi vào con số, không đi vào một hình vẽ của hệ thống.
+Card sống trong shadow DOM của dashboard Home Assistant, cạnh những card khác. Nó thừa kế font thân bài và chế độ sáng/tối của HA, chỉ mang theo ba thứ của riêng mình: bảng màu, bộ số nhúng và đơn vị `--u`. Hệ này từ chối sơ đồ năm vòng tròn nối về biến tần: nguồn đi vào con số, không đi vào một hình vẽ của hệ thống. Ngoại lệ có chủ đích là `layout: flow` (chủ dự án yêu cầu 08/11/2026): sơ đồ bốn nút nối về một ô biến tần, nhưng vẫn theo các quy tắc ở đây. Số trong nút là khối số của card, chữ bằng mực, màu nguồn chỉ ở dây, chấm và ô nhãn; sạc/xả vẫn nói bằng chữ. Từ hàng dự phòng trở xuống giữ nguyên tờ lịch.
 
 **Key Characteristics:**
 - Một đơn vị `--u` chi phối mọi kích thước; card rộng ra thì chữ lớn theo để đọc từ xa.

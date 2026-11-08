@@ -16,11 +16,13 @@ import {
 import type { Power } from './flows';
 import { FORECAST_ATTRIBUTES, fetchToday, parseForecast, toHourly } from './history';
 import { themeStyles } from './theme';
-import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, SolarAlmanacCardConfig } from './types';
+import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, MpptConfig, SolarAlmanacCardConfig } from './types';
 
 const CARD_TAG = 'solar-almanac-card';
 const HISTORY_REFRESH_MS = 5 * 60_000;
 const DASH_PERIOD = 15;
+/** Khoảng cách (px) giữa hai chấm trên dây của layout flow. */
+const WIRE_GAP = 18;
 const DEFAULT_HOURS: [number, number] = [6, 17];
 const ENERGY_TO_KWH: Record<string, number> = { wh: 0.001, mwh: 1000 };
 const DEFAULT_EOD_LEVELS = [10, 20, 30];
@@ -295,17 +297,7 @@ export class SolarAlmanacCard extends LitElement {
       `);
     }
 
-    const parts = flows
-      ? [
-          { name: 'Solar', w: flows.solarHome, color: 'var(--sac-solar)' },
-          { name: 'pin', w: flows.batteryHome, color: 'var(--sac-battery)' },
-          { name: 'lưới', w: flows.gridHome, color: 'var(--sac-grid)' },
-        ].filter((p) => p.w > 0)
-      : [];
-    const unknown = flows ? (load ?? 0) - parts.reduce((sum, p) => sum + p.w, 0) : 0;
-    const top = [...parts].sort((a, b) => b.w - a.w)[0];
-    const origin = top && load && load > threshold && top.w >= unknown ? `${Math.round((top.w / load) * 100)}% từ ${top.name}` : undefined;
-    const mix = unknown > threshold ? [...parts, { name: '', w: unknown, color: 'var(--sac-border)' }] : parts;
+    const { mix, origin } = this._homeMix(load, flows);
     const home = html`
       <span class="label">Nhà đang dùng</span>
       ${this._figure(load === undefined ? undefined : heroPower(load))}
@@ -321,6 +313,177 @@ export class SolarAlmanacCard extends LitElement {
     `);
 
     return html`<section class="lead" style="--cols:${stats.length}">${stats}</section>`;
+  }
+
+  /** Tải đang đến từ nguồn nào: các đoạn của thanh tỉ lệ và câu "83% từ Solar". */
+  private _homeMix(load: number | undefined, flows?: ReturnType<typeof computeFlows>) {
+    const threshold = this._config?.threshold ?? 10;
+    const parts = flows
+      ? [
+          { name: 'Solar', w: flows.solarHome, color: 'var(--sac-solar)' },
+          { name: 'pin', w: flows.batteryHome, color: 'var(--sac-battery)' },
+          { name: 'lưới', w: flows.gridHome, color: 'var(--sac-grid)' },
+        ].filter((p) => p.w > 0)
+      : [];
+    const unknown = flows ? (load ?? 0) - parts.reduce((sum, p) => sum + p.w, 0) : 0;
+    const top = [...parts].sort((a, b) => b.w - a.w)[0];
+    const origin = top && load && load > threshold && top.w >= unknown ? `${Math.round((top.w / load) * 100)}% từ ${top.name}` : undefined;
+    const mix = unknown > threshold ? [...parts, { name: '', w: unknown, color: 'var(--sac-border)' }] : parts;
+    return { mix, origin, top };
+  }
+
+  private _mixBar(mix: Array<{ w: number; color: string }>) {
+    return mix.length
+      ? html`<span class="mix">${mix.map((p) => html`<i style="flex:${p.w} 1 0;background:${p.color}"></i>`)}</span>`
+      : html`<span class="gauge"></span>`;
+  }
+
+  /**
+   * Sơ đồ dòng năng lượng: Solar trên, lưới trái, nhà phải, pin dưới, nối về biến tần ở giữa.
+   * Hệ không lưới thì pin sang trái và bỏ hàng dưới. Dây dày theo công suất, chấm chạy theo chiều dòng.
+   */
+  private _renderFlow(power: Power, load: number | undefined, flows?: ReturnType<typeof computeFlows>) {
+    const entities = this._config?.entities;
+    const threshold = this._config?.threshold ?? 10;
+    const max = this._config?.flow_max_power ?? 5000;
+    const hasPv = !!entities?.pv;
+    const hasGrid = !!entities?.grid;
+    const hasBattery = !!entities?.battery;
+    const batteryLeft = hasBattery && !hasGrid;
+    const batteryBottom = hasBattery && hasGrid;
+
+    // forward: chấm chạy sang phải (dây ngang) hoặc xuống dưới (dây dọc).
+    const wire = (key: string, w: number | undefined, color: string, axis: 'h' | 'v', forward: boolean, area: string) => {
+      const active = w !== undefined && Math.abs(w) > threshold;
+      const width = active ? 2 + 6 * Math.sqrt(Math.min(1, Math.abs(w) / max)) : 1;
+      return html`
+        <span class="wire ${axis} ${active ? 'on' : ''}" style="grid-area:${area};--wire:${width.toFixed(1)}px;--wire-color:${color}" aria-hidden="true">
+          <i class="dots" data-key=${key} data-axis=${axis} data-rate=${active ? 1 / flowDuration(w) : 0} data-reverse=${forward ? '' : '1'}></i>
+        </span>
+      `;
+    };
+    const swatch = (color: string) => html`<i style="background:${color}"></i>`;
+
+    const { mix, origin, top } = this._homeMix(load, flows);
+    const soc = this._value('battery_soc');
+    const bw = power.battery;
+    const bMoving = bw !== undefined && Math.abs(bw) > threshold;
+    const batteryFlow = bw === undefined ? '—' : bMoving ? `${bw > 0 ? 'xả' : 'sạc'} ${formatPower(bw)}` : 'đang nghỉ';
+    const pvToday = this._energy('pv_today');
+    const forecast = this._energy('forecast_today');
+    const pvSub = pvToday === undefined ? undefined : forecast === undefined ? `${formatNumber(pvToday)} kWh` : `${formatNumber(pvToday)} / ${formatNumber(forecast)} kWh`;
+    const gw = power.grid;
+    const gMoving = gw !== undefined && Math.abs(gw) > threshold;
+    const bought = this._energy('grid_import_today');
+    const sold = this._energy('grid_export_today');
+    const gridSub = [bought !== undefined ? `mua ${formatNumber(bought)}` : '', sold ? `phát ${formatNumber(sold)}` : ''].filter(Boolean).join(' · ');
+
+    const mppts = hasPv ? (this._config?.mppts ?? []) : [];
+    const rows = [
+      mppts.length ? '"mp mp mp mp mp"' : '',
+      hasPv ? '"pv pv pv pv pv"' : '',
+      hasPv ? '". . ws . ."' : '',
+      `"${hasGrid ? 'grid wg' : batteryLeft ? 'bat wb' : '. .'} hub wh home"`,
+      batteryBottom ? '". . wb . ."' : '',
+      batteryBottom ? '"bat bat bat bat bat"' : '',
+    ].filter(Boolean);
+
+    return html`
+      <section class="map" style="grid-template-areas:${rows.join(' ')}">
+        ${mppts.length ? this._renderMppts(mppts, wire) : nothing}
+        ${hasPv
+          ? html`
+              <div class="node" style="grid-area:pv">
+                <button class="main" @click=${() => this._moreInfo('pv')}>
+                  <span class="label">${swatch('var(--sac-solar)')}Solar</span>
+                  ${this._figure(power.pv === undefined ? undefined : heroPower(power.pv))}
+                </button>
+                ${this._gauge(pvToday !== undefined && forecast ? (pvToday / forecast) * 100 : undefined, 'var(--sac-solar)')}
+                ${pvSub ? html`<span class="sub">${pvSub}</span>` : nothing}
+              </div>
+              ${wire('pv', power.pv, 'var(--sac-solar)', 'v', true, 'ws')}
+            `
+          : nothing}
+        ${hasGrid
+          ? html`
+              <div class="node side" style="grid-area:grid">
+                <button class="main" @click=${() => this._moreInfo('grid')}>
+                  <span class="label">${swatch('var(--sac-grid)')}Lưới${gMoving ? (gw > 0 ? ' · mua' : ' · phát') : ''}</span>
+                  ${this._figure(gw === undefined ? undefined : heroPower(gw))}
+                </button>
+                ${gridSub ? html`<button class="sub" @click=${() => this._moreInfo('grid_import_today')}>${gridSub} kWh</button>` : nothing}
+              </div>
+              ${wire('grid', gw, 'var(--sac-grid)', 'h', (gw ?? 0) >= 0, 'wg')}
+            `
+          : nothing}
+        ${hasBattery
+          ? html`
+              <div class="node ${batteryLeft ? 'side' : ''}" style="grid-area:bat">
+                <button class="main" @click=${() => this._moreInfo(soc !== undefined ? 'battery_soc' : 'battery')}>
+                  <span class="label">${swatch('var(--sac-battery)')}Pin</span>
+                  ${this._figure(soc !== undefined ? { value: String(Math.round(soc)), unit: '%' } : bw === undefined ? undefined : heroPower(bw))}
+                </button>
+                ${this._gauge(soc, 'var(--sac-battery)')}
+                <button class="sub" @click=${() => this._moreInfo('battery')}>${batteryFlow}</button>
+              </div>
+              ${batteryLeft
+                ? wire('battery', bw, 'var(--sac-battery)', 'h', (bw ?? 0) >= 0, 'wb')
+                : wire('battery', bw, 'var(--sac-battery)', 'v', (bw ?? 0) < 0, 'wb')}
+            `
+          : nothing}
+        <span class="hub" style="grid-area:hub" aria-hidden="true">
+          ${svg`<svg viewBox="0 0 24 24"><path d="M4 12c2.7-5.3 5.3-5.3 8 0s5.3 5.3 8 0"></path></svg>`}
+        </span>
+        ${wire('home', load, top?.color ?? 'var(--sac-fg)', 'h', true, 'wh')}
+        <div class="node side home" style="grid-area:home">
+          ${entities?.load
+            ? html`<button class="main" @click=${() => this._moreInfo('load')}>
+                <span class="label">Nhà đang dùng</span>${this._figure(load === undefined ? undefined : heroPower(load))}
+              </button>`
+            : html`<div class="main"><span class="label">Nhà đang dùng</span>${this._figure(load === undefined ? undefined : heroPower(load))}</div>`}
+          ${this._mixBar(mix)} ${origin ? html`<span class="sub">${origin}</span>` : nothing}
+        </div>
+      </section>
+    `;
+  }
+
+  /** Đọc một entity bất kỳ (không nằm trong `entities`): số và đơn vị. */
+  private _read(ref: EntityRef | undefined): { id?: string; v?: number; unit: string } {
+    const cfg = toEntityConfig(ref);
+    const st = cfg && this.hass?.states[cfg.entity];
+    const v = parseFloat(st?.state ?? '');
+    const unit = String(st?.attributes.unit_of_measurement ?? '').toLowerCase();
+    return { id: cfg?.entity, v: Number.isNaN(v) ? undefined : cfg?.invert ? -v : v, unit };
+  }
+
+  /** Các ô MPPT trên nút Solar: công suất, điện áp · dòng, kWh hôm nay; dây nhỏ chảy xuống Solar. */
+  private _renderMppts(list: MpptConfig[], wire: (key: string, w: number | undefined, color: string, axis: 'h' | 'v', forward: boolean, area: string) => unknown) {
+    return html`
+      <div class="mppts" style="grid-area:mp;--n:${list.length}">
+        ${list.map((m, i) => {
+          const p = this._read(m.power);
+          const w = p.v === undefined ? undefined : p.v * (p.unit === 'kw' ? 1000 : 1);
+          const volt = this._read(m.voltage).v;
+          const amp = this._read(m.current).v;
+          const e = this._read(m.energy_today);
+          const kwh = e.v === undefined ? undefined : e.v * (ENERGY_TO_KWH[e.unit] ?? 1);
+          const va = [volt !== undefined ? `${formatNumber(volt, volt >= 100 ? 0 : 1)} V` : '', amp !== undefined ? `${formatNumber(amp, 1)} A` : '']
+            .filter(Boolean)
+            .join(' · ');
+          return html`
+            <div class="mppt">
+              <button class="box" @click=${() => this._openEntity(p.id)}>
+                <span class="label">${m.name ?? `PV${i + 1}`}</span>
+                <b class="num">${w === undefined ? '—' : formatPower(w)}</b>
+                ${va ? html`<span class="sub">${va}</span>` : nothing}
+                ${kwh !== undefined ? html`<span class="sub">${formatNumber(kwh)} kWh</span>` : nothing}
+              </button>
+              ${wire(`mppt${i}`, w, 'var(--sac-solar)', 'v', true, 'auto')}
+            </div>
+          `;
+        })}
+      </div>
+    `;
   }
 
   private _figure(v: { value: string; unit: string } | undefined) {
@@ -381,10 +544,12 @@ export class SolarAlmanacCard extends LitElement {
       selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%`, key: 'grid_import_today' as EntityKey } : undefined,
       tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh', key: 'forecast_tomorrow' as EntityKey } : undefined,
     ].filter((item) => item !== undefined);
-    if (!items.length && !entities?.grid) return nothing;
+    // Ở sơ đồ, lưới đã có nút riêng nên không lặp lại ở hàng này.
+    const showGrid = !!entities?.grid && this._config?.layout !== 'flow';
+    if (!items.length && !showGrid) return nothing;
     return html`
       <dl class="reserve">
-        ${entities?.grid
+        ${showGrid
           ? html`<div>
               <dt><i style="background:var(--sac-grid)"></i>Lưới${gridNote}</dt>
               <dd class="num"><button class="fact" @click=${() => this._moreInfo('grid')}>${grid === undefined ? '—' : formatPower(grid)}</button></dd>
@@ -601,7 +766,9 @@ export class SolarAlmanacCard extends LitElement {
         <div class="page">
           ${this._renderBand(now, online)}
           ${this._alerts().map((text) => html`<p class="alert">${text}</p>`)}
-          ${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}
+          ${this._config.layout === 'flow'
+            ? this._renderFlow(power, load, unread ? undefined : flows)
+            : html`${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}`}
           ${this._renderReserve(power, runtime, online, selfUse)}
           ${status ? html`<p class="say"><b>${status.lead}</b> ${status.rest ?? ''}</p>` : nothing}
           ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`} ${this._renderControls()}
@@ -618,14 +785,21 @@ export class SolarAlmanacCard extends LitElement {
   /** Hạt chạy bằng Web Animations, ngoài vòng render: đổi tốc độ không làm giật. */
   private _syncFlows(): void {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    for (const el of this.renderRoot.querySelectorAll<SVGPathElement>('.flow')) {
-      const key = el.dataset.key!;
+    // .flow: hạt trên đường SVG (layout columns); .dots: chấm trên dây CSS (layout flow).
+    for (const el of this.renderRoot.querySelectorAll<SVGPathElement | HTMLElement>('.flow, .dots')) {
+      const dots = el.classList.contains('dots');
+      const key = `${dots ? 'w' : 'f'}-${el.dataset.key!}`;
       const rate = Number(el.dataset.rate);
       let animation = this._animations.get(key);
       if (reduced || !el.animate) continue;
       if (!animation || (animation.effect as KeyframeEffect).target !== el) {
         animation?.cancel();
-        animation = el.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -DASH_PERIOD }], { duration: 1000, iterations: Infinity });
+        const frames = dots
+          ? el.dataset.axis === 'v'
+            ? [{ backgroundPosition: '50% 0px' }, { backgroundPosition: `50% ${WIRE_GAP}px` }]
+            : [{ backgroundPosition: '0px 50%' }, { backgroundPosition: `${WIRE_GAP}px 50%` }]
+          : [{ strokeDashoffset: 0 }, { strokeDashoffset: -DASH_PERIOD }];
+        animation = el.animate(frames, { duration: 1000, iterations: Infinity });
         this._animations.set(key, animation);
       }
       animation.effect?.updateTiming({ direction: el.dataset.reverse ? 'reverse' : 'normal' });
@@ -811,6 +985,173 @@ export class SolarAlmanacCard extends LitElement {
       }
       .flow.idle {
         display: none;
+      }
+      /* ---- layout: flow ---- */
+      .map {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(calc(var(--u) * 26), 0.8fr) auto minmax(calc(var(--u) * 26), 0.8fr) minmax(0, 1.15fr);
+        align-items: center;
+        padding: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 6);
+      }
+      .node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-self: center;
+        min-width: 0;
+        text-align: center;
+      }
+      .node .main {
+        align-items: center;
+      }
+      .node .gauge,
+      .node .mix {
+        align-self: stretch;
+        min-width: calc(var(--u) * 92);
+      }
+      .node .main .num {
+        font-size: calc(var(--u) * 32);
+        line-height: 1;
+      }
+      .node.side .main .num {
+        font-size: calc(var(--u) * 30);
+      }
+      .node.home .main .num {
+        font-size: calc(var(--u) * 44);
+      }
+      .node .sub {
+        margin-top: calc(var(--u) * 2);
+      }
+      .node.side {
+        justify-self: stretch;
+      }
+      .node.side .gauge,
+      .node.side .mix {
+        min-width: 0;
+      }
+      .mppts {
+        display: grid;
+        grid-template-columns: repeat(var(--n), minmax(0, calc(var(--u) * 150)));
+        justify-content: center;
+        gap: calc(var(--u) * 10);
+      }
+      .mppt {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+      }
+      .mppt .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+        padding: calc(var(--u) * 5) calc(var(--u) * 6);
+        border: 1px solid var(--sac-solar);
+        border-radius: calc(var(--u) * 4);
+        text-align: center;
+      }
+      .mppt .num {
+        font-size: calc(var(--u) * 22);
+        line-height: 1.05;
+        white-space: nowrap;
+      }
+      .mppt .sub {
+        margin-top: calc(var(--u) * 1);
+        font-size: max(11px, calc(var(--u) * 12));
+      }
+      .mppt .wire.v {
+        align-self: center;
+        width: calc(var(--u) * 12);
+        min-height: calc(var(--u) * 16);
+        margin: 0;
+      }
+      .hub {
+        display: grid;
+        place-items: center;
+        width: calc(var(--u) * 34);
+        height: calc(var(--u) * 34);
+        border: 1.5px solid var(--sac-dim);
+        border-radius: calc(var(--u) * 4);
+        color: var(--sac-dim);
+      }
+      .hub svg {
+        width: 62%;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+      .wire {
+        position: relative;
+        display: block;
+        align-self: stretch;
+        justify-self: stretch;
+      }
+      .wire.v {
+        min-height: calc(var(--u) * 22);
+        margin: calc(var(--u) * 3) 0;
+      }
+      .wire.h {
+        margin: 0 calc(var(--u) * 3);
+      }
+      .wire::before {
+        content: '';
+        position: absolute;
+        background: var(--sac-border);
+      }
+      .wire.on::before {
+        background: var(--wire-color);
+        opacity: 0.45;
+      }
+      .wire.h::before {
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: var(--wire);
+        transform: translateY(-50%);
+      }
+      .wire.v::before {
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: var(--wire);
+        transform: translateX(-50%);
+      }
+      .dots {
+        position: absolute;
+        display: none;
+        background-image: radial-gradient(circle closest-side, var(--wire-color) 85%, transparent 100%);
+      }
+      .wire.on .dots {
+        display: block;
+      }
+      .wire.h .dots {
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: calc(var(--wire) + 4px);
+        transform: translateY(-50%);
+        background-size: ${WIRE_GAP}px 100%;
+        background-repeat: repeat-x;
+      }
+      .wire.v .dots {
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: calc(var(--wire) + 4px);
+        transform: translateX(-50%);
+        background-size: 100% ${WIRE_GAP}px;
+        background-repeat: repeat-y;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .dots {
+          display: none !important;
+        }
+        .wire.on::before {
+          opacity: 1;
+        }
       }
       dl,
       dd {
@@ -1046,6 +1387,21 @@ export class SolarAlmanacCard extends LitElement {
         .main small {
           margin-left: calc(var(--u) * 2);
           font-size: calc(var(--u) * 12.5);
+        }
+      }
+      @container (max-width: 400px) {
+        .node .main .num {
+          font-size: calc(var(--u) * 30);
+        }
+        .node.side .main .num {
+          font-size: calc(var(--u) * 28);
+        }
+        .node.home .main .num {
+          font-size: calc(var(--u) * 38);
+        }
+        .node .gauge,
+        .node .mix {
+          min-width: calc(var(--u) * 70);
         }
       }
       @container (max-width: 367px) {
