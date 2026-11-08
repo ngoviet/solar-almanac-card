@@ -1911,5 +1911,5 @@ X($, "properties", {
 	name: "Solar Almanac",
 	description: "Luồng năng lượng và giờ tốt dùng tải lớn, trình bày như một tờ lịch",
 	preview: !0
-}), console.info("%c SOLAR-ALMANAC-CARD %c v0.2.0 ", "background:#c4302b;color:#fff", "background:#333;color:#fff"));
+}), console.info("%c SOLAR-ALMANAC-CARD %c v0.3.0 ", "background:#c4302b;color:#fff", "background:#333;color:#fff"));
 export { $ as SolarAlmanacCard };
