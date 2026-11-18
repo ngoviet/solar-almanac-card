@@ -70,9 +70,9 @@ entities:
 | `title`            | —        | Tên hiện trên băng đỏ, ẩn khi card quá hẹp                     |
 | `theme`            | `auto`   | `auto` theo chế độ sáng/tối của HA, hoặc `light`, `dark`       |
 | `compact`          | `false`  | Ẩn dải giờ và dòng chữ nhỏ; khu điều khiển vẫn hiện            |
-| `layout`           | `columns` | `flow`: thay ba số lớn và dải hạt bằng sơ đồ Solar trên, lưới trái, nhà phải, pin dưới, nối qua biến tần; dây dày theo công suất, chấm chạy theo chiều dòng. Không có lưới thì pin sang trái. Phần còn lại của card giữ nguyên |
-| `flow_max_power`   | `5000`   | W, công suất ứng với dây dày nhất ở `layout: flow`              |
-| `mppts`            | —        | Danh sách MPPT cho `layout: flow`: mỗi mục `name`, `power`, `voltage`, `current`, `energy_today`. Hiện thành các ô trên nút Solar (công suất, điện áp · dòng, kWh hôm nay), dây nhỏ chảy vào Solar |
+| `layout`           | `columns` | `flow`: thay ba số lớn và dải hạt bằng sơ đồ Solar trên, lưới trái, nhà phải, pin dưới, nối qua biến tần; dây dày theo công suất, chấm chạy theo chiều dòng. Không có lưới thì pin sang trái. Phần còn lại của card giữ nguyên. `inverter`: sơ đồ kiểu Sunsynk, Solar và các ô PV trên trái, pin dưới trái, biến tần giữa, nhà trên phải, lưới dưới phải, dây gấp khúc; số liệu trong ngày của từng nút đứng ngay cạnh nút (xem dưới) |
+| `flow_max_power`   | `5000`   | W, công suất ứng với dây dày nhất ở `layout: flow` và `inverter` |
+| `mppts`            | —        | Danh sách MPPT cho `layout: flow` và `inverter`: mỗi mục `name`, `power`, `voltage`, `current`, `energy_today`. Ở `flow` hiện thành các ô cùng hàng với nút Solar, nửa đầu bên trái, nửa sau bên phải; ở `inverter` là một hàng ô dưới nút Solar, dây từ đáy mỗi ô gom về biến tần (công suất, điện áp · dòng, kWh hôm nay) |
 | `threshold`        | `10`     | W, dưới mức này coi như không có dòng chảy                     |
 | `battery_capacity` | —        | kWh, cần để hiện "Nếu mất điện" và "Đầy sau"                   |
 | `battery_reserve`  | `0`      | %, phần pin không dùng khi tính thời gian còn chạy             |
@@ -83,6 +83,7 @@ entities:
 | `savings_label`    | `Tiết kiệm tháng` | Nhãn dòng `savings_month`, ví dụ `Tiết kiệm kỳ này`   |
 | `battery_period_label` | `Sạc / xả tháng` | Nhãn dòng `battery_charge_period` và `battery_discharge_period` |
 | `band`             | `red`             | Màu băng đầu card: `red` hoặc `neutral`; cảnh báo vẫn đỏ |
+| `animation`        | `auto`            | Hạt chạy trên dây: `auto` dừng khi hệ điều hành bật giảm chuyển động (Windows tắt hiệu ứng hoạt ảnh cũng tính là bật), `on` (hoặc `true`) luôn chạy, `off` (hoặc `false`) không chạy |
 
 ### Entity
 
@@ -126,6 +127,20 @@ Card tự quy đổi theo `unit_of_measurement`: công suất nhận `W`, `kW`; 
 
 Nguồn đã khai mà không đọc được thì dòng của nó hiện `—`, thanh tỉ lệ và câu trạng thái ẩn; riêng lúc `grid_connected` báo mất lưới thì lưới được tính bằng 0. Không có `load` mà thiếu một trong ba nguồn thì không tính được tải: số nhà đang dùng hiện `—`, thanh tỉ lệ và câu trạng thái ẩn. Hệ không có pin hoặc không nối lưới (không khai `grid`) luôn thiếu nguồn trong ba nguồn, nên phải khai `load` mới có số nhà đang dùng, thời gian còn chạy và dòng "Pin còn" ở cột dự phòng.
 
+### Sơ đồ `layout: inverter`
+
+Bố cục quen thuộc của card Sunsynk, vẽ lại bằng chữ HTML nên chữ không nhỏ dưới 12px trên điện thoại. Mỗi nút gom số liệu của chính nó:
+
+| Nút | Hiện cạnh nút |
+|-----|---------------|
+| Solar (trên trái) | công suất, thanh và số "hôm nay / dự báo", dự báo ngày mai; hàng ô PV bên dưới |
+| Pin (dưới trái) | SOC (biểu tượng pin đầy theo SOC), sạc/xả lúc này, sạc / xả hôm nay, thời gian còn chạy, lệch cell |
+| Biến tần (giữa) | nhiệt độ biến tần, đỏ khi vượt `inverter_temperature_warn` |
+| Nhà (trên phải) | công suất, thanh tỉ lệ nguồn và "% từ …", tải hôm nay, tự cấp |
+| Lưới (dưới phải) | công suất, mua / phát hôm nay, điện áp · tần số; băng đầu card chỉ còn "Có lưới" / "Mất lưới" |
+
+Dưới sơ đồ giữ câu trạng thái, dải giờ, khu điều khiển; chữ nhỏ cuối tờ chỉ còn các dòng không thuộc nút nào (tiết kiệm, sạc / xả theo kỳ). Không có lưới thì nhà xuống hàng dưới, nối thẳng với biến tần. Thiếu nút chứa một mục (khai `battery_soc` mà không khai `battery`, hoặc `forecast_tomorrow` mà không khai `pv`) thì "Nếu mất điện" / "Pin còn" và "Ngày mai" hiện ở hàng dự phòng dưới sơ đồ.
+
 ### Dải giờ
 
 "Giờ tốt dùng tải lớn" là chuỗi giờ liền nhau quanh giờ đỉnh, có dự báo từ 70% đỉnh trở lên. Khi khung giờ hôm nay đã qua, dải giờ chuyển sang ngày mai.
@@ -147,7 +162,7 @@ npm run watch      # build lại mỗi khi sửa
 - `src/theme.ts` — màu sáng/tối sinh bằng palette-axi
 - `src/font.ts` — font số nhúng base64
 - `src/types.ts` — kiểu config và `hass`
-- `dev/` — trang thử với `hass` giả, có các tình huống sạc, xả, phát lưới, mất lưới, cảnh báo, quạt tắt, thiếu dữ liệu
+- `dev/` — trang thử với `hass` giả, có các tình huống sạc, xả, phát lưới, mất lưới, cảnh báo, quạt tắt, thiếu dữ liệu. Tham số: `?flow`, `?inverter` (thêm `=1`, `=3` để đổi số ô MPPT), `&dc` bỏ lưới/quạt/EOD như hệ DC, `&kb=N` mở sẵn tình huống thứ N, `&auto` sáng/tối theo trình duyệt
 - `PRODUCT.md`, `DESIGN.md` — định hướng sản phẩm và hệ thiết kế
 
 ## Giấy phép

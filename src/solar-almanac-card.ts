@@ -21,6 +21,9 @@ import type { EntityRef, FlowEntityConfig, FlowKey, HomeAssistant, MpptConfig, S
 const CARD_TAG = 'solar-almanac-card';
 const HISTORY_REFRESH_MS = 5 * 60_000;
 const DASH_PERIOD = 15;
+/** Hạt đơn của layout inverter: px/giây khi `flowDuration` = 1 giây, và thời gian tối thiểu cho một vòng (giây). */
+const SOLO_SPEED = 60;
+const SOLO_MIN_LAP = 0.8;
 /** Khoảng cách (px) giữa hai chấm trên dây của layout flow. */
 const WIRE_GAP = 18;
 const DEFAULT_HOURS: [number, number] = [6, 17];
@@ -41,6 +44,33 @@ interface HourCell {
   actual?: number;
   now: boolean;
   good: boolean;
+}
+
+/** Biểu tượng nét của sơ đồ `inverter`; vẽ bằng màu chữ (`currentColor`) của ô chứa. */
+const ICONS = {
+  solar: svg`<svg viewBox="0 0 32 32"><path d="M5 20 9 6h18l-4 14Z M7 13h18 M15 6l-4 14 M21 6l-4 14 M14 20v6 M10 26h8"></path></svg>`,
+  grid: svg`<svg viewBox="0 0 32 32"><path d="M16 3 9 29 M16 3l7 26 M6 9h20 M8 15h16 M7 9v2.5 M25 9v2.5 M10.6 23l8.6-8 M21.4 23l-8.6-8"></path></svg>`,
+  home: svg`<svg viewBox="0 0 32 32"><path d="M4 15 16 4l12 11 M7 12.5V28h18V12.5 M17.5 12.5 13 19.5h4.5L15 25"></path></svg>`,
+  inverter: svg`<svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="3"></rect><rect x="9.5" y="7" width="13" height="6" rx="1"></rect><path d="M9.5 21.5c2.2-3.6 4.3-3.6 6.5 0s4.3 3.6 6.5 0"></path></svg>`,
+};
+
+/** Đường gấp khúc qua các điểm, bo tròn góc bán kính `r` (px). Bỏ điểm trùng nhau. */
+function roundedPath(points: Array<[number, number]>, r: number): string {
+  const p = points.filter((q, i) => i === 0 || Math.hypot(q[0] - points[i - 1][0], q[1] - points[i - 1][1]) > 0.5);
+  if (p.length < 2) return '';
+  const f = (n: number) => n.toFixed(1);
+  let d = `M${f(p[0][0])} ${f(p[0][1])}`;
+  for (let i = 1; i < p.length - 1; i++) {
+    const [a, b, c] = [p[i - 1], p[i], p[i + 1]];
+    const l1 = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    const l2 = Math.hypot(c[0] - b[0], c[1] - b[1]);
+    const k = Math.min(r, l1 / 2, l2 / 2);
+    const s = [b[0] - ((b[0] - a[0]) / l1) * k, b[1] - ((b[1] - a[1]) / l1) * k];
+    const e = [b[0] + ((c[0] - b[0]) / l2) * k, b[1] + ((c[1] - b[1]) / l2) * k];
+    d += `L${f(s[0])} ${f(s[1])}Q${f(b[0])} ${f(b[1])} ${f(e[0])} ${f(e[1])}`;
+  }
+  const last = p[p.length - 1];
+  return `${d}L${f(last[0])} ${f(last[1])}`;
 }
 
 function toEntityConfig(ref?: EntityRef): FlowEntityConfig | undefined {
@@ -66,6 +96,7 @@ export class SolarAlmanacCard extends LitElement {
 
   private _animations = new Map<string, Animation>();
   private _lastFetch = 0;
+  private _resize?: ResizeObserver;
 
   static getStubConfig(): Partial<SolarAlmanacCardConfig> {
     return {
@@ -105,6 +136,8 @@ export class SolarAlmanacCard extends LitElement {
     super.disconnectedCallback();
     for (const animation of this._animations.values()) animation.cancel();
     this._animations.clear();
+    this._resize?.disconnect();
+    this._resize = undefined;
   }
 
   private _entity(key: EntityKey) {
@@ -238,7 +271,9 @@ export class SolarAlmanacCard extends LitElement {
     const weekday = new Intl.DateTimeFormat('vi-VN', { weekday: 'long' }).format(now);
     const date = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
     const voltage = this._value('grid_voltage');
-    const volt = voltage !== undefined ? ` · ${Math.round(voltage)} V` : '';
+    // Sơ đồ `inverter` đã ghi điện áp cạnh nút lưới.
+    const inNode = this._config?.layout === 'inverter' && !!this._config.entities.grid;
+    const volt = voltage !== undefined && !inNode ? ` · ${Math.round(voltage)} V` : '';
     const state = (label: string, cls: string) =>
       this._config?.entities.grid_voltage
         ? html`<button class=${cls} @click=${() => this._moreInfo('grid_voltage')}>${label}</button>`
@@ -249,7 +284,7 @@ export class SolarAlmanacCard extends LitElement {
         ${this._config?.title ? html`<span class="title">${this._config.title}</span>` : nothing}
         ${online === false
           ? state('Mất lưới', 'state down')
-          : online || voltage !== undefined
+          : online || volt
             ? state(`${online ? 'Có lưới' : 'Lưới'}${volt}`, 'state')
             : nothing}
       </header>
@@ -378,9 +413,17 @@ export class SolarAlmanacCard extends LitElement {
     const sold = this._energy('grid_export_today');
     const gridSub = [bought !== undefined ? `mua ${formatNumber(bought)}` : '', sold ? `phát ${formatNumber(sold)}` : ''].filter(Boolean).join(' · ');
 
+    const batteryNode = html`
+      <button class="main" @click=${() => this._moreInfo(soc !== undefined ? 'battery_soc' : 'battery')}>
+        <span class="label">${swatch('var(--sac-battery)')}Pin</span>
+        ${this._figure(soc !== undefined ? { value: String(Math.round(soc)), unit: '%' } : bw === undefined ? undefined : heroPower(bw))}
+      </button>
+      ${this._gauge(soc, 'var(--sac-battery)')}
+      <button class="sub" @click=${() => this._moreInfo('battery')}>${batteryFlow}</button>
+    `;
+
     const mppts = hasPv ? (this._config?.mppts ?? []) : [];
     const rows = [
-      mppts.length ? '"mp mp mp mp mp"' : '',
       hasPv ? '"pv pv pv pv pv"' : '',
       hasPv ? '". . ws . ."' : '',
       `"${hasGrid ? 'grid wg' : batteryLeft ? 'bat wb' : '. .'} hub wh home"`,
@@ -390,16 +433,21 @@ export class SolarAlmanacCard extends LitElement {
 
     return html`
       <section class="map" style="grid-template-areas:${rows.join(' ')}">
-        ${mppts.length ? this._renderMppts(mppts, wire) : nothing}
         ${hasPv
           ? html`
-              <div class="node" style="grid-area:pv">
-                <button class="main" @click=${() => this._moreInfo('pv')}>
-                  <span class="label">${swatch('var(--sac-solar)')}Solar</span>
-                  ${this._figure(power.pv === undefined ? undefined : heroPower(power.pv))}
-                </button>
-                ${this._gauge(pvToday !== undefined && forecast ? (pvToday / forecast) * 100 : undefined, 'var(--sac-solar)')}
-                ${pvSub ? html`<span class="sub">${pvSub}</span>` : nothing}
+              <div class="axis" style="grid-area:pv">
+                ${mppts.length ? this._renderMppts(mppts.slice(0, Math.ceil(mppts.length / 2)), 0, 'left', wire) : nothing}
+                <div class="node">
+                  <button class="main" @click=${() => this._moreInfo('pv')}>
+                    <span class="label">${swatch('var(--sac-solar)')}Solar</span>
+                    ${this._figure(power.pv === undefined ? undefined : heroPower(power.pv))}
+                  </button>
+                  ${this._gauge(pvToday !== undefined && forecast ? (pvToday / forecast) * 100 : undefined, 'var(--sac-solar)')}
+                  ${pvSub ? html`<span class="sub">${pvSub}</span>` : nothing}
+                </div>
+                ${mppts.length > 1
+                  ? this._renderMppts(mppts.slice(Math.ceil(mppts.length / 2)), Math.ceil(mppts.length / 2), 'right', wire)
+                  : nothing}
               </div>
               ${wire('pv', power.pv, 'var(--sac-solar)', 'v', true, 'ws')}
             `
@@ -418,13 +466,10 @@ export class SolarAlmanacCard extends LitElement {
           : nothing}
         ${hasBattery
           ? html`
-              <div class="node ${batteryLeft ? 'side' : ''}" style="grid-area:bat">
-                <button class="main" @click=${() => this._moreInfo(soc !== undefined ? 'battery_soc' : 'battery')}>
-                  <span class="label">${swatch('var(--sac-battery)')}Pin</span>
-                  ${this._figure(soc !== undefined ? { value: String(Math.round(soc)), unit: '%' } : bw === undefined ? undefined : heroPower(bw))}
-                </button>
-                ${this._gauge(soc, 'var(--sac-battery)')}
-                <button class="sub" @click=${() => this._moreInfo('battery')}>${batteryFlow}</button>
+              <div class=${batteryLeft ? 'node side' : 'axis'} style="grid-area:bat">
+                ${batteryLeft
+                  ? batteryNode
+                  : html`<div class="node">${batteryNode}</div>`}
               </div>
               ${batteryLeft
                 ? wire('battery', bw, 'var(--sac-battery)', 'h', (bw ?? 0) >= 0, 'wb')
@@ -447,6 +492,287 @@ export class SolarAlmanacCard extends LitElement {
     `;
   }
 
+  /** Nút bấm mở lịch sử một entity; entity chưa khai thì chỉ là chữ. */
+  private _link(key: EntityKey, text: string) {
+    return this._config?.entities[key] ? html`<button class="lk" @click=${() => this._moreInfo(key)}>${text}</button>` : text;
+  }
+
+  /** Hai số năng lượng "a / b kWh", mỗi số mở entity của nó; thiếu cả hai thì không có. */
+  private _energyPair(a: EntityKey, b: EntityKey) {
+    const x = this._energy(a);
+    const y = this._energy(b);
+    if (x === undefined && y === undefined) return undefined;
+    const part = (v: number | undefined) => (v === undefined ? '—' : formatNumber(v));
+    return html`${this._link(a, part(x))} / ${this._link(b, `${part(y)} kWh`)}`;
+  }
+
+  /** Một dòng "nhãn giá trị" trong nút; giá trị dài thì tự xuống dòng dưới nhãn. */
+  private _kv(label: string, value: unknown) {
+    return value === undefined ? nothing : html`<div class="kv"><span>${label}</span> <b>${value}</b></div>`;
+  }
+
+  /** Ô số viền màu nguồn, như ô công suất của card Sunsynk. */
+  private _box(num: string | undefined, color: string, key?: EntityKey, word?: string) {
+    const inner = html`${word ? html`<span class="word">${word}</span>` : nothing}${num === undefined ? nothing : html`<b class="num">${num}</b>`}`;
+    return key && this._config?.entities[key]
+      ? html`<button class="val" style="--c:${color}" @click=${() => this._moreInfo(key)}>${inner}</button>`
+      : html`<span class="val" style="--c:${color}">${inner}</span>`;
+  }
+
+  /** Dòng thời gian dưới nút pin: như hàng dự phòng của layout khác, tính tới `battery_reserve`. */
+  private _batteryNote(runtime: number | undefined, offGrid: boolean): { label: string; value: string } | undefined {
+    if (runtime === undefined) return undefined;
+    return { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)} giờ` };
+  }
+
+  /**
+   * Sơ đồ kiểu Sunsynk: Solar trên trái, pin dưới trái, biến tần giữa, nhà trên phải, lưới dưới phải.
+   * Số liệu trong ngày của từng nút đứng ngay cạnh nút đó. Dây gấp khúc vẽ sau khi đo vị trí (`_layoutWires`).
+   */
+  private _renderInverter(
+    power: Power,
+    load: number | undefined,
+    flows: ReturnType<typeof computeFlows> | undefined,
+    runtime: number | undefined,
+    online: boolean | undefined,
+    selfUse: number | undefined,
+  ) {
+    const entities = this._config?.entities;
+    const threshold = this._config?.threshold ?? 10;
+    const max = this._config?.flow_max_power ?? 5000;
+    const hasPv = !!entities?.pv;
+    const hasGrid = !!entities?.grid;
+    const hasBattery = !!entities?.battery;
+    const mppts = hasPv ? (this._config?.mppts ?? []) : [];
+
+    const wires: Array<{ id: string; w: number | undefined; color: string; reverse: boolean }> = [];
+    const wire = (id: string, w: number | undefined, color: string, reverse = false) => wires.push({ id, w, color, reverse });
+
+    // ---- Solar
+    let solar: unknown = nothing;
+    if (hasPv) {
+      const pvToday = this._energy('pv_today');
+      const forecast = this._energy('forecast_today');
+      const tomorrow = this._energy('forecast_tomorrow');
+      const today = pvToday === undefined ? undefined : forecast === undefined ? `${formatNumber(pvToday)} kWh` : `${formatNumber(pvToday)} / ${formatNumber(forecast)} kWh`;
+      mppts.forEach((m, i) => {
+        const p = this._read(m.power);
+        wire(`mppt${i}`, p.v === undefined ? undefined : p.v * (p.unit === 'kw' ? 1000 : 1), 'var(--sac-solar)', (p.v ?? 0) < 0);
+      });
+      wire('pv', power.pv, 'var(--sac-solar)', (power.pv ?? 0) < 0);
+      solar = html`
+        <div class="part solar" style="grid-area:solar">
+          <div class="head">
+            <span class="icon" data-anchor=${mppts.length ? 'pv-icon' : 'pv'} style="color:var(--sac-solar)">${ICONS.solar}</span>
+            <div class="text">
+              <div class="headline">
+                <span class="label">Solar</span>
+                ${this._box(power.pv === undefined ? '—' : formatPower(power.pv), 'var(--sac-solar)', 'pv')}
+              </div>
+              ${today ? html`${this._gauge(pvToday !== undefined && forecast ? (pvToday / forecast) * 100 : undefined, 'var(--sac-solar)')}` : nothing}
+              ${this._kv('Hôm nay', today ? this._link('pv_today', today) : undefined)}
+              ${this._kv('Ngày mai', tomorrow === undefined ? undefined : this._link('forecast_tomorrow', `${Math.round(tomorrow)} kWh`))}
+            </div>
+          </div>
+          ${mppts.length
+            ? html`<div class="pvs" style="--n:${mppts.length}">
+                ${mppts.map((m, i) => {
+                  const p = this._read(m.power);
+                  const w = p.v === undefined ? undefined : p.v * (p.unit === 'kw' ? 1000 : 1);
+                  const volt = this._read(m.voltage).v;
+                  const amp = this._read(m.current).v;
+                  const e = this._read(m.energy_today);
+                  const kwh = e.v === undefined ? undefined : e.v * (ENERGY_TO_KWH[e.unit] ?? 1);
+                  const va = [volt !== undefined ? `${formatNumber(volt, volt >= 100 ? 0 : 1)} V` : '', amp !== undefined ? `${formatNumber(amp, 1)} A` : '']
+                    .filter(Boolean)
+                    .join(' · ');
+                  return html`
+                    <button class="pv" data-anchor="mppt${i}" @click=${() => this._openEntity(p.id)}>
+                      <span class="label">${m.name ?? `PV${i + 1}`}</span>
+                      <b class="num">${w === undefined ? '—' : formatPower(w)}</b>
+                      ${va ? html`<span class="sub">${va}</span>` : nothing}
+                      ${kwh !== undefined ? html`<span class="sub">${formatNumber(kwh)} kWh</span>` : nothing}
+                    </button>
+                  `;
+                })}
+              </div>`
+            : nothing}
+        </div>
+      `;
+    }
+
+    // ---- Pin
+    let battery: unknown = nothing;
+    if (hasBattery) {
+      const soc = this._value('battery_soc');
+      const bw = power.battery;
+      const moving = bw !== undefined && Math.abs(bw) > threshold;
+      const note = this._batteryNote(runtime, online === false || !hasGrid);
+      const delta = this._cellDelta();
+      const level = soc === undefined ? 0 : Math.min(100, Math.max(0, soc));
+      wire('bat', bw, 'var(--sac-battery)', (bw ?? 0) < 0);
+      battery = html`
+        <div class="part bat" style="grid-area:bat">
+          <div class="text">
+            <button class="main" @click=${() => this._moreInfo(soc !== undefined ? 'battery_soc' : 'battery')}>
+              <span class="label">Pin</span>
+              ${soc !== undefined ? html`<b class="num soc">${Math.round(soc)}<small>%</small></b>` : nothing}
+            </button>
+            ${moving && bw !== undefined
+              ? this._box(formatPower(bw), 'var(--sac-battery)', 'battery', bw > 0 ? 'xả' : 'sạc')
+              : this._box(undefined, 'var(--sac-battery)', 'battery', bw === undefined ? '—' : 'đang nghỉ')}
+            ${this._kv('Sạc / xả hôm nay', this._energyPair('battery_charge_today', 'battery_discharge_today'))}
+            ${note ? this._kv(note.label, this._link('battery_soc', note.value)) : nothing}
+            ${this._kv('Lệch cell', delta === undefined ? undefined : this._link('cell_delta', `${formatNumber(delta, 0)} mV`))}
+          </div>
+          <span class="icon battery" data-anchor="bat" aria-hidden="true">
+            ${svg`<svg viewBox="0 0 24 40">
+              <rect class="body" x="3" y="5" width="18" height="33" rx="3"></rect>
+              <rect class="cap" x="8" y="1.5" width="8" height="3.5" rx="1"></rect>
+              <rect class="level" x="6" y=${35 - (27 * level) / 100} width="12" height=${(27 * level) / 100} rx="1"></rect>
+            </svg>`}
+          </span>
+        </div>
+      `;
+    }
+
+    // ---- Lưới
+    let grid: unknown = nothing;
+    if (hasGrid) {
+      const gw = power.grid;
+      const moving = gw !== undefined && Math.abs(gw) > threshold;
+      const volt = this._value('grid_voltage');
+      const freq = this._value('grid_frequency');
+      const line = [
+        volt !== undefined ? this._link('grid_voltage', `${Math.round(volt)} V`) : undefined,
+        freq !== undefined ? this._link('grid_frequency', `${formatNumber(freq)} Hz`) : undefined,
+      ].filter((v) => v !== undefined);
+      wire('grid', gw, 'var(--sac-grid)', (gw ?? 0) < 0);
+      grid = html`
+        <div class="part grid" style="grid-area:grid">
+          <span class="icon" data-anchor="grid" style="color:${online === false ? 'var(--sac-dim)' : 'var(--sac-grid)'}">${ICONS.grid}</span>
+          <div class="text">
+            <span class="label">${online === false ? 'Lưới · mất' : `Lưới${moving ? (gw > 0 ? ' · mua' : ' · phát') : ''}`}</span>
+            ${this._box(gw === undefined ? '—' : formatPower(gw), 'var(--sac-grid)', 'grid')}
+            ${this._kv('Mua / phát hôm nay', this._energyPair('grid_import_today', 'grid_export_today'))}
+            ${line.length ? html`<div class="kv"><b>${line.map((v, i) => html`${i ? ' · ' : ''}${v}`)}</b></div>` : nothing}
+          </div>
+        </div>
+      `;
+    }
+
+    // ---- Nhà
+    const { mix, origin, top } = this._homeMix(load, flows);
+    const consumed = this._energy('load_today');
+    wire('home', load, top?.color ?? 'var(--sac-fg)');
+    const home = html`
+      <div class="part home" style="grid-area:home">
+        <span class="icon" data-anchor="home" style="color:var(--sac-fg)">${ICONS.home}</span>
+        <div class="text">
+          <span class="label">Nhà đang dùng</span>
+          ${this._box(load === undefined ? '—' : formatPower(load), 'var(--sac-fg)', entities?.load ? 'load' : undefined)}
+          ${this._mixBar(mix)} ${origin ? html`<span class="sub">${origin}</span>` : nothing}
+          ${this._kv('Tải hôm nay', consumed === undefined ? undefined : this._link('load_today', `${formatNumber(consumed)} kWh`))}
+          ${this._kv('Tự cấp', selfUse === undefined ? undefined : this._link('grid_import_today', `${selfUse}%`))}
+        </div>
+      </div>
+    `;
+
+    // ---- Biến tần
+    const temp = this._value('inverter_temperature');
+    const hot = temp !== undefined && this._config?.inverter_temperature_warn !== undefined && temp > this._config.inverter_temperature_warn;
+    const inverter = html`
+      <div class="part inv" style="grid-area:inv">
+        <span class="icon" data-anchor="inv">${ICONS.inverter}</span>
+        ${temp !== undefined
+          ? html`<button class="lk temp ${hot ? 'hot' : ''}" @click=${() => this._moreInfo('inverter_temperature')}>
+              ${formatNumber(temp, 0)} ${this._temperatureUnit()}
+            </button>`
+          : nothing}
+      </div>
+    `;
+
+    const rows = [
+      hasPv ? `"solar solar ${hasGrid ? 'home' : '.'}"` : hasGrid ? '". . home"' : '',
+      `"${hasBattery ? 'bat' : '.'} inv ${hasGrid ? 'grid' : 'home'}"`,
+    ].filter(Boolean);
+
+    return html`
+      <section class="rig" style="grid-template-areas:${rows.join(' ')}">
+        ${svg`<svg class="wires" aria-hidden="true">
+          ${wires.map(({ id, w, color, reverse }) => {
+            const active = w !== undefined && Math.abs(w) > threshold;
+            const width = active ? 2 + 4 * Math.sqrt(Math.min(1, Math.abs(w) / max)) : 1;
+            const style = `--c:${color};--w:${width.toFixed(1)}px`;
+            return svg`
+              <path class="track ${active ? 'on' : ''}" data-wire=${id} style=${style}></path>
+              <path
+                class="flow solo ${active ? '' : 'idle'}"
+                pathLength="100"
+                data-wire=${id}
+                data-key=${`i-${id}`}
+                data-rate=${active ? 1 / flowDuration(w) : 0}
+                data-reverse=${reverse ? '1' : ''}
+                style=${style}
+              ></path>
+            `;
+          })}
+        </svg>`}
+        ${solar} ${battery} ${inverter} ${home} ${grid}
+      </section>
+    `;
+  }
+
+  /** Vẽ đường cho các dây của sơ đồ `inverter` theo vị trí thật của các nút; gọi lại khi card đổi cỡ. */
+  private _layoutWires(): void {
+    const rig = this.renderRoot.querySelector<HTMLElement>('.rig');
+    if (!rig) return;
+    const origin = rig.getBoundingClientRect();
+    const at = (name: string) => {
+      const el = rig.querySelector<HTMLElement>(`[data-anchor="${name}"]`);
+      if (!el) return undefined;
+      const r = el.getBoundingClientRect();
+      const l = r.left - origin.left;
+      const t = r.top - origin.top;
+      return { l, t, r: l + r.width, b: t + r.height, cx: l + r.width / 2, cy: t + r.height / 2, h: r.height };
+    };
+    const inv = at('inv');
+    if (!inv) return;
+    type Pt = [number, number];
+    // Ngang - dọc - ngang; hai đầu gần cùng độ cao thì vẽ thẳng.
+    const hvh = (a: Pt, b: Pt, x = (a[0] + b[0]) / 2): Pt[] =>
+      Math.abs(a[1] - b[1]) < 2 ? [[a[0], b[1]], b] : [a, [x, a[1]], [x, b[1]], b];
+    const routes = new Map<string, Pt[]>();
+
+    const sources = [...rig.querySelectorAll<HTMLElement>('[data-anchor^="mppt"]')].map((el) => at(el.dataset.anchor!)!);
+    const pv = at('pv');
+    const solar = rig.querySelector<HTMLElement>('.part.solar');
+    if (solar && (sources.length || pv)) {
+      // Thanh góp Solar nằm giữa khe hai hàng, để dây không đi qua chữ của nút pin bên dưới.
+      const gap = parseFloat(getComputedStyle(rig).rowGap) || 0;
+      const yBus = solar.getBoundingClientRect().bottom - origin.top + gap / 2;
+      sources.forEach((s, i) => routes.set(`mppt${i}`, [[s.cx, s.b], [s.cx, yBus], [inv.cx, yBus]]));
+      routes.set('pv', pv ? [[pv.cx, pv.b], [pv.cx, yBus], [inv.cx, yBus], [inv.cx, inv.t]] : [[inv.cx, yBus], [inv.cx, inv.t]]);
+    }
+    const bat = at('bat');
+    if (bat) routes.set('bat', hvh([bat.r, bat.cy], [inv.l, inv.cy]));
+    const grid = at('grid');
+    if (grid) routes.set('grid', hvh([grid.l, grid.cy], [inv.r, inv.cy]));
+    const home = at('home');
+    if (home) {
+      // Có lưới thì lưới đi thẳng vào giữa biến tần, dây nhà rời biến tần cao hơn rồi gập lên.
+      const start: Pt = grid ? [inv.r, inv.t + inv.h * 0.22] : [inv.r, inv.cy];
+      routes.set('home', hvh(start, [home.l, home.cy], grid ? (inv.r + home.l) / 2 : undefined));
+    }
+
+    rig.querySelector('.wires')?.setAttribute('viewBox', `0 0 ${origin.width} ${origin.height}`);
+    for (const path of rig.querySelectorAll<SVGPathElement>('path[data-wire]')) {
+      const points = routes.get(path.dataset.wire!);
+      path.setAttribute('d', points ? roundedPath(points, 6) : '');
+    }
+    this._syncFlows();
+  }
+
   /** Đọc một entity bất kỳ (không nằm trong `entities`): số và đơn vị. */
   private _read(ref: EntityRef | undefined): { id?: string; v?: number; unit: string } {
     const cfg = toEntityConfig(ref);
@@ -456,11 +782,20 @@ export class SolarAlmanacCard extends LitElement {
     return { id: cfg?.entity, v: Number.isNaN(v) ? undefined : cfg?.invert ? -v : v, unit };
   }
 
-  /** Các ô MPPT trên nút Solar: công suất, điện áp · dòng, kWh hôm nay; dây nhỏ chảy xuống Solar. */
-  private _renderMppts(list: MpptConfig[], wire: (key: string, w: number | undefined, color: string, axis: 'h' | 'v', forward: boolean, area: string) => unknown) {
+  /**
+   * Các ô MPPT cùng hàng với nút Solar: nửa đầu bên trái, nửa sau bên phải, dây ngang chảy vào Solar.
+   * Mỗi ô: công suất, điện áp · dòng, kWh hôm nay. `first` là số thứ tự của ô đầu, để đặt tên PVn mặc định.
+   */
+  private _renderMppts(
+    list: MpptConfig[],
+    first: number,
+    side: 'left' | 'right',
+    wire: (key: string, w: number | undefined, color: string, axis: 'h' | 'v', forward: boolean, area: string) => unknown,
+  ) {
     return html`
-      <div class="mppts" style="grid-area:mp;--n:${list.length}">
-        ${list.map((m, i) => {
+      <div class="mppts ${side}">
+        ${list.map((m, j) => {
+          const i = first + j;
           const p = this._read(m.power);
           const w = p.v === undefined ? undefined : p.v * (p.unit === 'kw' ? 1000 : 1);
           const volt = this._read(m.voltage).v;
@@ -478,7 +813,7 @@ export class SolarAlmanacCard extends LitElement {
                 ${va ? html`<span class="sub">${va}</span>` : nothing}
                 ${kwh !== undefined ? html`<span class="sub">${formatNumber(kwh)} kWh</span>` : nothing}
               </button>
-              ${wire(`mppt${i}`, w, 'var(--sac-solar)', 'v', true, 'auto')}
+              ${wire(`mppt${i}`, w, 'var(--sac-solar)', 'h', side === 'left', 'auto')}
             </div>
           `;
         })}
@@ -539,13 +874,14 @@ export class SolarAlmanacCard extends LitElement {
     const offGrid = online === false || !entities?.grid;
     const grid = power.grid;
     const gridNote = grid === undefined || Math.abs(grid) <= threshold ? '' : grid > 0 ? ' · mua' : ' · phát';
+    const inverter = this._config?.layout === 'inverter';
     const items = [
-      runtime !== undefined ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ', key: 'battery_soc' as EntityKey } : undefined,
-      selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%`, key: 'grid_import_today' as EntityKey } : undefined,
-      tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh', key: 'forecast_tomorrow' as EntityKey } : undefined,
+      runtime !== undefined && !(inverter && entities?.battery) ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ', key: 'battery_soc' as EntityKey } : undefined,
+      selfUse !== undefined && !inverter ? { label: 'Tự cấp', value: `${selfUse}%`, key: 'grid_import_today' as EntityKey } : undefined,
+      tomorrow !== undefined && !(inverter && entities?.pv) ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh', key: 'forecast_tomorrow' as EntityKey } : undefined,
     ].filter((item) => item !== undefined);
     // Ở sơ đồ, lưới đã có nút riêng nên không lặp lại ở hàng này.
-    const showGrid = !!entities?.grid && this._config?.layout !== 'flow';
+    const showGrid = !!entities?.grid && this._config?.layout !== 'flow' && !inverter;
     if (!items.length && !showGrid) return nothing;
     return html`
       <dl class="reserve">
@@ -631,17 +967,20 @@ export class SolarAlmanacCard extends LitElement {
         ? undefined
         : html`${open(a, part(x), 'left')} / ${open(b, `${part(y)} kWh`, 'right')}`;
     };
-    const rows: Array<[string, unknown]> = [
+    // Sơ đồ `inverter` đã ghi các số trong ngày cạnh từng nút; chỉ còn các dòng không thuộc nút nào.
+    const inverter = this._config?.layout === 'inverter';
+    const entities = this._config?.entities;
+    const rows: Array<[string, unknown, boolean?]> = [
       [this._config?.savings_label ?? 'Tiết kiệm tháng', savings === undefined ? undefined : open('savings_month', `${formatNumber(savings, 0)} đ`)],
-      ['Tải hôm nay', load === undefined ? undefined : open('load_today', load)],
-      ['Mua / phát', pair('grid_import_today', 'grid_export_today')],
-      ['Sạc / xả hôm nay', pair('battery_charge_today', 'battery_discharge_today')],
+      ['Tải hôm nay', load === undefined ? undefined : open('load_today', load), true],
+      ['Mua / phát', pair('grid_import_today', 'grid_export_today'), !!entities?.grid],
+      ['Sạc / xả hôm nay', pair('battery_charge_today', 'battery_discharge_today'), !!entities?.battery],
       [this._config?.battery_period_label ?? 'Sạc / xả tháng', pair('battery_charge_period', 'battery_discharge_period')],
-      ['Lệch cell', delta === undefined ? undefined : open('cell_delta', `${formatNumber(delta, 0)} mV`)],
-      ['Nhiệt biến tần', temp === undefined ? undefined : open('inverter_temperature', `${formatNumber(temp, 0)} ${this._temperatureUnit()}`)],
-      ['Tần số lưới', freq === undefined ? undefined : open('grid_frequency', `${formatNumber(freq)} Hz`)],
+      ['Lệch cell', delta === undefined ? undefined : open('cell_delta', `${formatNumber(delta, 0)} mV`), !!entities?.battery],
+      ['Nhiệt biến tần', temp === undefined ? undefined : open('inverter_temperature', `${formatNumber(temp, 0)} ${this._temperatureUnit()}`), true],
+      ['Tần số lưới', freq === undefined ? undefined : open('grid_frequency', `${formatNumber(freq)} Hz`), !!entities?.grid],
     ];
-    const shown = rows.filter((r) => r[1] !== undefined);
+    const shown = rows.filter((r) => r[1] !== undefined && !(inverter && r[2]));
     if (!shown.length) return nothing;
     return html`<dl class="fine">${shown.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>`;
   }
@@ -735,6 +1074,7 @@ export class SolarAlmanacCard extends LitElement {
     const dark = theme === 'auto' ? (this.hass?.themes?.darkMode ?? matchMedia('(prefers-color-scheme: dark)').matches) : theme === 'dark';
     this.dataset.mode = dark ? 'dark' : 'light';
     this.dataset.band = this._config?.band ?? 'red';
+    this.dataset.motion = this._motion();
   }
 
   protected render() {
@@ -766,9 +1106,11 @@ export class SolarAlmanacCard extends LitElement {
         <div class="page">
           ${this._renderBand(now, online)}
           ${this._alerts().map((text) => html`<p class="alert">${text}</p>`)}
-          ${this._config.layout === 'flow'
-            ? this._renderFlow(power, load, unread ? undefined : flows)
-            : html`${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}`}
+          ${this._config.layout === 'inverter'
+            ? this._renderInverter(power, load, unread ? undefined : flows, runtime, online, selfUse)
+            : this._config.layout === 'flow'
+              ? this._renderFlow(power, load, unread ? undefined : flows)
+              : html`${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}`}
           ${this._renderReserve(power, runtime, online, selfUse)}
           ${status ? html`<p class="say"><b>${status.lead}</b> ${status.rest ?? ''}</p>` : nothing}
           ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`} ${this._renderControls()}
@@ -778,27 +1120,58 @@ export class SolarAlmanacCard extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
+    this._watchRig();
+    this._layoutWires();
     this._syncFlows();
     if (changed.has('hass') || changed.has('_config')) this._maybeFetchHistory();
   }
 
+  /** Dây của sơ đồ `inverter` theo vị trí các nút: vẽ lại khi sơ đồ hay một nút đổi cỡ (card co giãn, font nạp xong). */
+  private _watchRig(): void {
+    const rig = this.renderRoot.querySelector('.rig');
+    if (!rig) return;
+    this._resize ??= new ResizeObserver(() => this._layoutWires());
+    for (const el of [rig, ...rig.querySelectorAll('.part, [data-anchor]')]) this._resize.observe(el);
+  }
+
+  /**
+   * Chế độ hạt từ `animation`. Nhận cả true/false như card Sunsynk, và vì YAML 1.1 (PyYAML) đọc
+   * `animation: on` không quote thành true.
+   */
+  private _motion(): 'auto' | 'on' | 'off' {
+    const value: unknown = this._config?.animation;
+    if (value === true || value === 'on') return 'on';
+    if (value === false || value === 'off') return 'off';
+    return 'auto';
+  }
+
   /** Hạt chạy bằng Web Animations, ngoài vòng render: đổi tốc độ không làm giật. */
   private _syncFlows(): void {
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // .flow: hạt trên đường SVG (layout columns); .dots: chấm trên dây CSS (layout flow).
+    // `animation: on` vẫn chạy hạt khi hệ điều hành bật giảm chuyển động (Windows tắt hiệu ứng hoạt ảnh); `off` không bao giờ chạy.
+    const motion = this._motion();
+    const reduced = motion === 'off' || (motion === 'auto' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    // .flow: hạt trên đường SVG (layout columns); .dots: chấm trên dây CSS (layout flow);
+    // .solo: một hạt đi hết dây mỗi vòng (layout inverter), tốc độ px/giây theo công suất nên dây dài hay ngắn chạy đều nhau.
     for (const el of this.renderRoot.querySelectorAll<SVGPathElement | HTMLElement>('.flow, .dots')) {
       const dots = el.classList.contains('dots');
+      const solo = el.classList.contains('solo');
       const key = `${dots ? 'w' : 'f'}-${el.dataset.key!}`;
-      const rate = Number(el.dataset.rate);
+      const perSecond = Number(el.dataset.rate);
+      const length = solo && perSecond > 0 ? (el as SVGPathElement).getTotalLength() : 0;
+      const rate = solo && perSecond > 0 ? 1 / Math.max(SOLO_MIN_LAP, length / (SOLO_SPEED * perSecond)) : perSecond;
       let animation = this._animations.get(key);
-      if (reduced || !el.animate) continue;
+      if (reduced || !el.animate) {
+        animation?.cancel();
+        this._animations.delete(key);
+        continue;
+      }
       if (!animation || (animation.effect as KeyframeEffect).target !== el) {
         animation?.cancel();
         const frames = dots
           ? el.dataset.axis === 'v'
             ? [{ backgroundPosition: '50% 0px' }, { backgroundPosition: `50% ${WIRE_GAP}px` }]
             : [{ backgroundPosition: '0px 50%' }, { backgroundPosition: `${WIRE_GAP}px 50%` }]
-          : [{ strokeDashoffset: 0 }, { strokeDashoffset: -DASH_PERIOD }];
+          : [{ strokeDashoffset: 0 }, { strokeDashoffset: solo ? -100 : -DASH_PERIOD }];
         animation = el.animate(frames, { duration: 1000, iterations: Infinity });
         this._animations.set(key, animation);
       }
@@ -853,7 +1226,7 @@ export class SolarAlmanacCard extends LitElement {
         cursor: pointer;
       }
       button:focus-visible {
-        outline: calc(var(--u) * 2) solid var(--sac-fg);
+        outline: max(2px, calc(var(--u) * 2)) solid var(--sac-fg);
         outline-offset: calc(var(--u) * 1);
       }
       .num {
@@ -904,7 +1277,7 @@ export class SolarAlmanacCard extends LitElement {
       }
       .label,
       .reserve dt {
-        font-size: max(11px, calc(var(--u) * 12));
+        font-size: max(12px, calc(var(--u) * 12));
         color: var(--sac-dim);
         white-space: nowrap;
       }
@@ -955,7 +1328,7 @@ export class SolarAlmanacCard extends LitElement {
       }
       .sub {
         margin-top: calc(var(--u) * 4);
-        font-size: calc(var(--u) * 12.5);
+        font-size: max(12px, calc(var(--u) * 12.5));
         color: var(--sac-dim);
         white-space: nowrap;
       }
@@ -1029,25 +1402,44 @@ export class SolarAlmanacCard extends LitElement {
       .node.side .mix {
         min-width: 0;
       }
-      .mppts {
+      /* Hàng Solar và hàng Pin: tỉ lệ hai bên = (1 + 0.8) và (0.8 + 1.15) của .map, để nút đứng thẳng trên/dưới ô biến tần. */
+      .axis {
         display: grid;
-        grid-template-columns: repeat(var(--n), minmax(0, calc(var(--u) * 150)));
-        justify-content: center;
-        gap: calc(var(--u) * 10);
+        grid-template-columns: minmax(0, 1.8fr) auto minmax(0, 1.95fr);
+        grid-template-areas: 'left mid right';
+        align-items: center;
+      }
+      .axis > .node {
+        grid-area: mid;
+      }
+      .mppts {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--u) * 6);
+        min-width: 0;
+      }
+      .mppts.left {
+        grid-area: left;
+      }
+      .mppts.right {
+        grid-area: right;
       }
       .mppt {
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         min-width: 0;
+      }
+      .mppts.right .mppt {
+        flex-direction: row-reverse;
       }
       .mppt .box {
         display: flex;
         flex-direction: column;
         align-items: center;
+        flex: 0 1 auto;
         box-sizing: border-box;
-        width: 100%;
-        padding: calc(var(--u) * 5) calc(var(--u) * 6);
+        min-width: 0;
+        padding: calc(var(--u) * 5) calc(var(--u) * 8);
         border: 1px solid var(--sac-solar);
         border-radius: calc(var(--u) * 4);
         text-align: center;
@@ -1059,13 +1451,12 @@ export class SolarAlmanacCard extends LitElement {
       }
       .mppt .sub {
         margin-top: calc(var(--u) * 1);
-        font-size: max(11px, calc(var(--u) * 12));
+        font-size: max(12px, calc(var(--u) * 12));
       }
-      .mppt .wire.v {
-        align-self: center;
-        width: calc(var(--u) * 12);
-        min-height: calc(var(--u) * 16);
-        margin: 0;
+      .mppt .wire.h {
+        flex: 1 1 calc(var(--u) * 12);
+        min-width: calc(var(--u) * 12);
+        margin: 0 calc(var(--u) * 4);
       }
       .hub {
         display: grid;
@@ -1145,13 +1536,283 @@ export class SolarAlmanacCard extends LitElement {
         background-size: 100% ${WIRE_GAP}px;
         background-repeat: repeat-y;
       }
+      /* Giảm chuyển động (hoặc animation: off): bỏ chấm, dây đậm màu nguồn; animation: on thì vẫn chạy. */
       @media (prefers-reduced-motion: reduce) {
-        .dots {
+        :host(:not([data-motion='on'])) .dots {
           display: none !important;
         }
-        .wire.on::before {
+        :host(:not([data-motion='on'])) .wire.on::before {
           opacity: 1;
         }
+      }
+      :host([data-motion='off']) .dots {
+        display: none !important;
+      }
+      :host([data-motion='off']) .wire.on::before {
+        opacity: 1;
+      }
+      /* ---- layout: inverter (kiểu Sunsynk) ---- */
+      .rig {
+        /* Sơ đồ ba cột cần co thêm dưới mốc 0.92px của tờ giấy để vừa card điện thoại; chữ nhỏ có sàn 12px. */
+        --u: clamp(0.78px, 0.2427cqi, 1.7px);
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        column-gap: calc(var(--u) * 10);
+        row-gap: calc(var(--u) * 24);
+        align-items: center;
+        padding: calc(var(--u) * 12) calc(var(--u) * 14) calc(var(--u) * 10);
+      }
+      .rig .wires {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+      .rig .track,
+      .rig .flow {
+        stroke: var(--c);
+      }
+      /* Dây nghỉ vẫn mang màu nguồn (nhạt) để nhìn ra nút nào nối với nút nào, như card Sunsynk. */
+      .rig .track {
+        stroke-width: 1.5px;
+        opacity: 0.35;
+      }
+      .rig .track.on {
+        stroke: var(--c);
+        stroke-width: var(--w);
+        opacity: 0.45;
+      }
+      /* Một hạt mỗi dây: nét đứt dài bằng cả dây (pathLength 100), đầu tròn thành hạt. */
+      .rig .flow {
+        stroke-width: calc(var(--w) + 4px);
+        stroke-dasharray: 0.1 99.9;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        :host(:not([data-motion='on'])) .rig .flow {
+          display: none;
+        }
+        :host(:not([data-motion='on'])) .rig .track.on {
+          opacity: 1;
+        }
+      }
+      :host([data-motion='off']) .rig .flow {
+        display: none;
+      }
+      :host([data-motion='off']) .rig .track.on {
+        opacity: 1;
+      }
+      .rig .part {
+        position: relative;
+        z-index: 1;
+        min-width: 0;
+      }
+      .rig .part .text {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--u) * 3);
+        min-width: 0;
+      }
+      .rig .icon {
+        display: block;
+        flex: none;
+        width: calc(var(--u) * 32);
+        height: calc(var(--u) * 32);
+      }
+      .rig .icon svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .rig .val {
+        display: inline-flex;
+        align-self: flex-start;
+        justify-content: center;
+        min-width: calc(var(--u) * 64);
+        padding: calc(var(--u) * 1) calc(var(--u) * 8);
+        align-items: baseline;
+        gap: calc(var(--u) * 4);
+        border: 1.5px solid var(--c);
+        border-radius: calc(var(--u) * 4);
+        color: var(--sac-fg);
+      }
+      .rig .val .word {
+        font-family: var(--ha-font-family-body, Roboto, sans-serif);
+        font-size: max(12px, calc(var(--u) * 13));
+        font-weight: 500;
+        line-height: 1.15;
+        white-space: nowrap;
+      }
+      .rig .val .num {
+        font-size: calc(var(--u) * 22);
+        line-height: 1.15;
+        white-space: nowrap;
+      }
+      /* Nhãn và giá trị cùng một dòng chữ: nút số là liên kết nằm trong câu (WCAG 2.5.8, ngoại lệ inline). */
+      .rig .kv {
+        font-size: max(12px, calc(var(--u) * 12.5));
+        line-height: 1.35;
+        color: var(--sac-dim);
+      }
+      .rig .kv b {
+        color: var(--sac-fg);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .rig .lk {
+        cursor: pointer;
+      }
+      .rig .gauge,
+      .rig .mix {
+        margin-top: 0;
+      }
+      .rig .sub {
+        margin-top: 0;
+        font-size: max(12px, calc(var(--u) * 12.5));
+        white-space: normal;
+      }
+      /* Solar: đầu nút trên, các ô PV dưới, dây từ đáy từng ô chạy về biến tần. */
+      .rig .solar {
+        align-self: end;
+      }
+      .rig .solar .head {
+        display: flex;
+        gap: calc(var(--u) * 8);
+        align-items: flex-start;
+      }
+      .rig .solar .head .text {
+        flex: 1;
+      }
+      .rig .headline {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--u) * 8);
+      }
+      .rig .pvs {
+        display: grid;
+        grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+        gap: calc(var(--u) * 10);
+        margin-top: calc(var(--u) * 10);
+      }
+      .rig .pv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+        padding: calc(var(--u) * 4) calc(var(--u) * 6);
+        border: 1.5px solid var(--sac-solar);
+        border-radius: calc(var(--u) * 4);
+        text-align: center;
+      }
+      .rig .pv .num {
+        font-size: calc(var(--u) * 20);
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+      /* Nhiều MPPT thì ô hẹp: tên xuống dòng chứ không cắt. */
+      .rig .pv .label {
+        max-width: 100%;
+        white-space: normal;
+        text-wrap: balance;
+      }
+      .rig .pv .sub {
+        font-size: max(12px, calc(var(--u) * 12));
+        text-wrap: balance;
+      }
+      /* Pin: chữ căn phải, biểu tượng sát biến tần. */
+      .rig .bat {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: calc(var(--u) * 8);
+      }
+      .rig .bat .text {
+        align-items: flex-end;
+        text-align: right;
+      }
+      .rig .bat .val {
+        align-self: flex-end;
+      }
+      .rig .bat .main {
+        align-items: flex-end;
+      }
+      .rig .main .soc {
+        font-size: calc(var(--u) * 34);
+        line-height: 1;
+        color: var(--sac-fg);
+      }
+      .rig .soc small {
+        margin-left: calc(var(--u) * 2);
+        font-family: var(--ha-font-family-body, Roboto, sans-serif);
+        font-size: max(12px, calc(var(--u) * 14));
+        font-weight: 500;
+        color: var(--sac-dim);
+      }
+      .rig .icon.battery {
+        width: calc(var(--u) * 26);
+        height: calc(var(--u) * 44);
+        color: var(--sac-dim);
+      }
+      .rig .icon.battery .body {
+        stroke-width: 1.8;
+      }
+      .rig .icon.battery .cap {
+        fill: currentColor;
+        stroke: none;
+      }
+      .rig .icon.battery .level {
+        fill: var(--sac-battery);
+        stroke: none;
+      }
+      /* Nhà, lưới: biểu tượng trái sát dây, chữ phải. */
+      .rig .home,
+      .rig .grid {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--u) * 8);
+      }
+      .rig .home .text,
+      .rig .grid .text {
+        flex: 1;
+      }
+      .rig .home .mix {
+        align-self: stretch;
+      }
+      /* Biến tần: biểu tượng giữa ô, nhiệt độ treo dưới để dây ngang trúng tâm. */
+      .rig .inv {
+        display: grid;
+        justify-items: center;
+        margin: 0 calc(var(--u) * 6);
+      }
+      .rig .inv .icon {
+        width: calc(var(--u) * 46);
+        height: calc(var(--u) * 46);
+        color: var(--sac-dim);
+      }
+      .rig .temp {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: calc(var(--u) * 3);
+        font-size: max(12px, calc(var(--u) * 12.5));
+        font-weight: 500;
+        white-space: nowrap;
+        color: var(--sac-fg);
+      }
+      .rig .temp.hot {
+        padding: 0 calc(var(--u) * 5);
+        border-radius: calc(var(--u) * 4);
+        background: var(--sac-on-band);
+        color: var(--sac-alert);
+        font-weight: 700;
       }
       dl,
       dd {
@@ -1175,7 +1836,7 @@ export class SolarAlmanacCard extends LitElement {
       }
       .reserve small {
         font-family: var(--ha-font-family-body, Roboto, sans-serif);
-        font-size: calc(var(--u) * 12);
+        font-size: max(12px, calc(var(--u) * 12));
         font-weight: 500;
       }
       .alert {
@@ -1207,7 +1868,7 @@ export class SolarAlmanacCard extends LitElement {
         justify-content: space-between;
         gap: calc(var(--u) * 10);
         margin-bottom: calc(var(--u) * 5);
-        font-size: calc(var(--u) * 12.5);
+        font-size: max(12px, calc(var(--u) * 12.5));
         color: var(--sac-dim);
       }
       .hours-head b {
@@ -1253,7 +1914,7 @@ export class SolarAlmanacCard extends LitElement {
         border-radius: calc(var(--u) * 3);
         background: var(--sac-fg);
         color: var(--sac-surface);
-        font-size: max(11px, calc(var(--u) * 12));
+        font-size: max(12px, calc(var(--u) * 12));
         font-weight: 600;
         line-height: 1.25;
         text-align: center;
@@ -1266,29 +1927,33 @@ export class SolarAlmanacCard extends LitElement {
       .hour {
         display: block;
         margin-top: calc(var(--u) * 3);
-        font-size: max(11px, calc(var(--u) * 11));
+        font-size: max(12px, calc(var(--u) * 11));
         color: var(--sac-dim);
       }
       .fine {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: calc(var(--u) * 3) calc(var(--u) * 16);
+        /* Hàng cách nhau đủ để tâm hai nút số xếp chồng cách ≥ 24px (WCAG 2.5.8). */
+        gap: max(8px, calc(var(--u) * 3)) calc(var(--u) * 16);
         margin: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 12);
         padding-top: calc(var(--u) * 9);
         border-top: 1px solid var(--sac-border);
-        font-size: calc(var(--u) * 12.5);
+        font-size: max(12px, calc(var(--u) * 12.5));
         color: var(--sac-dim);
       }
       .fine div {
         position: relative;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
-        gap: calc(var(--u) * 8);
+        column-gap: calc(var(--u) * 8);
       }
       .fine dt {
         white-space: nowrap;
       }
+      /* Cột hẹp không chứa nổi cả dòng thì giá trị xuống dòng, vẫn căn phải. */
       .fine dd {
+        margin-left: auto;
         color: var(--sac-fg);
         font-weight: 500;
         white-space: nowrap;
@@ -1312,7 +1977,7 @@ export class SolarAlmanacCard extends LitElement {
         margin: calc(var(--u) * 10) calc(var(--u) * 14) calc(var(--u) * 12);
         padding-top: calc(var(--u) * 9);
         border-top: 1px solid var(--sac-border);
-        font-size: calc(var(--u) * 12.5);
+        font-size: max(12px, calc(var(--u) * 12.5));
         color: var(--sac-dim);
       }
       .fine + .controls {
@@ -1366,6 +2031,10 @@ export class SolarAlmanacCard extends LitElement {
         color: var(--sac-dim);
       }
       @media (hover: hover) {
+        .rig .lk:hover {
+          text-decoration: underline;
+        }
+        .rig .pv:hover .label,
         .main:hover .label,
         button.sub:hover,
         .about:hover span,
@@ -1386,7 +2055,7 @@ export class SolarAlmanacCard extends LitElement {
         }
         .main small {
           margin-left: calc(var(--u) * 2);
-          font-size: calc(var(--u) * 12.5);
+          font-size: max(12px, calc(var(--u) * 12.5));
         }
       }
       @container (max-width: 400px) {
@@ -1402,6 +2071,40 @@ export class SolarAlmanacCard extends LitElement {
         .node .gauge,
         .node .mix {
           min-width: calc(var(--u) * 70);
+        }
+      }
+      /* Sơ đồ inverter ở card hẹp: thu khoảng cách và biểu tượng trước, số nhỏ lại sau cùng; chữ không dưới 12px. */
+      @container (max-width: 400px) {
+        .rig {
+          column-gap: calc(var(--u) * 6);
+          padding-left: calc(var(--u) * 10);
+          padding-right: calc(var(--u) * 10);
+        }
+        .rig .inv {
+          margin: 0 calc(var(--u) * 2);
+        }
+        .rig .icon.battery {
+          width: calc(var(--u) * 22);
+          height: calc(var(--u) * 38);
+        }
+        .rig .val {
+          padding: calc(var(--u) * 1) calc(var(--u) * 5);
+        }
+      }
+      @container (max-width: 340px) {
+        .rig .val .num {
+          font-size: calc(var(--u) * 19);
+        }
+        .rig .main .soc {
+          font-size: calc(var(--u) * 30);
+        }
+        .rig .icon {
+          width: calc(var(--u) * 26);
+          height: calc(var(--u) * 26);
+        }
+        .rig .inv .icon {
+          width: calc(var(--u) * 38);
+          height: calc(var(--u) * 38);
         }
       }
       @container (max-width: 367px) {
