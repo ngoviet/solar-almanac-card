@@ -36,16 +36,23 @@ export interface SolarAlmanacCardConfig {
   theme?: 'auto' | 'dark' | 'light';
   /** Màu băng đầu card; `neutral` để dành màu đỏ cho cảnh báo. */
   band?: 'red' | 'neutral';
+  /**
+   * Hạt chạy trên dây. `auto` (mặc định) dừng hạt khi hệ điều hành bật giảm chuyển động;
+   * `on` (hoặc true) luôn chạy (Windows tắt hiệu ứng hoạt ảnh vẫn thấy hạt); `off` (hoặc false) không bao giờ chạy.
+   */
+  animation?: 'auto' | 'on' | 'off' | boolean;
   /** Ẩn dải giờ và dòng chữ nhỏ để card thấp hơn. */
   compact?: boolean;
   /**
    * `columns` (mặc định): ba số lớn ngang hàng và dải hạt.
    * `flow`: sơ đồ Solar trên, lưới trái, nhà phải, pin dưới, nối qua biến tần; dây dày theo công suất.
+   * `inverter`: sơ đồ kiểu Sunsynk: Solar trên trái, pin dưới trái, biến tần giữa, nhà trên phải,
+   *   lưới dưới phải; dây gấp khúc, số liệu của từng nút đứng ngay cạnh nút đó.
    */
-  layout?: 'columns' | 'flow';
-  /** Công suất (W) ứng với dây dày nhất ở `layout: flow`; mặc định 5000. */
+  layout?: 'columns' | 'flow' | 'inverter';
+  /** Công suất (W) ứng với dây dày nhất ở `layout: flow` và `inverter`; mặc định 5000. */
   flow_max_power?: number;
-  /** Từng MPPT / chuỗi PV, hiện thành các ô trên nút Solar ở `layout: flow`. */
+  /** Từng MPPT / chuỗi PV, hiện thành các ô trên nút Solar ở `layout: flow` và `inverter`. */
   mppts?: MpptConfig[];
   /** Dung lượng pin (kWh), dùng để tính thời gian còn chạy và thời gian đầy. */
   battery_capacity?: number;

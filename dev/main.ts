@@ -45,6 +45,16 @@ const SCENARIOS: Scenario[] = [
   { label: 'Thiếu dữ liệu', hour: 15, pv: 1500, battery: 0, grid: 300, soc: 55, sparse: true, pvToday: 0, loadToday: 0 },
 ];
 
+// ?flow: dựng layout flow kèm 2 ô MPPT; ?flow=1, ?flow=3 đổi số ô MPPT.
+// ?inverter: layout kiểu Sunsynk, cùng cách đếm ô MPPT (?inverter=3). Thêm &dc để bỏ lưới, quạt, EOD (hệ DC không lưới).
+const PARAMS = new URLSearchParams(location.search);
+const INVERTER = PARAMS.has('inverter');
+const DC = PARAMS.has('dc');
+const FLOW = PARAMS.get('flow') ?? PARAMS.get('inverter');
+const MPPT_COUNT = FLOW === null ? 0 : Number(FLOW) || 2;
+const MPPT_SHARE = [0.76, 0.24, 0.5, 0.3].slice(0, MPPT_COUNT);
+const MPPT_NAMES = ['Longi', 'Dehui', 'Jinko', 'JA'];
+
 const card = document.createElement('solar-almanac-card');
 card.setConfig({
   type: 'custom:solar-almanac-card',
@@ -52,6 +62,21 @@ card.setConfig({
   battery_capacity: 17.15,
   battery_reserve: 2,
   inverter_temperature_warn: 70,
+  ...(FLOW === null
+    ? {}
+    : {
+        layout: INVERTER ? ('inverter' as const) : ('flow' as const),
+        band: 'neutral' as const,
+        savings_label: 'Tiết kiệm kỳ này',
+        battery_period_label: 'Sạc / xả kỳ này',
+        mppts: MPPT_SHARE.map((_, i) => ({
+          name: `PV${i + 1} · ${MPPT_NAMES[i]}`,
+          power: `sensor.pv${i + 1}_power`,
+          voltage: `sensor.pv${i + 1}_voltage`,
+          current: `sensor.pv${i + 1}_current`,
+          energy_today: `sensor.pv${i + 1}_today`,
+        })),
+      }),
   entities: {
     pv: 'sensor.pv_power',
     battery: 'sensor.battery_power',
@@ -80,6 +105,10 @@ card.setConfig({
     eod: 'number.eod',
   },
 });
+if (DC) {
+  const e = (card as unknown as { _config: { entities: Record<string, unknown> } })._config.entities;
+  for (const k of ['grid', 'grid_import_today', 'grid_export_today', 'grid_voltage', 'grid_frequency', 'grid_connected', 'inverter_temperature', 'fan', 'fan_rpm', 'fan_auto', 'fan_stall', 'eod']) delete e[k];
+}
 document.getElementById('wrap')!.appendChild(card);
 
 // Thay HA xử lý nút: trên dev bấm là đổi ngay, không có hộp xác nhận.
@@ -118,6 +147,16 @@ function apply(s: Scenario, dark: boolean) {
     'sensor.battery_soc': entity(s.soc, '%'),
     'sensor.grid_power': entity(s.grid, 'W'),
   };
+  MPPT_SHARE.forEach((share, i) => {
+    const w = s.pv * share;
+    const volt = w > 0 ? 445 - i * 60 : 186;
+    Object.assign(states, {
+      [`sensor.pv${i + 1}_power`]: entity(Math.round(w), 'W'),
+      [`sensor.pv${i + 1}_voltage`]: entity(volt, 'V'),
+      [`sensor.pv${i + 1}_current`]: entity((w / volt).toFixed(1), 'A'),
+      [`sensor.pv${i + 1}_today`]: entity((s.pvToday * share).toFixed(1), 'kWh'),
+    });
+  });
   if (!s.sparse) {
     Object.assign(states, {
       'sensor.pv_today': entity(s.pvToday, 'kWh'),
@@ -158,8 +197,11 @@ function apply(s: Scenario, dark: boolean) {
   card.hass = hass;
 }
 
-let scenario = SCENARIOS[0];
-let dark = false;
+// ?kb=N: mở sẵn tình huống thứ N (0 = 19:08 xả).
+let scenario = SCENARIOS[Number(PARAMS.get('kb')) || 0] ?? SCENARIOS[0];
+// ?auto: sáng/tối theo prefers-color-scheme của trình duyệt (để design-kit chụp đủ hai chế độ).
+let dark = PARAMS.has('auto') && matchMedia('(prefers-color-scheme: dark)').matches;
+document.body.dataset.dark = String(dark);
 const bar = document.getElementById('bar')!;
 for (const s of SCENARIOS) {
   const b = document.createElement('button');

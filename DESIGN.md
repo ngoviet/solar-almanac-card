@@ -53,7 +53,7 @@ typography:
     lineHeight: 1.4
   label:
     fontFamily: "var(--ha-font-family-body, Roboto, sans-serif)"
-    fontSize: "max(11px, calc(var(--u) * 12))"
+    fontSize: "max(12px, calc(var(--u) * 12))"
     fontWeight: 400
     lineHeight: 1.4
 rounded:
@@ -134,7 +134,7 @@ Mỗi ngày là một tờ lịch treo tường: băng đỏ đầu tờ, một 
 
 Hệ này in trên giấy, không phải dựng trên bảng điều khiển. Nền là giấy tint đỏ của palette-axi, chữ là mực trung tính, số là khối đặc đậm khổ lớn. Mật độ cao nhưng phân tầng rõ: một số lớn, ba số vừa, phần còn lại là chữ nhỏ. Màu chỉ xuất hiện ở nơi có nghĩa, và mọi dấu trên dải giờ đều là số liệu thật, không có trang trí.
 
-Card sống trong shadow DOM của dashboard Home Assistant, cạnh những card khác. Nó thừa kế font thân bài và chế độ sáng/tối của HA, chỉ mang theo ba thứ của riêng mình: bảng màu, bộ số nhúng và đơn vị `--u`. Hệ này từ chối sơ đồ năm vòng tròn nối về biến tần: nguồn đi vào con số, không đi vào một hình vẽ của hệ thống. Ngoại lệ có chủ đích là `layout: flow` (chủ dự án yêu cầu 08/11/2026): sơ đồ bốn nút nối về một ô biến tần, nhưng vẫn theo các quy tắc ở đây. Số trong nút là khối số của card, chữ bằng mực, màu nguồn chỉ ở dây, chấm và ô nhãn; sạc/xả vẫn nói bằng chữ. Từ hàng dự phòng trở xuống giữ nguyên tờ lịch.
+Card sống trong shadow DOM của dashboard Home Assistant, cạnh những card khác. Nó thừa kế font thân bài và chế độ sáng/tối của HA, chỉ mang theo ba thứ của riêng mình: bảng màu, bộ số nhúng và đơn vị `--u`. Hệ này từ chối sơ đồ năm vòng tròn nối về biến tần: nguồn đi vào con số, không đi vào một hình vẽ của hệ thống. Ngoại lệ có chủ đích là `layout: flow` (chủ dự án yêu cầu 08/11/2026): sơ đồ bốn nút nối về một ô biến tần, nhưng vẫn theo các quy tắc ở đây. Số trong nút là khối số của card, chữ bằng mực, màu nguồn chỉ ở dây, chấm và ô nhãn; sạc/xả vẫn nói bằng chữ. Từ hàng dự phòng trở xuống giữ nguyên tờ lịch. Ngoại lệ thứ hai là `layout: inverter` (chủ dự án yêu cầu 14/11/2026, vì quen nhìn card Sunsynk hơn): bố cục Sunsynk với biểu tượng nét cho từng nút, số trong ô viền màu nguồn và số liệu trong ngày gom về cạnh nút của nó; số và chữ vẫn bằng mực.
 
 **Key Characteristics:**
 - Một đơn vị `--u` chi phối mọi kích thước; card rộng ra thì chữ lớn theo để đọc từ xa.
@@ -185,12 +185,12 @@ Ba màu nguồn nằm trên cùng một dải sáng, chỉ dùng cho dấu đồ
 - **body** (400, 14u, 1.4): cỡ gốc của tờ giấy.
 - **band** (500, 14u, 1.4): ngày trên băng; tiêu đề trên băng lùi về 400.
 - **small** (400, 12.5u, 1.4): tiêu đề dải giờ và chữ nhỏ cuối tờ; giá trị trong chữ nhỏ dùng 500.
-- **label** (400, sàn 11px, 12u, 1.4): nhãn nguồn và nhãn dự phòng; nhãn khung giờ tốt dùng cùng cỡ ở 600, line-height 1.25, rộng bằng khung và nhô đều hai bên khi khung ngắn hơn chữ, không cắt chữ; số giờ dưới ô dùng 11u với cùng sàn.
+- **label** (400, sàn 12px, 12u, 1.4): nhãn nguồn và nhãn dự phòng; nhãn khung giờ tốt dùng cùng cỡ ở 600, line-height 1.25, rộng bằng khung và nhô đều hai bên khi khung ngắn hơn chữ, không cắt chữ; số giờ dưới ô dùng 11u với cùng sàn.
 
 ### Named Rules
 **Quy tắc Bộ Số.** `SAC Numerals` là bộ con chỉ có chữ số và ký hiệu đơn vị. Chữ thường không bao giờ đi vào `.num`: phần đơn vị dạng chữ như "giờ", "kWh" quay về font thân bài (`small`, 12u, 500).
 
-**Quy tắc Sàn 11px.** Chữ nhỏ dùng `max(11px, …)` để không tụt dưới ngưỡng đọc được khi card hẹp.
+**Quy tắc Sàn 12px.** Chữ nhỏ dùng `max(12px, …)` để không tụt dưới ngưỡng đọc được khi card hẹp (nâng từ 11px ngày 14/11/2026 theo ngưỡng của design-kit). Viền focus cũng có sàn 2px.
 
 ## Layout
 
@@ -237,7 +237,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Vị trí:** dải cao 24u dưới ba số. Solar và Pin đi xuống từ giữa cột của mình, Lưới đi lên từ hàng dưới, cả ba chạy theo làn riêng về cột Nhà.
 - **Style:** đường nền 1px Viền Giấy, hạt 3.5px đầu tròn màu nguồn với nét đứt `0.1 14.9`, cả hai `non-scaling-stroke`.
 - **Chuyển động:** Web Animations ngoài vòng render, tốc độ theo log công suất (0.4 đến 2.5 giây mỗi chu kỳ), đảo chiều khi giá trị âm; dưới `threshold` thì hạt ẩn.
-- **Giảm chuyển động:** với `prefers-reduced-motion` hạt đứng yên; chiều dòng vẫn được nói bằng chữ ở cột Pin và hàng phụ.
+- **Giảm chuyển động:** với `prefers-reduced-motion` hạt đứng yên (sơ đồ `flow` và `inverter` bỏ hạt, dây đậm màu nguồn); chiều dòng vẫn được nói bằng chữ ở cột Pin và hàng phụ. Tuỳ chọn `animation` ghi đè: `on` vẫn chạy hạt (Windows tắt hiệu ứng hoạt ảnh thì Chromium báo giảm chuyển động cho mọi trang), `off` không bao giờ chạy; mặc định `auto` theo hệ điều hành.
 
 ### Hàng phụ
 - **Style:** danh sách định nghĩa nằm ngang, các ô chia đều: nhãn `label`, giá trị 21u bộ số, đơn vị chữ `small` về font thân bài.
@@ -258,13 +258,21 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 - **Ghi:** nút phát `hass-action`; mức EOD kèm `confirmation` để HA hỏi lại trước khi ghi vào biến tần. Bấm mức đang chọn thì không làm gì.
 - **Tự bỏ qua:** không khai entity, hoặc entity không có trong HA, thì dòng đó không vẽ; không còn dòng nào thì cả khu biến mất. Không lặp nhiệt độ biến tần vì chữ nhỏ đã có; quạt kẹt lên dòng cảnh báo.
 
+### Sơ đồ inverter (`layout: inverter`)
+- **Bố cục:** lưới ba cột `1fr auto 1fr`, hai hàng. Hàng trên: Solar trải hai cột trái (đầu nút rồi hàng ô PV, căn đáy), Nhà ở cột phải. Hàng dưới: Pin, Biến tần, Lưới. Không có lưới thì Nhà xuống hàng dưới. Khe giữa hai hàng 24u là chỗ của thanh góp Solar.
+- **Nút:** biểu tượng nét 32u (pin 26u × 44u, biến tần 46u) đặt sát phía có dây; chữ đứng ở phía còn lại. Pin căn phải để biểu tượng sát biến tần; Nhà và Lưới căn trái. Màu biểu tượng: Solar Vàng Nắng, Lưới Xanh Trời (Mực Nhạt khi mất lưới), Nhà Mực Nâu, Biến tần Mực Nhạt; pin là vỏ Mực Nhạt với ruột Xanh Lá cao theo SOC.
+- **Ô số:** viền 1.5px màu nguồn (Nhà viền Mực Nâu), bo 4u, số bộ số 22u màu Mực Nâu; SOC 34u không viền. Hàng ô PV: viền Vàng Nắng, số 20u, tên và điện áp · dòng được xuống dòng khi ô hẹp.
+- **Dòng phụ:** `nhãn giá trị` nằm cùng một dòng chữ (nhãn Mực Nhạt, giá trị Mực Nâu 500), cỡ `small` với sàn 12px; dài thì giá trị xuống dòng. Nút số trong dòng là liên kết trong câu.
+- **Dây:** SVG phủ dưới các nút, đường gấp khúc ngang-dọc-ngang bo góc 6px, tính từ vị trí thật của biểu tượng (đo lại khi card đổi cỡ). Dây nghỉ 1.5px màu nguồn mờ 35%; dây chạy dày 2–6px theo căn bậc hai công suất trên `flow_max_power`, mờ 45%. Mỗi dây chỉ một hạt (chủ dự án yêu cầu 15/11/2026), đường kính bằng dây cộng 4px, chạy hết dây rồi lặp lại theo chiều dòng: `pathLength="100"`, nét đứt `0.1 99.9`. Tốc độ tính bằng px/giây (60 × 1/`flowDuration`) nên dây dài và dây ngắn chạy đều nhau; một vòng không dưới 0,8 giây để hạt trên dây ngắn không nhấp nháy. Lưới và Pin vào giữa biến tần; dây Nhà rời biến tần ở 22% chiều cao rồi gập lên; Solar vào đỉnh biến tần.
+- **Card hẹp:** riêng sơ đồ cho `--u` co tới 0.78px; dưới 400px thu khe và lề, dưới 340px số ô còn 19u, SOC 30u, biểu tượng 26u.
+
 ### Focus
 - **Style:** mọi nút dùng viền mực 2u, cách 1u, chỉ khi `:focus-visible`.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px, sàn chữ 11px và sàn bấm 36px.
+- **Do** tính mọi cỡ chữ, khoảng cách và bo góc theo `calc(var(--u) * n)`; px thẳng chỉ dành cho đường kẻ 1px, nét hạt 3.5px, sàn chữ 12px, sàn viền focus 2px, nét dây 1.5px của sơ đồ `inverter` và sàn bấm 36px.
 - **Do** đặt `--u` bên trong container (`.page`), không đặt trên `:host` hay `ha-card`, vì `cqi` phải đo được `ha-card`.
 - **Do** cài `@font-face` vào `document`, vì khai báo trong shadow DOM không có tác dụng.
 - **Do** để cảnh báo là chữ có giá trị và ngưỡng: "Mất lưới" trên băng, câu đầy đủ ở dòng cảnh báo.
@@ -275,7 +283,7 @@ Thẳng thắn và in sẵn: mỗi thành phần là một dấu trên tờ gi�
 ### Don't:
 - **Don't** cho tải một màu riêng, và **don't** thêm màu thứ năm nếu nó không phải một nguồn điện.
 - **Don't** dùng màu nguồn cho chữ hay số.
-- **Don't** vẽ sơ đồ năm vòng tròn nối về biến tần.
+- **Don't** vẽ sơ đồ năm vòng tròn nối về biến tần (hai ngoại lệ có chủ đích: `layout: flow` và `layout: inverter`).
 - **Don't** thêm con số thứ tư cỡ `metric-hero`.
 - **Don't** thêm bóng vào bên trong tờ giấy.
 - **Don't** đưa chữ thường vào `.num`.
