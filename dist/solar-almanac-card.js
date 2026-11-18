@@ -1,4 +1,4 @@
-// ../solar-almanac-card/node_modules/@lit/reactive-element/css-tag.js
+// node_modules/@lit/reactive-element/css-tag.js
 var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, n = Symbol(), r = /* @__PURE__ */ new WeakMap(), i = class {
 	constructor(e, t, r) {
 		if (this._$cssResult$ = !0, r !== n) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
@@ -252,7 +252,7 @@ var S = class extends HTMLElement {
 	firstUpdated(e) {}
 };
 S.elementStyles = [], S.shadowRootOptions = { mode: "open" }, S[v("elementProperties")] = /* @__PURE__ */ new Map(), S[v("finalized")] = /* @__PURE__ */ new Map(), ee?.({ ReactiveElement: S }), (h.reactiveElementVersions ??= []).push("2.1.2");
-// ../solar-almanac-card/node_modules/lit-html/lit-html.js
+// node_modules/lit-html/lit-html.js
 var C = globalThis, w = (e) => e, T = C.trustedTypes, E = T ? T.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, D = "$lit$", O = `lit$${Math.random().toFixed(9).slice(2)}$`, te = "?" + O, ne = `<${te}>`, k = document, A = () => k.createComment(""), j = (e) => e === null || typeof e != "object" && typeof e != "function", re = Array.isArray, ie = (e) => re(e) || typeof e?.[Symbol.iterator] == "function", ae = "[ 	\n\f\r]", M = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, oe = /-->/g, se = />/g, N = RegExp(`>|${ae}(?:([^\\s"'>=/]+)(${ae}*=${ae}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ce = /'/g, le = /"/g, ue = /^(?:script|style|textarea|title)$/i, de = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
@@ -1082,9 +1082,9 @@ var $ = class extends H {
 	_kv(e, t) {
 		return t === void 0 ? L : P`<div class="kv"><span>${e}</span> <b>${t}</b></div>`;
 	}
-	_box(e, t, n) {
-		let r = P`<b class="num">${e}</b>`;
-		return n && this._config?.entities[n] ? P`<button class="val" style="--c:${t}" @click=${() => this._moreInfo(n)}>${r}</button>` : P`<span class="val" style="--c:${t}">${r}</span>`;
+	_box(e, t, n, r) {
+		let i = P`${r ? P`<span class="word">${r}</span>` : L}${e === void 0 ? L : P`<b class="num">${e}</b>`}`;
+		return n && this._config?.entities[n] ? P`<button class="val" style="--c:${t}" @click=${() => this._moreInfo(n)}>${i}</button>` : P`<span class="val" style="--c:${t}">${i}</span>`;
 	}
 	_batteryNote(e, t) {
 		if (e !== void 0) return {
@@ -1136,7 +1136,7 @@ var $ = class extends H {
 		}
 		let g = L;
 		if (d) {
-			let t = this._value("battery_soc"), n = e.battery, a = n === void 0 ? "—" : n !== void 0 && Math.abs(n) > s ? `${n > 0 ? "xả" : "sạc"} ${W(n)}` : "đang nghỉ", o = this._batteryNote(r, i === !1 || !u), c = this._cellDelta(), l = t === void 0 ? 0 : Math.min(100, Math.max(0, t));
+			let t = this._value("battery_soc"), n = e.battery, a = n !== void 0 && Math.abs(n) > s, o = this._batteryNote(r, i === !1 || !u), c = this._cellDelta(), l = t === void 0 ? 0 : Math.min(100, Math.max(0, t));
 			m("bat", n, "var(--sac-battery)", (n ?? 0) < 0), g = P`
         <div class="part bat" style="grid-area:bat">
           <div class="text">
@@ -1144,7 +1144,7 @@ var $ = class extends H {
               <span class="label">Pin</span>
               ${t === void 0 ? L : P`<b class="num soc">${Math.round(t)}<small>%</small></b>`}
             </button>
-            ${this._box(a, "var(--sac-battery)", "battery")}
+            ${a && n !== void 0 ? this._box(W(n), "var(--sac-battery)", "battery", n > 0 ? "xả" : "sạc") : this._box(void 0, "var(--sac-battery)", "battery", n === void 0 ? "—" : "đang nghỉ")}
             ${this._kv("Sạc / xả hôm nay", this._energyPair("battery_charge_today", "battery_discharge_today"))}
             ${o ? this._kv(o.label, this._link("battery_soc", o.value)) : L}
             ${this._kv("Lệch cell", c === void 0 ? void 0 : this._link("cell_delta", `${U(c, 0)} mV`))}
@@ -1331,32 +1331,32 @@ var $ = class extends H {
     `;
 	}
 	_renderReserve(e, t, n, r) {
-		let i = this._config?.entities, a = this._config?.threshold ?? 10, o = this._energy("forecast_tomorrow"), s = n === !1 || !i?.grid, c = e.grid, l = c === void 0 || Math.abs(c) <= a ? "" : c > 0 ? " · mua" : " · phát", u = [
-			t === void 0 ? void 0 : {
+		let i = this._config?.entities, a = this._config?.threshold ?? 10, o = this._energy("forecast_tomorrow"), s = n === !1 || !i?.grid, c = e.grid, l = c === void 0 || Math.abs(c) <= a ? "" : c > 0 ? " · mua" : " · phát", u = this._config?.layout === "inverter", d = [
+			t !== void 0 && !(u && i?.battery) ? {
 				label: s ? "Pin còn" : "Nếu mất điện",
 				value: `~${U(t)}`,
 				unit: "giờ",
 				key: "battery_soc"
-			},
-			r === void 0 ? void 0 : {
+			} : void 0,
+			r !== void 0 && !u ? {
 				label: "Tự cấp",
 				value: `${r}%`,
 				key: "grid_import_today"
-			},
-			o === void 0 ? void 0 : {
+			} : void 0,
+			o !== void 0 && !(u && i?.pv) ? {
 				label: "Ngày mai",
 				value: `${Math.round(o)}`,
 				unit: "kWh",
 				key: "forecast_tomorrow"
-			}
-		].filter((e) => e !== void 0), d = !!i?.grid && this._config?.layout !== "flow";
-		return !u.length && !d ? L : P`
+			} : void 0
+		].filter((e) => e !== void 0), f = !!i?.grid && this._config?.layout !== "flow" && !u;
+		return !d.length && !f ? L : P`
       <dl class="reserve">
-        ${d ? P`<div>
+        ${f ? P`<div>
               <dt><i style="background:var(--sac-grid)"></i>Lưới${l}</dt>
               <dd class="num"><button class="fact" @click=${() => this._moreInfo("grid")}>${c === void 0 ? "—" : W(c)}</button></dd>
             </div>` : L}
-        ${u.map((e) => P`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? P` <small>${e.unit}</small>` : L}</button></dd></div>`)}
+        ${d.map((e) => P`<div><dt>${e.label}</dt><dd class="num"><button class="fact" @click=${() => this._moreInfo(e.key)}>${e.value}${e.unit ? P` <small>${e.unit}</small>` : L}</button></dd></div>`)}
       </dl>
     `;
 	}
@@ -1522,10 +1522,8 @@ var $ = class extends H {
         <div class="page">
           ${this._renderBand(e, n)}
           ${this._alerts().map((e) => P`<p class="alert">${e}</p>`)}
-          ${this._config.layout === "inverter" ? this._renderInverter(r, a, i ? void 0 : o, l, n, p) : P`
-                ${this._config.layout === "flow" ? this._renderFlow(r, a, i ? void 0 : o) : P`${this._renderLead(r, a, i ? void 0 : o)} ${this._renderLinks(r)}`}
-                ${this._renderReserve(r, l, n, p)}
-              `}
+          ${this._config.layout === "inverter" ? this._renderInverter(r, a, i ? void 0 : o, l, n, p) : this._config.layout === "flow" ? this._renderFlow(r, a, i ? void 0 : o) : P`${this._renderLead(r, a, i ? void 0 : o)} ${this._renderLinks(r)}`}
+          ${this._renderReserve(r, l, n, p)}
           ${m ? P`<p class="say"><b>${m.lead}</b> ${m.rest ?? ""}</p>` : L}
           ${this._config.compact ? L : P`${this._renderHours(e)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
@@ -2018,9 +2016,18 @@ J($, "properties", {
         justify-content: center;
         min-width: calc(var(--u) * 64);
         padding: calc(var(--u) * 1) calc(var(--u) * 8);
+        align-items: baseline;
+        gap: calc(var(--u) * 4);
         border: 1.5px solid var(--c);
         border-radius: calc(var(--u) * 4);
         color: var(--sac-fg);
+      }
+      .rig .val .word {
+        font-family: var(--ha-font-family-body, Roboto, sans-serif);
+        font-size: max(12px, calc(var(--u) * 13));
+        font-weight: 500;
+        line-height: 1.15;
+        white-space: nowrap;
       }
       .rig .val .num {
         font-size: calc(var(--u) * 22);
@@ -2115,7 +2122,7 @@ J($, "properties", {
       .rig .bat .main {
         align-items: flex-end;
       }
-      .rig .soc {
+      .rig .main .soc {
         font-size: calc(var(--u) * 34);
         line-height: 1;
         color: var(--sac-fg);
@@ -2467,7 +2474,7 @@ J($, "properties", {
         .rig .val .num {
           font-size: calc(var(--u) * 19);
         }
-        .rig .soc {
+        .rig .main .soc {
           font-size: calc(var(--u) * 30);
         }
         .rig .icon {

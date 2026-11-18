@@ -512,8 +512,8 @@ export class SolarAlmanacCard extends LitElement {
   }
 
   /** Ô số viền màu nguồn, như ô công suất của card Sunsynk. */
-  private _box(text: string, color: string, key?: EntityKey) {
-    const inner = html`<b class="num">${text}</b>`;
+  private _box(num: string | undefined, color: string, key?: EntityKey, word?: string) {
+    const inner = html`${word ? html`<span class="word">${word}</span>` : nothing}${num === undefined ? nothing : html`<b class="num">${num}</b>`}`;
     return key && this._config?.entities[key]
       ? html`<button class="val" style="--c:${color}" @click=${() => this._moreInfo(key)}>${inner}</button>`
       : html`<span class="val" style="--c:${color}">${inner}</span>`;
@@ -607,7 +607,6 @@ export class SolarAlmanacCard extends LitElement {
       const soc = this._value('battery_soc');
       const bw = power.battery;
       const moving = bw !== undefined && Math.abs(bw) > threshold;
-      const flow = bw === undefined ? '—' : moving ? `${bw > 0 ? 'xả' : 'sạc'} ${formatPower(bw)}` : 'đang nghỉ';
       const note = this._batteryNote(runtime, online === false || !hasGrid);
       const delta = this._cellDelta();
       const level = soc === undefined ? 0 : Math.min(100, Math.max(0, soc));
@@ -619,7 +618,9 @@ export class SolarAlmanacCard extends LitElement {
               <span class="label">Pin</span>
               ${soc !== undefined ? html`<b class="num soc">${Math.round(soc)}<small>%</small></b>` : nothing}
             </button>
-            ${this._box(flow, 'var(--sac-battery)', 'battery')}
+            ${moving && bw !== undefined
+              ? this._box(formatPower(bw), 'var(--sac-battery)', 'battery', bw > 0 ? 'xả' : 'sạc')
+              : this._box(undefined, 'var(--sac-battery)', 'battery', bw === undefined ? '—' : 'đang nghỉ')}
             ${this._kv('Sạc / xả hôm nay', this._energyPair('battery_charge_today', 'battery_discharge_today'))}
             ${note ? this._kv(note.label, this._link('battery_soc', note.value)) : nothing}
             ${this._kv('Lệch cell', delta === undefined ? undefined : this._link('cell_delta', `${formatNumber(delta, 0)} mV`))}
@@ -873,13 +874,14 @@ export class SolarAlmanacCard extends LitElement {
     const offGrid = online === false || !entities?.grid;
     const grid = power.grid;
     const gridNote = grid === undefined || Math.abs(grid) <= threshold ? '' : grid > 0 ? ' · mua' : ' · phát';
+    const inverter = this._config?.layout === 'inverter';
     const items = [
-      runtime !== undefined ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ', key: 'battery_soc' as EntityKey } : undefined,
-      selfUse !== undefined ? { label: 'Tự cấp', value: `${selfUse}%`, key: 'grid_import_today' as EntityKey } : undefined,
-      tomorrow !== undefined ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh', key: 'forecast_tomorrow' as EntityKey } : undefined,
+      runtime !== undefined && !(inverter && entities?.battery) ? { label: offGrid ? 'Pin còn' : 'Nếu mất điện', value: `~${formatNumber(runtime)}`, unit: 'giờ', key: 'battery_soc' as EntityKey } : undefined,
+      selfUse !== undefined && !inverter ? { label: 'Tự cấp', value: `${selfUse}%`, key: 'grid_import_today' as EntityKey } : undefined,
+      tomorrow !== undefined && !(inverter && entities?.pv) ? { label: 'Ngày mai', value: `${Math.round(tomorrow)}`, unit: 'kWh', key: 'forecast_tomorrow' as EntityKey } : undefined,
     ].filter((item) => item !== undefined);
     // Ở sơ đồ, lưới đã có nút riêng nên không lặp lại ở hàng này.
-    const showGrid = !!entities?.grid && this._config?.layout !== 'flow';
+    const showGrid = !!entities?.grid && this._config?.layout !== 'flow' && !inverter;
     if (!items.length && !showGrid) return nothing;
     return html`
       <dl class="reserve">
@@ -1106,12 +1108,10 @@ export class SolarAlmanacCard extends LitElement {
           ${this._alerts().map((text) => html`<p class="alert">${text}</p>`)}
           ${this._config.layout === 'inverter'
             ? this._renderInverter(power, load, unread ? undefined : flows, runtime, online, selfUse)
-            : html`
-                ${this._config.layout === 'flow'
-                  ? this._renderFlow(power, load, unread ? undefined : flows)
-                  : html`${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}`}
-                ${this._renderReserve(power, runtime, online, selfUse)}
-              `}
+            : this._config.layout === 'flow'
+              ? this._renderFlow(power, load, unread ? undefined : flows)
+              : html`${this._renderLead(power, load, unread ? undefined : flows)} ${this._renderLinks(power)}`}
+          ${this._renderReserve(power, runtime, online, selfUse)}
           ${status ? html`<p class="say"><b>${status.lead}</b> ${status.rest ?? ''}</p>` : nothing}
           ${this._config.compact ? nothing : html`${this._renderHours(now)} ${this._renderFine()}`} ${this._renderControls()}
         </div>
@@ -1637,9 +1637,18 @@ export class SolarAlmanacCard extends LitElement {
         justify-content: center;
         min-width: calc(var(--u) * 64);
         padding: calc(var(--u) * 1) calc(var(--u) * 8);
+        align-items: baseline;
+        gap: calc(var(--u) * 4);
         border: 1.5px solid var(--c);
         border-radius: calc(var(--u) * 4);
         color: var(--sac-fg);
+      }
+      .rig .val .word {
+        font-family: var(--ha-font-family-body, Roboto, sans-serif);
+        font-size: max(12px, calc(var(--u) * 13));
+        font-weight: 500;
+        line-height: 1.15;
+        white-space: nowrap;
       }
       .rig .val .num {
         font-size: calc(var(--u) * 22);
@@ -1734,7 +1743,7 @@ export class SolarAlmanacCard extends LitElement {
       .rig .bat .main {
         align-items: flex-end;
       }
-      .rig .soc {
+      .rig .main .soc {
         font-size: calc(var(--u) * 34);
         line-height: 1;
         color: var(--sac-fg);
@@ -2086,7 +2095,7 @@ export class SolarAlmanacCard extends LitElement {
         .rig .val .num {
           font-size: calc(var(--u) * 19);
         }
-        .rig .soc {
+        .rig .main .soc {
           font-size: calc(var(--u) * 30);
         }
         .rig .icon {
