@@ -139,7 +139,7 @@ Bố cục quen thuộc của card Sunsynk, vẽ lại bằng chữ HTML nên ch
 | Nhà (trên phải) | công suất, thanh tỉ lệ nguồn và "% từ …", tải hôm nay, tự cấp |
 | Lưới (dưới phải) | công suất, mua / phát hôm nay, điện áp · tần số; băng đầu card chỉ còn "Có lưới" / "Mất lưới" |
 
-Dưới sơ đồ giữ câu trạng thái, dải giờ, khu điều khiển; chữ nhỏ cuối tờ chỉ còn các dòng không thuộc nút nào (tiết kiệm, sạc / xả theo kỳ). Không có lưới thì nhà xuống hàng dưới, nối thẳng với biến tần.
+Dưới sơ đồ giữ câu trạng thái, dải giờ, khu điều khiển; chữ nhỏ cuối tờ chỉ còn các dòng không thuộc nút nào (tiết kiệm, sạc / xả theo kỳ). Không có lưới thì nhà xuống hàng dưới, nối thẳng với biến tần. Thiếu nút chứa một mục (khai `battery_soc` mà không khai `battery`, hoặc `forecast_tomorrow` mà không khai `pv`) thì "Nếu mất điện" / "Pin còn" và "Ngày mai" hiện ở hàng dự phòng dưới sơ đồ.
 
 ### Dải giờ
 
