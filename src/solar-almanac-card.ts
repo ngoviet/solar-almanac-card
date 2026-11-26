@@ -509,6 +509,8 @@ export class SolarAlmanacCard extends LitElement {
   /** Số kWh hôm nay của công tơ tổng; đã khai mà không đọc được thì báo "mất kết nối" thay vì ẩn dòng. */
   private _meterText(): string | undefined {
     if (!this._config?.entities.grid_meter_today) return undefined;
+    // Gõ sai entity id thì HA không có entity đó: báo khác với entity có mà đang mất kết nối.
+    if (!this._entity('grid_meter_today')) return 'không tìm thấy entity';
     const v = this._energy('grid_meter_today');
     return v === undefined ? 'mất kết nối' : `${formatNumber(v)} kWh`;
   }
@@ -983,7 +985,7 @@ export class SolarAlmanacCard extends LitElement {
     const rows: Array<[string, unknown, boolean?]> = [
       [this._config?.savings_label ?? 'Tiết kiệm tháng', savings === undefined ? undefined : open('savings_month', `${formatNumber(savings, 0)} đ`)],
       ['Tải hôm nay', load === undefined ? undefined : open('load_today', load), true],
-      ['Mua / phát', pair('grid_import_today', 'grid_export_today'), !!entities?.grid],
+      [entities?.grid_meter_today ? 'Biến tần mua / phát' : 'Mua / phát', pair('grid_import_today', 'grid_export_today'), !!entities?.grid],
       [this._config?.grid_meter_label ?? 'Công tơ tổng', meter === undefined ? undefined : open('grid_meter_today', meter), !!entities?.grid],
       ['Sạc / xả hôm nay', pair('battery_charge_today', 'battery_discharge_today'), !!entities?.battery],
       [this._config?.battery_period_label ?? 'Sạc / xả tháng', pair('battery_charge_period', 'battery_discharge_period')],

@@ -1,4 +1,4 @@
-// ../solar-almanac-card/node_modules/@lit/reactive-element/css-tag.js
+// node_modules/@lit/reactive-element/css-tag.js
 var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, n = Symbol(), r = /* @__PURE__ */ new WeakMap(), i = class {
 	constructor(e, t, r) {
 		if (this._$cssResult$ = !0, r !== n) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
@@ -252,7 +252,7 @@ var S = class extends HTMLElement {
 	firstUpdated(e) {}
 };
 S.elementStyles = [], S.shadowRootOptions = { mode: "open" }, S[v("elementProperties")] = /* @__PURE__ */ new Map(), S[v("finalized")] = /* @__PURE__ */ new Map(), ee?.({ ReactiveElement: S }), (h.reactiveElementVersions ??= []).push("2.1.2");
-// ../solar-almanac-card/node_modules/lit-html/lit-html.js
+// node_modules/lit-html/lit-html.js
 var C = globalThis, w = (e) => e, T = C.trustedTypes, E = T ? T.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, D = "$lit$", O = `lit$${Math.random().toFixed(9).slice(2)}$`, te = "?" + O, ne = `<${te}>`, k = document, A = () => k.createComment(""), j = (e) => e === null || typeof e != "object" && typeof e != "function", re = Array.isArray, ie = (e) => re(e) || typeof e?.[Symbol.iterator] == "function", ae = "[ 	\n\f\r]", M = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, oe = /-->/g, se = />/g, N = RegExp(`>|${ae}(?:([^\\s"'>=/]+)(${ae}*=${ae}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), ce = /'/g, le = /"/g, ue = /^(?:script|style|textarea|title)$/i, de = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
@@ -1081,6 +1081,7 @@ var $ = class extends H {
 	}
 	_meterText() {
 		if (!this._config?.entities.grid_meter_today) return;
+		if (!this._entity("grid_meter_today")) return "không tìm thấy entity";
 		let e = this._energy("grid_meter_today");
 		return e === void 0 ? "mất kết nối" : `${U(e)} kWh`;
 	}
@@ -1417,7 +1418,7 @@ var $ = class extends H {
 				!0
 			],
 			[
-				"Mua / phát",
+				d?.grid_meter_today ? "Biến tần mua / phát" : "Mua / phát",
 				l("grid_import_today", "grid_export_today"),
 				!!d?.grid
 			],
