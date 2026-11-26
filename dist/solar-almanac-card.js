@@ -1079,6 +1079,12 @@ var $ = class extends H {
 		let i = (e) => e === void 0 ? "—" : U(e);
 		return P`${this._link(e, i(n))} / ${this._link(t, `${i(r)} kWh`)}`;
 	}
+	_meterText() {
+		if (!this._config?.entities.grid_meter_today) return;
+		if (!this._entity("grid_meter_today")) return "không tìm thấy entity";
+		let e = this._energy("grid_meter_today");
+		return e === void 0 ? "mất kết nối" : `${U(e)} kWh`;
+	}
 	_kv(e, t) {
 		return t === void 0 ? L : P`<div class="kv"><span>${e}</span> <b>${t}</b></div>`;
 	}
@@ -1161,15 +1167,16 @@ var $ = class extends H {
 		}
 		let _ = L;
 		if (u) {
-			let t = e.grid, n = t !== void 0 && Math.abs(t) > s, r = this._value("grid_voltage"), a = this._value("grid_frequency"), o = [r === void 0 ? void 0 : this._link("grid_voltage", `${Math.round(r)} V`), a === void 0 ? void 0 : this._link("grid_frequency", `${U(a)} Hz`)].filter((e) => e !== void 0);
+			let t = e.grid, n = t !== void 0 && Math.abs(t) > s, r = this._value("grid_voltage"), a = this._value("grid_frequency"), c = [r === void 0 ? void 0 : this._link("grid_voltage", `${Math.round(r)} V`), a === void 0 ? void 0 : this._link("grid_frequency", `${U(a)} Hz`)].filter((e) => e !== void 0), l = this._meterText();
 			m("grid", t, "var(--sac-grid)", (t ?? 0) < 0), _ = P`
         <div class="part grid" style="grid-area:grid">
           <span class="icon" data-anchor="grid" style="color:${i === !1 ? "var(--sac-dim)" : "var(--sac-grid)"}">${Z.grid}</span>
           <div class="text">
             <span class="label">${i === !1 ? "Lưới · mất" : `Lưới${n ? t > 0 ? " · mua" : " · phát" : ""}`}</span>
             ${this._box(t === void 0 ? "—" : W(t), "var(--sac-grid)", "grid")}
-            ${this._kv("Mua / phát hôm nay", this._energyPair("grid_import_today", "grid_export_today"))}
-            ${o.length ? P`<div class="kv"><b>${o.map((e, t) => P`${t ? " · " : ""}${e}`)}</b></div>` : L}
+            ${this._kv(o?.grid_meter_today ? "Biến tần mua / phát" : "Mua / phát hôm nay", this._energyPair("grid_import_today", "grid_export_today"))}
+            ${this._kv(this._config?.grid_meter_label ?? "Công tơ tổng", l === void 0 ? void 0 : this._link("grid_meter_today", l))}
+            ${c.length ? P`<div class="kv"><b>${c.map((e, t) => P`${t ? " · " : ""}${e}`)}</b></div>` : L}
           </div>
         </div>
       `;
@@ -1400,44 +1407,49 @@ var $ = class extends H {
     `;
 	}
 	_renderFine() {
-		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${U(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = (e) => e === void 0 ? "—" : U(e), s = (e, t, n = "") => this._config?.entities[e] ? P`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, c = (e, t) => {
+		let e = this._energy("load_today"), t = e === void 0 ? void 0 : `${U(e)} kWh`, n = this._value("savings_month"), r = this._cellDelta(), i = this._value("inverter_temperature"), a = this._value("grid_frequency"), o = this._meterText(), s = (e) => e === void 0 ? "—" : U(e), c = (e, t, n = "") => this._config?.entities[e] ? P`<button class="fact ${n}" @click=${() => this._moreInfo(e)}>${t}</button>` : t, l = (e, t) => {
 			let n = this._energy(e), r = this._energy(t);
-			return n === void 0 && r === void 0 ? void 0 : P`${s(e, o(n), "left")} / ${s(t, `${o(r)} kWh`, "right")}`;
-		}, l = this._config?.layout === "inverter", u = this._config?.entities, d = [
-			[this._config?.savings_label ?? "Tiết kiệm tháng", n === void 0 ? void 0 : s("savings_month", `${U(n, 0)} đ`)],
+			return n === void 0 && r === void 0 ? void 0 : P`${c(e, s(n), "left")} / ${c(t, `${s(r)} kWh`, "right")}`;
+		}, u = this._config?.layout === "inverter", d = this._config?.entities, f = [
+			[this._config?.savings_label ?? "Tiết kiệm tháng", n === void 0 ? void 0 : c("savings_month", `${U(n, 0)} đ`)],
 			[
 				"Tải hôm nay",
-				t === void 0 ? void 0 : s("load_today", t),
+				t === void 0 ? void 0 : c("load_today", t),
 				!0
 			],
 			[
-				"Mua / phát",
-				c("grid_import_today", "grid_export_today"),
-				!!u?.grid
+				d?.grid_meter_today ? "Biến tần mua / phát" : "Mua / phát",
+				l("grid_import_today", "grid_export_today"),
+				!!d?.grid
+			],
+			[
+				this._config?.grid_meter_label ?? "Công tơ tổng",
+				o === void 0 ? void 0 : c("grid_meter_today", o),
+				!!d?.grid
 			],
 			[
 				"Sạc / xả hôm nay",
-				c("battery_charge_today", "battery_discharge_today"),
-				!!u?.battery
+				l("battery_charge_today", "battery_discharge_today"),
+				!!d?.battery
 			],
-			[this._config?.battery_period_label ?? "Sạc / xả tháng", c("battery_charge_period", "battery_discharge_period")],
+			[this._config?.battery_period_label ?? "Sạc / xả tháng", l("battery_charge_period", "battery_discharge_period")],
 			[
 				"Lệch cell",
-				r === void 0 ? void 0 : s("cell_delta", `${U(r, 0)} mV`),
-				!!u?.battery
+				r === void 0 ? void 0 : c("cell_delta", `${U(r, 0)} mV`),
+				!!d?.battery
 			],
 			[
 				"Nhiệt biến tần",
-				i === void 0 ? void 0 : s("inverter_temperature", `${U(i, 0)} ${this._temperatureUnit()}`),
+				i === void 0 ? void 0 : c("inverter_temperature", `${U(i, 0)} ${this._temperatureUnit()}`),
 				!0
 			],
 			[
 				"Tần số lưới",
-				a === void 0 ? void 0 : s("grid_frequency", `${U(a)} Hz`),
-				!!u?.grid
+				a === void 0 ? void 0 : c("grid_frequency", `${U(a)} Hz`),
+				!!d?.grid
 			]
-		].filter((e) => e[1] !== void 0 && !(l && e[2]));
-		return d.length ? P`<dl class="fine">${d.map(([e, t]) => P`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : L;
+		].filter((e) => e[1] !== void 0 && !(u && e[2]));
+		return f.length ? P`<dl class="fine">${f.map(([e, t]) => P`<div><dt>${e}</dt><dd>${t}</dd></div>`)}</dl>` : L;
 	}
 	_renderFan() {
 		let e = this._entity("fan"), t = this._entity("fan_auto"), { ids: n, rpm: r } = this._fanRpm();

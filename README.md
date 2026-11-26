@@ -123,6 +123,7 @@ A declared source that cannot be read shows `—` on its line, and the share bar
 | `eod_levels`       | `[10, 20, 30]` | %, the quick buttons for `eod`                           |
 | `savings_label`    | `Tiết kiệm tháng` | Label of the `savings_month` line (default "savings this month"), for example `Tiết kiệm kỳ này` (savings this billing period) |
 | `battery_period_label` | `Sạc / xả tháng` | Label of the `battery_charge_period` and `battery_discharge_period` line (default "charge / discharge this month") |
+| `grid_meter_label` | `Công tơ tổng` | Label of the `grid_meter_today` line (default "main meter"), for example `Aptomat tổng` |
 | `band`             | `red`             | Colour of the header band: `red` or `neutral`; warnings stay red |
 | `animation`        | `auto`            | Particles on the wires: `auto` stops when the operating system asks for reduced motion (Windows with animation effects turned off counts), `on` (or `true`) always runs, `off` (or `false`) never runs |
 
@@ -133,7 +134,8 @@ A declared source that cannot be read shows `—` on its line, and the share bar
 | `pv`, `battery`, `grid`                                   | The three sources and the particle paths       |
 | `load`                                                    | The "Nhà đang dùng" (house load) figure; left out, it is worked out as pv + battery + grid, only when all three are declared. A system without a battery or without `grid` (a 25.6V DC system) must declare `load`, otherwise the house figure, the runtime left and the "Pin còn" line are lost |
 | `battery_soc`                                             | Battery percentage, the SOC bar                |
-| `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Daily totals; `grid_import_today` and `load_today` give the "Tự cấp" (self-sufficiency) figure |
+| `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Daily totals; `grid_import_today` and `load_today` give the "Tự cấp" (self-sufficiency) figure, so take both from the inverter |
+| `grid_meter_today` | kWh today on the house's main meter (a metering breaker or the utility meter), which also counts loads that bypass the inverter. Shown under the grid node (layout `inverter`) or in the fine print (other layouts) next to the inverter's buy / sell figures, whose label then reads "Biến tần mua / phát"; when the entity is unavailable the line says "mất kết nối" (disconnected), and when Home Assistant has no entity with that id (a typo) it says "không tìm thấy entity" (entity not found), instead of disappearing. Not used for "Tự cấp" |
 | `battery_charge_today`, `battery_discharge_today` | kWh charged into and discharged from the battery today, the "Sạc / xả hôm nay" line |
 | `battery_charge_period`, `battery_discharge_period` | Same, per month or billing period; the line's label is set with `battery_period_label` (default "Sạc / xả tháng") |
 | `forecast_today`, `forecast_tomorrow`                     | kWh values; their hourly forecast attribute builds the hour strip |

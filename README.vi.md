@@ -123,6 +123,7 @@ Nguồn đã khai mà không đọc được thì dòng của nó hiện `—`, 
 | `eod_levels`       | `[10, 20, 30]` | %, các mức bấm nhanh cho `eod`                           |
 | `savings_label`    | `Tiết kiệm tháng` | Nhãn dòng `savings_month`, ví dụ `Tiết kiệm kỳ này`   |
 | `battery_period_label` | `Sạc / xả tháng` | Nhãn dòng `battery_charge_period` và `battery_discharge_period` |
+| `grid_meter_label` | `Công tơ tổng` | Nhãn dòng `grid_meter_today`, ví dụ `Aptomat tổng` |
 | `band`             | `red`             | Màu băng đầu card: `red` hoặc `neutral`; cảnh báo vẫn đỏ |
 | `animation`        | `auto`            | Hạt chạy trên dây: `auto` dừng khi hệ điều hành bật giảm chuyển động (Windows tắt hiệu ứng hoạt ảnh cũng tính là bật), `on` (hoặc `true`) luôn chạy, `off` (hoặc `false`) không chạy |
 
@@ -133,7 +134,8 @@ Nguồn đã khai mà không đọc được thì dòng của nó hiện `—`, 
 | `pv`, `battery`, `grid`                                   | Ba nguồn và đường hạt                          |
 | `load`                                                    | Số "Nhà đang dùng"; bỏ trống thì tự tính pv + battery + grid, chỉ khi khai đủ cả ba. Hệ không có pin hoặc không khai `grid` (hệ 25.6V DC) phải khai `load`, nếu không thì mất số nhà đang dùng, thời gian còn chạy và dòng "Pin còn" |
 | `battery_soc`                                             | Phần trăm pin, thanh SOC                       |
-| `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Tổng ngày; `grid_import_today` và `load_today` tạo chỉ số Tự cấp |
+| `pv_today`, `load_today`, `grid_import_today`, `grid_export_today` | Tổng ngày; `grid_import_today` và `load_today` tạo chỉ số Tự cấp, nên lấy cả hai từ biến tần |
+| `grid_meter_today` | kWh hôm nay của công tơ tổng (aptomat đo điện hoặc đồng hồ điện lực), đo cả tải không đi qua biến tần. Hiện dưới nút Lưới (layout `inverter`) hoặc trong chữ nhỏ cuối tờ (layout khác), cạnh số mua / phát của biến tần, khi đó nhãn đổi thành "Biến tần mua / phát"; entity mất kết nối thì dòng ghi "mất kết nối", HA không có entity id đó (gõ sai) thì ghi "không tìm thấy entity", chứ không biến mất. Không dùng để tính Tự cấp |
 | `battery_charge_today`, `battery_discharge_today` | kWh sạc vào và xả ra khỏi pin trong ngày, dòng "Sạc / xả hôm nay" |
 | `battery_charge_period`, `battery_discharge_period` | Như trên nhưng theo tháng hoặc kỳ; nhãn dòng đặt bằng `battery_period_label` (mặc định "Sạc / xả tháng") |
 | `forecast_today`, `forecast_tomorrow`                     | Giá trị kWh, cộng thuộc tính dự báo theo giờ để dựng dải giờ |
