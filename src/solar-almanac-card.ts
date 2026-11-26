@@ -506,6 +506,13 @@ export class SolarAlmanacCard extends LitElement {
     return html`${this._link(a, part(x))} / ${this._link(b, `${part(y)} kWh`)}`;
   }
 
+  /** Số kWh hôm nay của công tơ tổng; đã khai mà không đọc được thì báo "mất kết nối" thay vì ẩn dòng. */
+  private _meterText(): string | undefined {
+    if (!this._config?.entities.grid_meter_today) return undefined;
+    const v = this._energy('grid_meter_today');
+    return v === undefined ? 'mất kết nối' : `${formatNumber(v)} kWh`;
+  }
+
   /** Một dòng "nhãn giá trị" trong nút; giá trị dài thì tự xuống dòng dưới nhãn. */
   private _kv(label: string, value: unknown) {
     return value === undefined ? nothing : html`<div class="kv"><span>${label}</span> <b>${value}</b></div>`;
@@ -647,6 +654,7 @@ export class SolarAlmanacCard extends LitElement {
         volt !== undefined ? this._link('grid_voltage', `${Math.round(volt)} V`) : undefined,
         freq !== undefined ? this._link('grid_frequency', `${formatNumber(freq)} Hz`) : undefined,
       ].filter((v) => v !== undefined);
+      const meter = this._meterText();
       wire('grid', gw, 'var(--sac-grid)', (gw ?? 0) < 0);
       grid = html`
         <div class="part grid" style="grid-area:grid">
@@ -654,7 +662,8 @@ export class SolarAlmanacCard extends LitElement {
           <div class="text">
             <span class="label">${online === false ? 'Lưới · mất' : `Lưới${moving ? (gw > 0 ? ' · mua' : ' · phát') : ''}`}</span>
             ${this._box(gw === undefined ? '—' : formatPower(gw), 'var(--sac-grid)', 'grid')}
-            ${this._kv('Mua / phát hôm nay', this._energyPair('grid_import_today', 'grid_export_today'))}
+            ${this._kv(entities?.grid_meter_today ? 'Biến tần mua / phát' : 'Mua / phát hôm nay', this._energyPair('grid_import_today', 'grid_export_today'))}
+            ${this._kv(this._config?.grid_meter_label ?? 'Công tơ tổng', meter === undefined ? undefined : this._link('grid_meter_today', meter))}
             ${line.length ? html`<div class="kv"><b>${line.map((v, i) => html`${i ? ' · ' : ''}${v}`)}</b></div>` : nothing}
           </div>
         </div>
@@ -956,6 +965,7 @@ export class SolarAlmanacCard extends LitElement {
     const delta = this._cellDelta();
     const temp = this._value('inverter_temperature');
     const freq = this._value('grid_frequency');
+    const meter = this._meterText();
     const part = (v: number | undefined) => (v === undefined ? '—' : formatNumber(v));
     const open = (key: EntityKey, text: string, side = '') =>
       this._config?.entities[key] ? html`<button class="fact ${side}" @click=${() => this._moreInfo(key)}>${text}</button>` : text;
@@ -974,6 +984,7 @@ export class SolarAlmanacCard extends LitElement {
       [this._config?.savings_label ?? 'Tiết kiệm tháng', savings === undefined ? undefined : open('savings_month', `${formatNumber(savings, 0)} đ`)],
       ['Tải hôm nay', load === undefined ? undefined : open('load_today', load), true],
       ['Mua / phát', pair('grid_import_today', 'grid_export_today'), !!entities?.grid],
+      [this._config?.grid_meter_label ?? 'Công tơ tổng', meter === undefined ? undefined : open('grid_meter_today', meter), !!entities?.grid],
       ['Sạc / xả hôm nay', pair('battery_charge_today', 'battery_discharge_today'), !!entities?.battery],
       [this._config?.battery_period_label ?? 'Sạc / xả tháng', pair('battery_charge_period', 'battery_discharge_period')],
       ['Lệch cell', delta === undefined ? undefined : open('cell_delta', `${formatNumber(delta, 0)} mV`), !!entities?.battery],

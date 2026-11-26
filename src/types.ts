@@ -67,6 +67,8 @@ export interface SolarAlmanacCardConfig {
   savings_label?: string;
   /** Nhãn dòng sạc/xả theo kỳ (`battery_charge_period`, `battery_discharge_period`). */
   battery_period_label?: string;
+  /** Nhãn dòng `grid_meter_today`, ví dụ `Aptomat tổng`. */
+  grid_meter_label?: string;
   /** Các mức SOC (%) bấm nhanh cho `entities.eod`. */
   eod_levels?: number[];
   entities: {
@@ -80,6 +82,8 @@ export interface SolarAlmanacCardConfig {
     load_today?: EntityRef;
     grid_import_today?: EntityRef;
     grid_export_today?: EntityRef;
+    /** kWh trong ngày của công tơ tổng (aptomat đo điện, đồng hồ điện lực): đo cả tải không đi qua biến tần. */
+    grid_meter_today?: EntityRef;
     /** Năng lượng sạc vào / xả ra khỏi pin trong ngày và trong kỳ (Wh, kWh hoặc MWh). */
     battery_charge_today?: EntityRef;
     battery_discharge_today?: EntityRef;

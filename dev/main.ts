@@ -31,6 +31,7 @@ interface Scenario {
   temp?: number;
   stall?: boolean;
   fanOff?: boolean;
+  meterLost?: boolean;
   pvToday: number;
   loadToday: number;
 }
@@ -39,7 +40,7 @@ const SCENARIOS: Scenario[] = [
   { label: '19:08 xả', hour: 19.13, pv: 0, battery: 1627, grid: 371, soc: 80, pvToday: 29.4, loadToday: 21 },
   { label: '10:00 sạc', hour: 10, pv: 6139, battery: -4590, grid: 6, soc: 62, pvToday: 11.6, loadToday: 12.2 },
   { label: 'Phát lưới', hour: 12.5, pv: 6400, battery: 0, grid: -3200, soc: 100, pvToday: 20.1, loadToday: 14 },
-  { label: 'Mất lưới', hour: 21, pv: 0, battery: 2400, grid: 0, soc: 42, gridOnline: false, pvToday: 29.4, loadToday: 24 },
+  { label: 'Mất lưới', hour: 21, pv: 0, battery: 2400, grid: 0, soc: 42, gridOnline: false, meterLost: true, pvToday: 29.4, loadToday: 24 },
   { label: 'Cảnh báo', hour: 14, pv: 3100, battery: -800, grid: 0, soc: 96, temp: 78, stall: true, pvToday: 24.5, loadToday: 16 },
   { label: 'Quạt tắt', hour: 6, pv: 120, battery: 300, grid: 0, soc: 48, fanOff: true, pvToday: 0.1, loadToday: 8 },
   { label: 'Thiếu dữ liệu', hour: 15, pv: 1500, battery: 0, grid: 300, soc: 55, sparse: true, pvToday: 0, loadToday: 0 },
@@ -69,6 +70,7 @@ card.setConfig({
         band: 'neutral' as const,
         savings_label: 'Tiết kiệm kỳ này',
         battery_period_label: 'Sạc / xả kỳ này',
+        grid_meter_label: 'Aptomat tổng',
         mppts: MPPT_SHARE.map((_, i) => ({
           name: `PV${i + 1} · ${MPPT_NAMES[i]}`,
           power: `sensor.pv${i + 1}_power`,
@@ -86,6 +88,7 @@ card.setConfig({
     load_today: 'sensor.load_today',
     grid_import_today: 'sensor.grid_import_today',
     grid_export_today: 'sensor.grid_export_today',
+    grid_meter_today: 'sensor.grid_meter_today',
     battery_charge_today: 'sensor.battery_charge_today',
     battery_discharge_today: 'sensor.battery_discharge_today',
     battery_charge_period: 'sensor.battery_charge_period',
@@ -107,7 +110,7 @@ card.setConfig({
 });
 if (DC) {
   const e = (card as unknown as { _config: { entities: Record<string, unknown> } })._config.entities;
-  for (const k of ['grid', 'grid_import_today', 'grid_export_today', 'grid_voltage', 'grid_frequency', 'grid_connected', 'inverter_temperature', 'fan', 'fan_rpm', 'fan_auto', 'fan_stall', 'eod']) delete e[k];
+  for (const k of ['grid', 'grid_import_today', 'grid_export_today', 'grid_meter_today', 'grid_voltage', 'grid_frequency', 'grid_connected', 'inverter_temperature', 'fan', 'fan_rpm', 'fan_auto', 'fan_stall', 'eod']) delete e[k];
 }
 document.getElementById('wrap')!.appendChild(card);
 
@@ -163,6 +166,7 @@ function apply(s: Scenario, dark: boolean) {
       'sensor.load_today': entity(s.loadToday, 'kWh'),
       'sensor.grid_import_today': entity(0.5, 'kWh'),
       'sensor.grid_export_today': entity(0, 'kWh'),
+      'sensor.grid_meter_today': entity(s.meterLost ? 'unavailable' : 9.5, 'kWh'),
       'sensor.battery_charge_today': entity(6.3, 'kWh'),
       'sensor.battery_discharge_today': entity(5.7, 'kWh'),
       'sensor.battery_charge_period': entity(156.6, 'kWh'),
